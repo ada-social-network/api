@@ -1,7 +1,10 @@
 #!/bin/sh
 set -e
 
-exec golangci-lint run
+golangci-lint run
+echo "--- lint ok"
+go test ./...
+echo "--- test ok"
 
 exit 0
 

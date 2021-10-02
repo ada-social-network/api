@@ -1,7 +1,84 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	_ "embed"
+	"flag"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
+
+	"github.com/ada-social-network/api/handler"
+	"github.com/ada-social-network/api/middleware"
+	"github.com/gin-gonic/gin"
+)
+
+const (
+	version  = "dev"
+	basePath = "/api/rest/v1"
+)
 
 func main() {
-	fmt.Println("Hello")
+	var wait time.Duration
+	var port int
+	var iface string
+	var mode string
+
+	flag.IntVar(&port, "http-port", 8080, "Default port")
+	flag.StringVar(&iface, "http-iface", "127.0.0.1", "Default interface")
+	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
+	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
+	flag.Parse()
+
+	gin.SetMode(mode)
+
+	r := gin.New()
+	r.
+		// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
+		Use(gin.Logger()).
+		// Recovery middleware recovers from any panics and writes a 500 if there was one.
+		Use(gin.Recovery()).
+		// Add in the response current version details
+		Use(middleware.Version(version)).
+		GET("/ping", handler.PingHandler).
+		GET(basePath+"/posts", handler.PostHandler)
+
+	srv := &http.Server{
+		Addr: fmt.Sprintf("%s:%d", iface, port),
+		// Good practice to set timeouts to avoid Slowloris attacks.
+		WriteTimeout: time.Second * 15,
+		ReadTimeout:  time.Second * 15,
+		IdleTimeout:  time.Second * 60,
+		Handler:      r, // Pass our instance of gorilla/mux in.
+	}
+
+	// Run our server in a goroutine so that it doesn't block.
+	go func() {
+		log.Printf("Http server is started on interface %s:%d", iface, port)
+
+		if err := srv.ListenAndServe(); err != nil {
+			log.Println(err)
+		}
+	}()
+
+	// Wait for interrupt signal to gracefully shutdown the server with
+	// a timeout of 5 seconds.
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	log.Println("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
+	}
+
+	log.Println("Server exiting")
+	os.Exit(0)
+
 }

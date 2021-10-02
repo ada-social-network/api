@@ -22,11 +22,14 @@ if you need help use the following command:
 - format whole repository: `go fmt ./...`
 - build the api: `go build -o ada-api .`
 - run the api: `go run .`
+- run in debug mode: `go run . --mode=debug`
+- run test: `go test ./...`
 
 ### Workflow
 
 - Before commit, ensure the following command are ok:
   - lint: `golangci-lint run`
+  - test: `go test ./...`
   - build: `go build -o ada-api .`
 
 ### Hooks
