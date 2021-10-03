@@ -1,8 +1,11 @@
 #!/bin/sh
 set -e
 
+echo "--- lint start"
 golangci-lint run
 echo "--- lint ok"
+
+echo "--- test start"
 go test ./...
 echo "--- test ok"
 
