@@ -41,7 +41,6 @@ our hooks using the following command:
 ln -s ../../.githook/pre-commit .git/hooks/pre-commit
 ```
 
-
 ### Lint
 
 Lints are performed by Golang CI Lint with the configuration in `.golangci.yml`

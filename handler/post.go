@@ -8,10 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	version = "dev"
-)
-
 var (
 	//go:embed fixtures/list-posts.json
 	listPosts []byte
@@ -26,6 +22,7 @@ type Post struct {
 // PostHandler respond a list of posts
 func PostHandler(c *gin.Context) {
 	posts := &[]Post{}
+
 	err := json.Unmarshal(listPosts, posts)
 	if err != nil {
 		httpError.Internal(c, err)
@@ -33,5 +30,4 @@ func PostHandler(c *gin.Context) {
 	}
 
 	c.JSON(200, posts)
-	c.Writer.Header().Add("X-VERSION", version)
 }
