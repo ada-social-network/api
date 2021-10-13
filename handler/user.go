@@ -10,29 +10,32 @@ import (
 	"gorm.io/gorm"
 )
 
-// Post define a post resource
-type Post struct {
+// User define a user resource
+type User struct {
 	CommonResource
-	Content string `json:"content"`
+	LastName    string `json:"last_name"`
+	FirstName   string `json:"first_name"`
+	Email       string `json:"email"`
+	DateOfBirth string `json:"date_of_birth"`
 }
 
-// ListHandler respond a list of posts
-func ListHandler(db *gorm.DB) gin.HandlerFunc {
+// ListUserHandler respond a list of users
+func ListUserHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		posts := &[]Post{}
+		users := &[]User{}
 
-		result := db.Find(&posts)
+		result := db.Find(&users)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
 		}
 
-		c.JSON(200, posts)
+		c.JSON(200, users)
 	}
 }
 
-// CreateHandler create a post
-func CreateHandler(db *gorm.DB) gin.HandlerFunc {
+// CreateUserHandler create a user
+func CreateUserHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		jsonData, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
@@ -40,29 +43,29 @@ func CreateHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		post := &Post{}
-		err = json.Unmarshal(jsonData, post)
+		user := &User{}
+		err = json.Unmarshal(jsonData, user)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
 
-		result := db.Create(post)
+		result := db.Create(user)
 		if result.Error != nil {
 			httpError.Internal(c, err)
 			return
 		}
 
-		c.JSON(200, post)
+		c.JSON(200, user)
 	}
 }
 
-// DeleteHandler delete a specific post
-func DeleteHandler(db *gorm.DB) gin.HandlerFunc {
+// DeleteUserHandler delete a specific user
+func DeleteUserHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id := c.Query("id")
-		result := db.Delete(&Post{}, id)
+		result := db.Delete(&User{}, id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -72,23 +75,23 @@ func DeleteHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// GetPostHandler get a specific post
-func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
+// GetUserHandler get a specific user
+func GetUserHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
-		post := &Post{}
+		user := &User{}
 
-		result := db.First(post, id)
+		result := db.First(user, id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Post", id, result.Error)
+				httpError.NotFound(c, "User", id, result.Error)
 			} else {
 				httpError.Internal(c, result.Error)
 			}
 			return
 		}
 
-		c.JSON(200, post)
+		c.JSON(200, user)
 	}
 }

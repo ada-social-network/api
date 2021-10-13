@@ -14,9 +14,25 @@ Ping indicates if the server is working.
 - Base path: `/api/rest/v1`
 - Content-Type: `application/json`
 
-| Name       | Resource | Collection | Path     | Method | Description |     
-|------------|----------|------------|----------|--------|-------------|
-| List Posts | `Post`   | `yes`      | `/posts` | `GET`  | Retrieve a collection of post |
+| Name        | Resource | Response           | Code | Path         | Method   | Description |     
+|-------------|----------|--------------------|------|--------------|----------|--------|
+| List Posts  | `Post`   | `Collection<Post>` | 200  | `/posts`     | `GET`    | Retrieve a collection of post |
+| Get Post    | `Post`   | `Post`             | 200  | `/posts/:id` | `GET`    | Get a specific post |
+| Create Post | `Post`   | `Post`             | 200  | `/posts`     | `POST`   | Create a new post |
+| Delete Post | `Post`   | `<empty>`          | 204  | `/posts/:id` | `DELETE` | Delete a post |
+| List User   | `User`   | `Collection<User>` | 200  | `/users`     | `GET`    | Retrieve a collection of user |
+| Get User    | `User`   | `User`             | 200  | `/users/:id` | `GET`    | Get a specific user |
+| Create User | `User`   | `User`             | 200  | `/users`     | `POST`   | Create a new user |
+| Delete User | `User`   | `<empty>`          | 204  | `/users/:id` | `DELETE` | Delete a user |
+
+### Resource
+
+All resources will be represented with the following fields:
+
+| Key               | Type     | Description                             |
+|-------------------|----------|-----------------------------------------|
+| `created_at`      | `string` | Date of creation in RFC 3339 format |
+| `updated_at`      | `string` | Date of updation in RFC 3339 format |
 
 ### Collection
 
@@ -28,11 +44,15 @@ For example:
 ```json
 [
   {
-    "id": "123456",
+    "id": 1,
+    "created_at": "2021-10-13T10:52:11.50932133+02:00",
+    "updated_at": "2021-10-13T10:52:11.50932133+02:00",
     "content": "lorem ipsum sit dolor set amet..."
   },
   {
-    "id": "654321",
+    "id": 2,
+    "created_at": "2021-10-13T12:52:11.50932133+02:00",
+    "updated_at": "2021-10-13T12:52:11.50932133+02:00",
     "content": "foo bar..."
   }
 ]
@@ -46,6 +66,11 @@ and the following `application/json` content:
 | Key       | Type     | Description   |
 |-----------|----------|---------------|
 | `message` | `string` | Error message |
+
+The following errors are supported:
+
+- `404`: The resource is not found
+- `500`: An internal error happened
 
 ## Resources
 
@@ -71,14 +96,45 @@ A Post represents an information.
 
 | Key       | Type     | Description                             |
 |-----------|----------|-----------------------------------------|
-| `id`      | `string` | Unique identifier for a `Post` resource |
+| `id`      | `uint` | Unique identifier for a `Post` resource |
 | `content` | `string` | Content of a `Post` resource |
 
 **Sample:**
 
 ```json
 {
-  "id": "123456",
+  "id": 1,
+  "created_at": "2021-10-13T10:52:11.50932133+02:00",
+  "updated_at": "2021-10-13T10:52:11.50932133+02:00",
   "content": "lorem ipsum sit dolor set amet..."
+}
+```
+
+### User
+
+A User represents informations about a user.
+
+| Key          | Type     | Description                             |
+|--------------|----------|-----------------------------------------|
+| `id`         | `uint`   | Unique identifier for a `User` resource |
+| `last_name`  | `string` |  Last name of a `User` resource |
+| `first_name` | `string` |  First name of a `User` resource |
+| `email`      | `string` |  Email of a `User` resource |
+| `date_of_birth` | `string` |  Date of birth of a `User` resource |
+
+
+**Sample:**
+
+```json
+{
+  "id": 1,
+  "created_at": "2021-10-13T16:40:23.591222637+02:00",
+  "updated_at": "2021-10-13T16:40:23.591222637+02:00",
+  "deleted_at": null,
+  "last_name": "Armand",
+  "first_name": "Fanny",
+  "email": "fanfantam_33@hotmail.com",
+  "date_of_birth": "18/09/1986"
+  
 }
 ```

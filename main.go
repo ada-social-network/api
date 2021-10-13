@@ -14,6 +14,8 @@ import (
 	"github.com/ada-social-network/api/handler"
 	"github.com/ada-social-network/api/middleware"
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 const (
@@ -26,12 +28,24 @@ func main() {
 	var port int
 	var iface string
 	var mode string
+	var dsn string
 
 	flag.IntVar(&port, "http-port", 8080, "Default port")
 	flag.StringVar(&iface, "http-iface", "127.0.0.1", "Default interface")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
+	flag.StringVar(&dsn, "sqlite-dsn", "gorm.db", "sqlite database file (dsn) that will store data")
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
+
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal("DB connection failed", err)
+	}
+
+	err = db.AutoMigrate(&handler.Post{}, &handler.User{})
+	if err != nil {
+		log.Fatal("Automigration failed", err)
+	}
 
 	gin.SetMode(mode)
 
@@ -44,7 +58,14 @@ func main() {
 		// Add in the response current version details
 		Use(middleware.Version(version)).
 		GET("/ping", handler.PingHandler).
-		GET(basePath+"/posts", handler.PostHandler)
+		GET(basePath+"/posts", handler.ListHandler(db)).
+		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
+		POST(basePath+"/posts", handler.CreateHandler(db)).
+		DELETE(basePath+"/posts/:id", handler.DeleteHandler(db)).
+		GET(basePath+"/users", handler.ListUserHandler(db)).
+		GET(basePath+"/users/:id", handler.GetUserHandler(db)).
+		POST(basePath+"/users", handler.CreateUserHandler(db)).
+		DELETE(basePath+"/users/:id", handler.DeleteUserHandler(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", iface, port),

@@ -1,6 +1,7 @@
 package error
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,16 @@ type Content struct {
 // Internal respond with an internal error
 func Internal(c *gin.Context, err error) {
 	HTTPError(c, http.StatusInternalServerError, "Internal error", err)
+}
+
+// NotFound respond with a not found error
+func NotFound(c *gin.Context, name string, id string, err error) {
+	HTTPError(
+		c,
+		http.StatusNotFound,
+		fmt.Sprintf("Resource %s with id %s can not found", name, id),
+		err,
+	)
 }
 
 // HTTPError respond an http generic error
