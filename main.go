@@ -58,13 +58,15 @@ func main() {
 		// Add in the response current version details
 		Use(middleware.Version(version)).
 		GET("/ping", handler.PingHandler).
-		GET(basePath+"/posts", handler.ListHandler(db)).
+		GET(basePath+"/posts", handler.ListPostHandler(db)).
 		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
-		POST(basePath+"/posts", handler.CreateHandler(db)).
-		DELETE(basePath+"/posts/:id", handler.DeleteHandler(db)).
+		POST(basePath+"/posts", handler.CreatePostHandler(db)).
+		PATCH(basePath+"/posts/:id", handler.UpdatePostHandler(db)).
+		DELETE(basePath+"/posts/:id", handler.DeletePostHandler(db)).
 		GET(basePath+"/users", handler.ListUserHandler(db)).
 		GET(basePath+"/users/:id", handler.GetUserHandler(db)).
 		POST(basePath+"/users", handler.CreateUserHandler(db)).
+		PATCH(basePath+"/users/:id", handler.UpdateUserHandler(db)).
 		DELETE(basePath+"/users/:id", handler.DeleteUserHandler(db))
 
 	srv := &http.Server{
@@ -73,7 +75,7 @@ func main() {
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
 		IdleTimeout:  time.Second * 60,
-		Handler:      r, // Pass our instance of gorilla/mux in.
+		Handler:      r,
 	}
 
 	// Run our server in a goroutine so that it doesn't block.

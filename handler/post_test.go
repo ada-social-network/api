@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func TestListHandler(t *testing.T) {
+func TestListPostHandler(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 
@@ -18,12 +18,12 @@ func TestListHandler(t *testing.T) {
 	_ = db.AutoMigrate(&Post{})
 	db.Create(&Post{})
 
-	ListHandler(db)(c)
+	ListPostHandler(db)(c)
 
 	got := &[]Post{}
 	_ = json.Unmarshal(w.Body.Bytes(), got)
 
 	if len(*got) == 0 {
-		t.Error("ListHandler response should not be empty")
+		t.Error("ListPostHandler response should not be empty")
 	}
 }

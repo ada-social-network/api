@@ -18,6 +18,11 @@ func Internal(c *gin.Context, err error) {
 	HTTPError(c, http.StatusInternalServerError, "Internal error", err)
 }
 
+// Validation respond with a validation error
+func Validation(c *gin.Context, err error) {
+	HTTPError(c, http.StatusBadRequest, "Validation error", err)
+}
+
 // NotFound respond with a not found error
 func NotFound(c *gin.Context, name string, id string, err error) {
 	HTTPError(

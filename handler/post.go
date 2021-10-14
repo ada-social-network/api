@@ -1,9 +1,7 @@
 package handler
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/gin-gonic/gin"
@@ -13,11 +11,11 @@ import (
 // Post define a post resource
 type Post struct {
 	CommonResource
-	Content string `json:"content"`
+	Content string `json:"content" binding:"required,min=4,max=1024"`
 }
 
-// ListHandler respond a list of posts
-func ListHandler(db *gorm.DB) gin.HandlerFunc {
+// ListPostHandler respond a list of posts
+func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		posts := &[]Post{}
 
@@ -31,17 +29,11 @@ func ListHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// CreateHandler create a post
-func CreateHandler(db *gorm.DB) gin.HandlerFunc {
+// CreatePostHandler create a post
+func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		jsonData, err := ioutil.ReadAll(c.Request.Body)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
 		post := &Post{}
-		err = json.Unmarshal(jsonData, post)
+		err := c.ShouldBindJSON(post)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
@@ -57,11 +49,11 @@ func CreateHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// DeleteHandler delete a specific post
-func DeleteHandler(db *gorm.DB) gin.HandlerFunc {
+// DeletePostHandler delete a specific post
+func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		id := c.Query("id")
+		id, _ := c.Params.Get("id")
 		result := db.Delete(&Post{}, id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
@@ -88,6 +80,35 @@ func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 			}
 			return
 		}
+
+		c.JSON(200, post)
+	}
+}
+
+// UpdatePostHandler update a specific post
+func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		id, _ := c.Params.Get("id")
+		post := &Post{}
+
+		result := db.First(post, id)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "Post", id, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		err := c.ShouldBindJSON(post)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		db.Save(post)
 
 		c.JSON(200, post)
 	}

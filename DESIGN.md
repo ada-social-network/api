@@ -19,10 +19,12 @@ Ping indicates if the server is working.
 | List Posts  | `Post`   | `Collection<Post>` | 200  | `/posts`     | `GET`    | Retrieve a collection of post |
 | Get Post    | `Post`   | `Post`             | 200  | `/posts/:id` | `GET`    | Get a specific post |
 | Create Post | `Post`   | `Post`             | 200  | `/posts`     | `POST`   | Create a new post |
+| Update Post | `Post`   | `Post`             | 200  | `/posts/:id` | `PATCH`  | Update a post |
 | Delete Post | `Post`   | `<empty>`          | 204  | `/posts/:id` | `DELETE` | Delete a post |
 | List User   | `User`   | `Collection<User>` | 200  | `/users`     | `GET`    | Retrieve a collection of user |
 | Get User    | `User`   | `User`             | 200  | `/users/:id` | `GET`    | Get a specific user |
 | Create User | `User`   | `User`             | 200  | `/users`     | `POST`   | Create a new user |
+| Update User | `User`   | `User`             | 200  | `/users/:id` | `PATCH`  | Update a user |
 | Delete User | `User`   | `<empty>`          | 204  | `/users/:id` | `DELETE` | Delete a user |
 
 ### Resource
@@ -94,12 +96,14 @@ A Ping represents a dummy response .
 
 A Post represents an information.
 
-| Key       | Type     | Description                             |
-|-----------|----------|-----------------------------------------|
-| `id`      | `uint` | Unique identifier for a `Post` resource |
-| `content` | `string` | Content of a `Post` resource |
+| Key          | Type     | Creatable | Mutable | Required | Validation                | Description                            |
+|-----------   |----------|-----------|---------|----------|---------------------------|---------------------------------------|
+| `id`         | `uint`   | no        | no      | no       | no                        | Unique identifier for a `Post` resource |
+| `content`    | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Content of a `Post` resource        |
+| `created_at` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format |
+| `updated_at` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format |
 
-**Sample:**
+**Sample:**   
 
 ```json
 {
@@ -114,13 +118,15 @@ A Post represents an information.
 
 A User represents informations about a user.
 
-| Key          | Type     | Description                             |
-|--------------|----------|-----------------------------------------|
-| `id`         | `uint`   | Unique identifier for a `User` resource |
-| `last_name`  | `string` |  Last name of a `User` resource |
-| `first_name` | `string` |  First name of a `User` resource |
-| `email`      | `string` |  Email of a `User` resource |
-| `date_of_birth` | `string` |  Date of birth of a `User` resource |
+| Key             | Type     | Creatable | Mutable | Required | Validation | Description     |                           
+|--------------   |----------|-----------|---------|----------|-----------|------------------|
+| `id`            | `uint`   | no        | no      | no       | no        |Unique identifier for a `User` resource |
+| `last_name`     | `string` | yes       | no      | yes      | `required,min=2,max=20 `| Last name of a `User` resource |
+| `first_name`    | `string` | yes       | no      | yes      | `required,min=2,max=20` | First name of a `User` resource |
+| `email`         | `string` | yes       | no      | yes      | `required,email`        | Email of a `User` resource |
+| `date_of_birth` | `string` | yes       | no      | yes      | no        | Date of birth of a `User` resource |
+| `created_at`    | `string` | no        | no      | no       | no        | Date of creation in RFC 3339 format |
+| `updated_at`    | `string` | no        | no      | no       | no        | Date of updation in RFC 3339 format |
 
 
 **Sample:**
@@ -130,7 +136,6 @@ A User represents informations about a user.
   "id": 1,
   "created_at": "2021-10-13T16:40:23.591222637+02:00",
   "updated_at": "2021-10-13T16:40:23.591222637+02:00",
-  "deleted_at": null,
   "last_name": "Armand",
   "first_name": "Fanny",
   "email": "fanfantam_33@hotmail.com",
