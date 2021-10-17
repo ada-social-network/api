@@ -33,6 +33,7 @@ func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
 func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		post := &Post{}
+
 		err := c.ShouldBindJSON(post)
 		if err != nil {
 			httpError.Internal(c, err)
@@ -52,8 +53,8 @@ func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 // DeletePostHandler delete a specific post
 func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
+
 		result := db.Delete(&Post{}, id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
@@ -67,7 +68,6 @@ func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 // GetPostHandler get a specific post
 func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
 		post := &Post{}
 
@@ -88,7 +88,6 @@ func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 // UpdatePostHandler update a specific post
 func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
 		post := &Post{}
 

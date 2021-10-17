@@ -21,7 +21,7 @@ Ping indicates if the server is working.
 | Create Post | `Post`   | `Post`             | 200  | `/posts`     | `POST`   | Create a new post |
 | Update Post | `Post`   | `Post`             | 200  | `/posts/:id` | `PATCH`  | Update a post |
 | Delete Post | `Post`   | `<empty>`          | 204  | `/posts/:id` | `DELETE` | Delete a post |
-| List User   | `User`   | `Collection<User>` | 200  | `/users`     | `GET`    | Retrieve a collection of user |
+| List Users  | `User`   | `Collection<User>` | 200  | `/users`     | `GET`    | Retrieve a collection of user |
 | Get User    | `User`   | `User`             | 200  | `/users/:id` | `GET`    | Get a specific user |
 | Create User | `User`   | `User`             | 200  | `/users`     | `POST`   | Create a new user |
 | Update User | `User`   | `User`             | 200  | `/users/:id` | `PATCH`  | Update a user |
