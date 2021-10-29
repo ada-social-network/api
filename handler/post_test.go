@@ -2,18 +2,15 @@ package handler
 
 import (
 	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"strings"
 	"testing"
 
+	commonTesting "github.com/ada-social-network/api/testing"
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 func TestListPostHandler(t *testing.T) {
-	db, res, ctx := InitHTTPTest(&Post{})
+	db := commonTesting.InitDB(&Post{})
+	res, ctx, _ := commonTesting.InitHTTPTest()
 
 	db.Create(&Post{})
 
@@ -76,9 +73,10 @@ func TestCreatePostHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db, res, ctx := InitHTTPTest(&Post{})
+			db := commonTesting.InitDB(&Post{})
+			res, ctx, _ := commonTesting.InitHTTPTest()
 
-			AddRequestWithBodyToContext(ctx, tt.args.post)
+			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.post)
 
 			CreatePostHandler(db)(ctx)
 
@@ -98,7 +96,8 @@ func TestCreatePostHandler(t *testing.T) {
 }
 
 func TestDeletePostHandler(t *testing.T) {
-	db, res, ctx := InitHTTPTest(&Post{})
+	db := commonTesting.InitDB(&Post{})
+	res, ctx, _ := commonTesting.InitHTTPTest()
 
 	db.Create(&Post{
 		CommonResource: CommonResource{
@@ -125,22 +124,76 @@ func TestDeletePostHandler(t *testing.T) {
 	}
 }
 
-func InitDB(i interface{}) *gorm.DB {
-	db, _ := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
-	_ = db.AutoMigrate(i)
-	return db
-}
+func TestGetPostHandler(t *testing.T) {
+	db := commonTesting.InitDB(&Post{})
 
-func AddRequestWithBodyToContext(c *gin.Context, i interface{}) {
-	marshal, _ := json.Marshal(i)
-	body := strings.NewReader(string(marshal))
-	c.Request, _ = http.NewRequest("", "", body)
-}
+	type args struct {
+		post   *Post
+		params gin.Params
+	}
 
-func InitHTTPTest(i interface{}) (db *gorm.DB, res *httptest.ResponseRecorder, ctx *gin.Context) {
-	db = InitDB(i)
-	res = httptest.NewRecorder()
-	ctx, _ = gin.CreateTestContext(res)
+	type want struct {
+		code int
+	}
 
-	return db, res, ctx
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			name: "nominal",
+			args: args{
+				post: &Post{
+					CommonResource: CommonResource{
+						ID: 122,
+					},
+				},
+				params: gin.Params{
+					{
+						Key:   "id",
+						Value: "122",
+					},
+				},
+			},
+			want: want{
+				code: 200,
+			},
+		},
+		{
+			name: "not found",
+			args: args{
+				post: &Post{
+					CommonResource: CommonResource{
+						ID: 124,
+					},
+				},
+				params: gin.Params{
+					{
+						Key:   "id",
+						Value: "125",
+					},
+				},
+			},
+			want: want{
+				code: 404,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res, ctx, _ := commonTesting.InitHTTPTest()
+
+			db.Create(tt.args.post)
+
+			ctx.Params = tt.args.params
+
+			GetPostHandler(db)(ctx)
+
+			if res.Code != tt.want.code {
+				t.Errorf("GetPostHandler want:%d, got:%d", tt.want.code, res.Code)
+			}
+		})
+	}
 }
