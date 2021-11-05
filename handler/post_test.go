@@ -4,19 +4,21 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ada-social-network/api/models"
 	commonTesting "github.com/ada-social-network/api/testing"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 func TestListPostHandler(t *testing.T) {
-	db := commonTesting.InitDB(&Post{})
+	db := commonTesting.InitDB(&models.Post{})
 	res, ctx, _ := commonTesting.InitHTTPTest()
 
-	db.Create(&Post{})
+	db.Create(&models.Post{})
 
 	ListPostHandler(db)(ctx)
 
-	got := &[]Post{}
+	got := &[]models.Post{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
 
 	if len(*got) == 0 {
@@ -26,7 +28,7 @@ func TestListPostHandler(t *testing.T) {
 
 func TestCreatePostHandler(t *testing.T) {
 	type args struct {
-		post Post
+		post models.Post
 	}
 
 	type want struct {
@@ -42,7 +44,7 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "valid post",
 			args: args{
-				post: Post{Content: "lorem ipsum"},
+				post: models.Post{Content: "lorem ipsum"},
 			},
 			want: want{
 				count:      1,
@@ -52,7 +54,7 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "invalid post",
 			args: args{
-				post: Post{Content: "l"},
+				post: models.Post{Content: "l"},
 			},
 			want: want{
 				count:      0,
@@ -62,7 +64,7 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "empty post",
 			args: args{
-				post: Post{},
+				post: models.Post{},
 			},
 			want: want{
 				count:      0,
@@ -73,21 +75,21 @@ func TestCreatePostHandler(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := commonTesting.InitDB(&Post{})
+			db := commonTesting.InitDB(&models.Post{})
 			res, ctx, _ := commonTesting.InitHTTPTest()
 
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.post)
 
 			CreatePostHandler(db)(ctx)
 
-			post := &Post{}
+			post := &models.Post{}
 			_ = json.Unmarshal(res.Body.Bytes(), post)
 
 			if res.Code != tt.want.statusCode {
 				t.Errorf("CreatePostHandler want:%d, got:%d", tt.want.statusCode, res.Code)
 			}
 
-			tx := db.First(&Post{}, post.ID)
+			tx := db.First(&models.Post{}, post.ID)
 			if tx.RowsAffected != tt.want.count {
 				t.Errorf("CreatePostHandler want:%d, got:%d", tt.want.count, tx.RowsAffected)
 			}
@@ -96,13 +98,12 @@ func TestCreatePostHandler(t *testing.T) {
 }
 
 func TestDeletePostHandler(t *testing.T) {
-	db := commonTesting.InitDB(&Post{})
+	db := commonTesting.InitDB(&models.Post{})
 	res, ctx, _ := commonTesting.InitHTTPTest()
 
-	db.Create(&Post{
-		CommonResource: CommonResource{
-			ID: 123,
-		},
+	db.Create(&models.Post{
+		Model:   gorm.Model{},
+		Content: "123",
 	})
 
 	ctx.Params = gin.Params{
@@ -118,17 +119,17 @@ func TestDeletePostHandler(t *testing.T) {
 		t.Errorf("DeletePostHandler want:%d, got:%d", 204, res.Code)
 	}
 
-	tx := db.First(&Post{}, 123)
+	tx := db.First(&models.Post{}, 123)
 	if tx.RowsAffected != 0 {
 		t.Errorf("DeletePostHandler Post should be deleted")
 	}
 }
 
 func TestGetPostHandler(t *testing.T) {
-	db := commonTesting.InitDB(&Post{})
+	db := commonTesting.InitDB(&models.Post{})
 
 	type args struct {
-		post   *Post
+		post   *models.Post
 		params gin.Params
 	}
 
@@ -144,8 +145,8 @@ func TestGetPostHandler(t *testing.T) {
 		{
 			name: "nominal",
 			args: args{
-				post: &Post{
-					CommonResource: CommonResource{
+				post: &models.Post{
+					Model: gorm.Model{
 						ID: 122,
 					},
 				},
@@ -163,10 +164,9 @@ func TestGetPostHandler(t *testing.T) {
 		{
 			name: "not found",
 			args: args{
-				post: &Post{
-					CommonResource: CommonResource{
-						ID: 124,
-					},
+				post: &models.Post{
+					Model:   gorm.Model{},
+					Content: "125",
 				},
 				params: gin.Params{
 					{
