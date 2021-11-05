@@ -26,7 +26,11 @@ Ping indicates if the server is working.
 | Create User | `User`   | `User`             | 200  | `/users`     | `POST`   | Create a new user |
 | Update User | `User`   | `User`             | 200  | `/users/:id` | `PATCH`  | Update a user |
 | Delete User | `User`   | `<empty>`          | 204  | `/users/:id` | `DELETE` | Delete a user |
-
+| List  BdaPosts  | ` BdaPost`  | `Collection< BdaPost>`| 200  | `/bdaposts`     | `GET`    | Retrieve a collection of bda post |
+| Get BdaPost     | `BdaPost`   | `BdaPost`             | 200  | `/bdaposts/:id` | `GET`    | Get a specific bda post |
+| Create  BdaPost | ` BdaPost`  | `BdaPost`             | 200  | `/bdaposts`     | `POST`   | Create a new bda post |
+| Update  BdaPost | ` BdaPost`  | `BdaPost`             | 200  | `/bdaposts/:id` | `PATCH`  | Update a bda post |
+| Delete  BdaPost | ` BdaPost`  | `<empty>`             | 204  | `/bdaposts/:id` | `DELETE` | Delete a bda post |
 ### Resource
 
 All resources will be represented with the following fields:
