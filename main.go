@@ -14,6 +14,7 @@ import (
 	"github.com/ada-social-network/api/handler"
 	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
+	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -52,6 +53,7 @@ func main() {
 
 	r := gin.New()
 	r.
+		Use(cors.Default()).
 		// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 		Use(gin.Logger()).
 		// Recovery middleware recovers from any panics and writes a 500 if there was one.
