@@ -20,4 +20,5 @@ type User struct {
 	Admin          bool      `json:"is_admin"`
 	PromoID        uint      `json:"promo_id"`
 	BdaPost        []BdaPost `gorm:"foreignKey:UserID"`
+	Post           []Post    `gorm:"foreignKey:UserID"`
 }
