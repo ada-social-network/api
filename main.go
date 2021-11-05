@@ -13,6 +13,7 @@ import (
 
 	"github.com/ada-social-network/api/handler"
 	"github.com/ada-social-network/api/middleware"
+	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -42,7 +43,7 @@ func main() {
 		log.Fatal("DB connection failed", err)
 	}
 
-	err = db.AutoMigrate(&handler.Post{}, &handler.User{})
+	err = db.AutoMigrate(&models.Post{}, &models.User{})
 	if err != nil {
 		log.Fatal("Automigration failed", err)
 	}

@@ -4,20 +4,15 @@ import (
 	"errors"
 
 	httpError "github.com/ada-social-network/api/error"
+	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-// Post define a post resource
-type Post struct {
-	CommonResource
-	Content string `json:"content" binding:"required,min=4,max=1024"`
-}
-
 // ListPostHandler respond a list of posts
 func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		posts := &[]Post{}
+		posts := &[]models.Post{}
 
 		result := db.Find(&posts)
 		if result.Error != nil {
@@ -32,7 +27,7 @@ func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
 // CreatePostHandler create a post
 func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		post := &Post{}
+		post := &models.Post{}
 
 		err := c.ShouldBindJSON(post)
 		if err != nil {
@@ -55,7 +50,7 @@ func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 
-		result := db.Delete(&Post{}, id)
+		result := db.Delete(&models.Post{}, id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -69,7 +64,7 @@ func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
-		post := &Post{}
+		post := &models.Post{}
 
 		result := db.First(post, id)
 		if result.Error != nil {
@@ -89,7 +84,7 @@ func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
-		post := &Post{}
+		post := &models.Post{}
 
 		result := db.First(post, id)
 		if result.Error != nil {
