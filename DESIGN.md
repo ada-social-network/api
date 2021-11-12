@@ -9,6 +9,19 @@ Ping indicates if the server is working.
 |------|---------|--------|--------------------|-------------------------------------|
 | Ping | `/ping` | `GET`  | `application/json` | Get Pong with status code 200 if OK |
 
+## Authentication
+
+- Base path: `/auth`
+- Content-Type: `application/json`
+
+| Name                    | Resource         | Response              | Code | Path            | Method   | Description               |     
+|-------------------------|------------------|--------------------   |------|--------------   |----------|---------------------------|
+| Register                | `UserRegister`   |    `User`             | 200  | `/register`     | `POST`   |  Register a new user      |
+| Login (not implemented) | `UserLogin`      |                       | 200  | `/login`        | `POST`   |        |
+| Renew (not implemented) | `TokenRenew`     |                       | 200  | `/renew`        | `POST`   |        |
+| Logout (not implemented)| `TokenLogout`    |                       | 200  | `/logout`       | `POST`   |        |
+
+
 ## Rest Api
 
 - Base path: `/api/rest/v1`
@@ -77,7 +90,9 @@ and the following `application/json` content:
 
 The following errors are supported:
 
+- `400`: The request is not valid
 - `404`: The resource is not found
+- `409`: The resource is in conflict (e.g. already exist)
 - `500`: An internal error happened
 
 ## Resources

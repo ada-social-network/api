@@ -3,6 +3,8 @@ set -e
 
 echo "--- lint start"
 golangci-lint run
+# Move to docker command for removing golang-ci install requirement
+# docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.43.0 golangci-lint run -v
 echo "--- lint ok"
 
 echo "--- test start"

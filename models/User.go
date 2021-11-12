@@ -1,13 +1,18 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"golang.org/x/crypto/bcrypt"
+
+	"gorm.io/gorm"
+)
 
 // User define a user resource
 type User struct {
 	gorm.Model
 	LastName       string    `json:"last_name" binding:"required,min=2,max=20"`
 	FirstName      string    `json:"first_name" binding:"required,min=2,max=20"`
-	Email          string    `json:"email" binding:"required,email"`
+	Email          string    `json:"email" binding:"required,email" gorm:"unique"`
+	Password       string    `json:"-"`
 	DateOfBirth    string    `json:"date_of_birth" binding:"required"`
 	Apprenticeship string    `json:"apprentice_at"`
 	ProfilPic      string    `json:"profil_pic"`
@@ -21,4 +26,32 @@ type User struct {
 	PromoID        uint      `json:"promo_id"`
 	BdaPosts       []BdaPost `json:"bda_posts"`
 	Posts          []Post    `json:"posts"`
+}
+
+//HashPassword substitutes User.Password with its bcrypt hash
+func (user *User) HashPassword() error {
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(hash)
+	return nil
+}
+
+//ComparePassword compares User.Password hash with raw password
+func (user *User) ComparePassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+}
+
+//BeforeCreate gorm hook
+func (user *User) BeforeCreate(db *gorm.DB) (err error) {
+	return user.HashPassword()
+}
+
+//BeforeSave gorm hook
+func (user *User) BeforeSave(db *gorm.DB) (err error) {
+	if user.Password != "" {
+		return user.HashPassword()
+	}
+	return nil
 }

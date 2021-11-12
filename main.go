@@ -21,8 +21,9 @@ import (
 )
 
 const (
-	version  = "dev"
-	basePath = "/api/rest/v1"
+	version      = "dev"
+	basePath     = "/api/rest/v1"
+	basePathAuth = "/auth"
 )
 
 func main() {
@@ -61,6 +62,7 @@ func main() {
 		// Add in the response current version details
 		Use(middleware.Version(version)).
 		GET("/ping", handler.Ping).
+		POST(basePathAuth+"/register", handler.Register(db)).
 		GET(basePath+"/posts", handler.ListPostHandler(db)).
 		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
 		POST(basePath+"/posts", handler.CreatePostHandler(db)).
