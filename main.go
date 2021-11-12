@@ -44,7 +44,7 @@ func main() {
 		log.Fatal("DB connection failed", err)
 	}
 
-	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{})
+	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{})
 	if err != nil {
 		log.Fatal("Automigration failed", err)
 	}
@@ -75,7 +75,11 @@ func main() {
 		GET(basePath+"/bdaposts/:id", handler.GetBdaPost(db)).
 		POST(basePath+"/bdaposts", handler.CreateBdaPost(db)).
 		PATCH(basePath+"/bdaposts/:id", handler.UpdateBdaPost(db)).
-		DELETE(basePath+"/bdaposts/:id", handler.DeleteBdaPost(db))
+		DELETE(basePath+"/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET(basePath+"/promo", handler.ListPromo(db)).
+		POST(basePath+"/promo", handler.CreatePromo(db)).
+		PATCH(basePath+"/promo/:id", handler.UpdatePromo(db)).
+		DELETE(basePath+"/promo/:id", handler.DeletePromo(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
