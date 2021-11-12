@@ -172,7 +172,8 @@ A User represents informations about a user.
 | `mbti`          | `string` | yes       | no      | no       | no                       | Profil mbti of a `User` resource |
 | `is_admin`      | `bool`   | no        | no      | no       | no                       | Profil admin of a `User` resource |
 | `promo_id`      | `uint`   | yes       | no      | no       | no                       | Promo id of a `User` resource |
-| `BdaPost`       | `Collection<BdaPost>`   | no       | no      | no       | no                       | Bda Posts of a `User` resource |
+| `bda_posts`      | `Collection<BdaPost>`| no       | no      | no       | no                       | Bda Posts of a `User` resource |
+| `posts`          | `Collection<Post>`   | no       | no      | no       | no                       | Posts of a `User` resource |
 | `created_at`    | `string` | no        | no      | no       | no                       | Date of creation in RFC 3339 format |
 | `updated_at`    | `string` | no        | no      | no       | no                       | Date of updation in RFC 3339 format |
 | `deleted_at`    | `string` | no        | no      | no       | no                       | Date of deletion in RFC 3339 format |
