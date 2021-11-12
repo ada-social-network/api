@@ -15,10 +15,10 @@ func TestPingHandler(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 
-	PingHandler(c)
+	Ping(c)
 
 	if w.Code != 200 {
-		t.Errorf("PingHandler want:%d, got:%d", 200, w.Code)
+		t.Errorf("Ping want:%d, got:%d", 200, w.Code)
 	}
 
 	want := Pong{Message: "pong"}

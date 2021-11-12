@@ -19,6 +19,6 @@ type User struct {
 	MBTI           string    `json:"mbti"`
 	Admin          bool      `json:"is_admin"`
 	PromoID        uint      `json:"promo_id"`
-	BdaPosts       []BdaPost `json:"bda_posts" gorm:"foreignKey:UserID"`
-	Posts          []Post    `json:"posts" gorm:"foreignKey:UserID"`
+	BdaPosts       []BdaPost `json:"bda_posts"`
+	Posts          []Post    `json:"posts"`
 }

@@ -28,12 +28,12 @@ const (
 func main() {
 	var wait time.Duration
 	var port int
-	var iface string
+	var host string
 	var mode string
 	var dsn string
 
 	flag.IntVar(&port, "http-port", 8080, "Default port")
-	flag.StringVar(&iface, "http-iface", "127.0.0.1", "Default interface")
+	flag.StringVar(&host, "http-host", "0.0.0.0", "Default interface")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
 	flag.StringVar(&dsn, "sqlite-dsn", "gorm.db", "sqlite database file (dsn) that will store data")
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
@@ -60,7 +60,7 @@ func main() {
 		Use(gin.Recovery()).
 		// Add in the response current version details
 		Use(middleware.Version(version)).
-		GET("/ping", handler.PingHandler).
+		GET("/ping", handler.Ping).
 		GET(basePath+"/posts", handler.ListPostHandler(db)).
 		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
 		POST(basePath+"/posts", handler.CreatePostHandler(db)).
@@ -78,7 +78,7 @@ func main() {
 		DELETE(basePath+"/bdaposts/:id", handler.DeleteBdaPost(db))
 
 	srv := &http.Server{
-		Addr: fmt.Sprintf("%s:%d", iface, port),
+		Addr: fmt.Sprintf("%s:%d", host, port),
 		// Good practice to set timeouts to avoid Slowloris attacks.
 		WriteTimeout: time.Second * 15,
 		ReadTimeout:  time.Second * 15,
@@ -88,7 +88,7 @@ func main() {
 
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
-		log.Printf("Http server is started on interface %s:%d", iface, port)
+		log.Printf("Http server is started on interface %s:%d", host, port)
 
 		if err := srv.ListenAndServe(); err != nil {
 			log.Println(err)

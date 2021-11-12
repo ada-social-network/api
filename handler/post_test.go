@@ -44,7 +44,7 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "valid post",
 			args: args{
-				post: models.Post{Content: "lorem ipsum"},
+				post: models.Post{Content: "lorem ipsum", UserID: 1},
 			},
 			want: want{
 				count:      1,

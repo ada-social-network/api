@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// ListbdaPost respond a list of posts
+// ListBdaPost respond a list of bda posts
 func ListBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bdaPosts := &[]models.BdaPost{}
@@ -24,7 +24,7 @@ func ListBdaPost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// CreatePostHandler create a post
+// CreateBdaPost create a bda post
 func CreateBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bdaPost := &models.BdaPost{}
@@ -45,7 +45,7 @@ func CreateBdaPost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// DeletePostHandler delete a specific post
+// DeleteBdaPost delete a specific bda post
 func DeleteBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
@@ -60,7 +60,7 @@ func DeleteBdaPost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// GetPostHandler get a specific post
+// GetBdaPost get a specific bda post
 func GetBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
@@ -80,7 +80,7 @@ func GetBdaPost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// UpdatePostHandler update a specific post
+// UpdateBdaPost update a specific bda post
 func UpdateBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")

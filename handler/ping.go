@@ -7,7 +7,7 @@ type Pong struct {
 	Message string `json:"message"`
 }
 
-// PingHandler respond dummy message
-func PingHandler(c *gin.Context) {
+// Ping respond dummy message
+func Ping(c *gin.Context) {
 	c.JSON(200, Pong{Message: "pong"})
 }
