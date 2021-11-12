@@ -4,6 +4,18 @@
 
 ## Usage
 
+### Using docker-compose
+
+The application can be run using docker-compose:
+
+```shell
+docker-compose up
+```
+
+More details in [the Docker Compose section](#docker-compose).
+
+### Using the ada-api binary
+
 The application can be used with the following command:
 
 ```
@@ -94,7 +106,7 @@ You can run the image and bind:
 
 ```shell
 # run latest
-docker run -p 8080:8080 ghcr.io/ada-social-network/api
+docker run  --rm -p 8080:8080 ghcr.io/ada-social-network/api
 ```
 
 if you want to reuse your local file gorm.db in the container you can run:
@@ -111,7 +123,25 @@ docker run ghcr.io/ada-social-network/api --help
 # add flag for debug mode
 docker run ghcr.io/ada-social-network/api --mode=debug
 ```
+### Docker compose
 
+In order to simplify the use of the api you can use docker-compose.
+
+For example: 
+
+```shell
+# start the application in docker-compose attached mode, you can interrupt the process with CTRL+C
+docker-compose up
+
+# start the application in docker-compose detached mode(run in the background)
+docker-compose up -d
+
+# stop the application
+docker-compose stop
+
+# remove stopped application
+docker-compose rm
+```
 ## References
 
 - https://golang.org/pkg/testing/

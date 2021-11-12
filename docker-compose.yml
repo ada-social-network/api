@@ -1,0 +1,11 @@
+version: "3"
+services:
+  web:
+    image: ghcr.io/ada-social-network/api:latest
+    volumes:
+      - data-volume:/usr/local/ada/data
+    ports:
+      - "8080:8080"
+
+volumes:
+  data-volume:
