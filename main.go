@@ -32,7 +32,9 @@ func main() {
 	var host string
 	var mode string
 	var dsn string
+	var withAuth bool
 
+	flag.BoolVar(&withAuth, "auth", true, "Use api authentication")
 	flag.IntVar(&port, "http-port", 8080, "Default port")
 	flag.StringVar(&host, "http-host", "0.0.0.0", "Default interface")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
@@ -61,23 +63,41 @@ func main() {
 		Use(gin.Recovery()).
 		// Add in the response current version details
 		Use(middleware.Version(version)).
-		GET("/ping", handler.Ping).
-		POST(basePathAuth+"/register", handler.Register(db)).
-		GET(basePath+"/posts", handler.ListPostHandler(db)).
-		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
-		POST(basePath+"/posts", handler.CreatePostHandler(db)).
-		PATCH(basePath+"/posts/:id", handler.UpdatePostHandler(db)).
-		DELETE(basePath+"/posts/:id", handler.DeletePostHandler(db)).
-		GET(basePath+"/users", handler.ListUserHandler(db)).
-		GET(basePath+"/users/:id", handler.GetUserHandler(db)).
-		POST(basePath+"/users", handler.CreateUserHandler(db)).
-		PATCH(basePath+"/users/:id", handler.UpdateUserHandler(db)).
-		DELETE(basePath+"/users/:id", handler.DeleteUserHandler(db)).
-		GET(basePath+"/bdaposts", handler.ListBdaPost(db)).
-		GET(basePath+"/bdaposts/:id", handler.GetBdaPost(db)).
-		POST(basePath+"/bdaposts", handler.CreateBdaPost(db)).
-		PATCH(basePath+"/bdaposts/:id", handler.UpdateBdaPost(db)).
-		DELETE(basePath+"/bdaposts/:id", handler.DeleteBdaPost(db))
+		GET("/ping", handler.Ping)
+
+	authMiddleware, err := middleware.CreateAuthMiddleware(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r.Group(basePathAuth).
+		POST("/register", handler.Register(db)).
+		POST("/login", authMiddleware.LoginHandler).
+		GET("/renew", authMiddleware.RefreshHandler)
+
+	protected := r.Group(basePath)
+
+	if withAuth {
+		protected.Use(authMiddleware.MiddlewareFunc())
+	}
+
+	protected.
+		GET("/me", handler.MeHandler).
+		GET("/posts", handler.ListPostHandler(db)).
+		GET("/posts/:id", handler.GetPostHandler(db)).
+		POST("/posts", handler.CreatePostHandler(db)).
+		PATCH("/posts/:id", handler.UpdatePostHandler(db)).
+		DELETE("/posts/:id", handler.DeletePostHandler(db)).
+		GET("/users", handler.ListUserHandler(db)).
+		GET("/users/:id", handler.GetUserHandler(db)).
+		POST("/users", handler.CreateUserHandler(db)).
+		PATCH("/users/:id", handler.UpdateUserHandler(db)).
+		DELETE("/users/:id", handler.DeleteUserHandler(db)).
+		GET("/bdaposts", handler.ListBdaPost(db)).
+		GET("/bdaposts/:id", handler.GetBdaPost(db)).
+		POST("/bdaposts", handler.CreateBdaPost(db)).
+		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
+		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

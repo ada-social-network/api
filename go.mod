@@ -3,6 +3,7 @@ module github.com/ada-social-network/api
 go 1.16
 
 require (
+	github.com/appleboy/gin-jwt/v2 v2.7.0
 	github.com/gin-gonic/contrib v0.0.0-20201101042839-6a891bf89f19
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-playground/validator/v10 v10.4.1

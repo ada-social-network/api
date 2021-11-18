@@ -18,14 +18,40 @@ Ping indicates if the server is working.
 |-------------------------|------------------|--------------------   |------|--------------   |----------|---------------------------|
 | Register                | `UserRegister`   |    `User`             | 200  | `/register`     | `POST`   |  Register a new user      |
 | Login (not implemented) | `UserLogin`      |                       | 200  | `/login`        | `POST`   |        |
-| Renew (not implemented) | `TokenRenew`     |                       | 200  | `/renew`        | `POST`   |        |
-| Logout (not implemented)| `TokenLogout`    |                       | 200  | `/logout`       | `POST`   |        |
+| Renew (not implemented) | `TokenRenew`     |                       | 200  | `/renew`        | `GET`    |        |
 
+### How to register
+
+You can register to the API blablablabalbl
+```shell
+curl --location --request POST 'http://localhost:8080/auth/register' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+        "last_name": "Fanny",
+        "first_name": "Armand",
+        "email": "fannyarmand2@gmail.com",
+        "date_of_birth": "18/09/1986",
+        "password": "secretpassword"
+    
+}'
+```
+
+In this example, localhost:8080 is the address of your API.
+
+### How to login
+
+### How to renew a token
+
+### How to use API authenticated endpoint?
+
+(add in header token, add in cookie token, add in query token and put some curl for example).
 
 ## Rest Api
 
 - Base path: `/api/rest/v1`
 - Content-Type: `application/json`
+- Authentication: `true`
+- Rights: `anyone`
 
 | Name            | Resource    | Response              | Code | Path            | Method   | Description |     
 |-------------    |----------   |--------------------   |------|--------------   |----------|--------|

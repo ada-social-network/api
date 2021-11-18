@@ -43,11 +43,6 @@ func (user *User) ComparePassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
 
-//BeforeCreate gorm hook
-func (user *User) BeforeCreate(db *gorm.DB) (err error) {
-	return user.HashPassword()
-}
-
 //BeforeSave gorm hook
 func (user *User) BeforeSave(db *gorm.DB) (err error) {
 	if user.Password != "" {
