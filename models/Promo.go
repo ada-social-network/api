@@ -2,7 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-// Promo model dnejfbhjr
+// Promo define a promo resource
 type Promo struct {
 	gorm.Model
 	PromoName string `json:"promo_name"`

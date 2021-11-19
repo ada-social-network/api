@@ -98,10 +98,10 @@ func main() {
 		POST("/bdaposts", handler.CreateBdaPost(db)).
 		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
 		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
-		GET("/promo", handler.ListPromo(db)).
-		POST("/promo", handler.CreatePromo(db)).
-		PATCH("/promo/:id", handler.UpdatePromo(db)).
-		DELETE("/promo/:id", handler.DeletePromo(db))
+		GET("/promos", handler.ListPromo(db)).
+		POST("/promos", handler.CreatePromo(db)).
+		PATCH("/promos/:id", handler.UpdatePromo(db)).
+		DELETE("/promos/:id", handler.DeletePromo(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

@@ -70,6 +70,10 @@ In this example, localhost:8080 is the address of your API.
 | Create  BdaPost | `BdaPost`   | `BdaPost`             | 200  | `/bdaposts`     | `POST`   | Create a new bda post |
 | Update  BdaPost | `BdaPost`   | `BdaPost`             | 200  | `/bdaposts/:id` | `PATCH`  | Update a bda post |
 | Delete  BdaPost | `BdaPost`   | `<empty>`             | 204  | `/bdaposts/:id` | `DELETE` | Delete a bda post |
+| List Promos     | `Promo`     | `Collection<Promo>`   | 200  | `/promos`        | `GET`    | Retrieve a collection of promo |
+| Create Promo    | `Promo`     | `Promo`               | 200  | `/promos`        | `POST`   | Create a new promo |
+| Update Promo    | `Promo`     | `Promo`               | 200  | `/promos/:id`    | `PATCH`  | Update a promo|
+| Delete Promo    | `Promo`     | `<empty>`             | 204  | `/promos/:id`    | `DELETE` | Delete a promo |
 
 ### Resource
 
@@ -243,5 +247,35 @@ A User represents informations about a user.
   "is_admin": true,
   "promo_id": 1,
   "BdaPost": null
+}
+```
+
+### Promo
+
+A promo represents informations about a promo.
+
+| Key             | Type     | Creatable | Mutable | Required | Validation               | Description     |                           
+|--------------   |----------|-----------|---------|----------|--------------------------|------------------|
+| `id`            | `uint`   | no        | no      | no       | no                       | Unique identifier for a `Promo` resource |
+| `promo_name`    | `string` | yes       | no      | no       | no                       | Promo name of a `Promo` resource |
+| `date_of_start` | `string` | yes       | no      | no       | no                       | Date of start of a `Promo` resource |
+| `date_of_end`   | `string` | yes       | no      | no       | no                       | Date of end of a `Promo` resource |
+| `biography`     | `string` | yes       | no      | no       | no                       | Biography of a `Promo` resource |
+| `created_at`    | `string` | no        | no      | no       | no                       | Date of creation in RFC 3339 format |
+| `updated_at`    | `string` | no        | no      | no       | no                       | Date of updation in RFC 3339 format |
+| `deleted_at`    | `string` | no        | no      | no       | no                       | Date of deletion in RFC 3339 format |
+
+**Sample:**
+
+```json
+{
+    "ID": 1,
+    "CreatedAt": "2021-11-19T15:15:16.218234962+01:00",
+    "UpdatedAt": "2021-11-19T15:15:16.218234962+01:00",
+    "DeletedAt": null,
+    "promo_name": "Béatrice Worsley",
+    "date_of_start": "05/10/2020",
+    "date_of_end": "30/06/2021",
+    "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School"
 }
 ```
