@@ -21,8 +21,9 @@ import (
 )
 
 const (
-	version  = "dev"
-	basePath = "/api/rest/v1"
+	version      = "dev"
+	basePath     = "/api/rest/v1"
+	basePathAuth = "/auth"
 )
 
 func main() {
@@ -31,7 +32,9 @@ func main() {
 	var host string
 	var mode string
 	var dsn string
+	var withAuth bool
 
+	flag.BoolVar(&withAuth, "auth", true, "Use api authentication")
 	flag.IntVar(&port, "http-port", 8080, "Default port")
 	flag.StringVar(&host, "http-host", "0.0.0.0", "Default interface")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
@@ -60,7 +63,27 @@ func main() {
 		Use(gin.Recovery()).
 		// Add in the response current version details
 		Use(middleware.Version(version)).
-		GET("/ping", handler.Ping).
+
+		GET("/ping", handler.Ping)
+
+	authMiddleware, err := middleware.CreateAuthMiddleware(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r.Group(basePathAuth).
+		POST("/register", handler.Register(db)).
+		POST("/login", authMiddleware.LoginHandler).
+		GET("/renew", authMiddleware.RefreshHandler)
+
+	protected := r.Group(basePath)
+
+	if withAuth {
+		protected.Use(authMiddleware.MiddlewareFunc())
+	}
+
+	protected.
+		GET("/me", handler.MeHandler).
 		GET(basePath+"/posts", handler.ListPostHandler(db)).
 		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
 		POST(basePath+"/posts", handler.CreatePostHandler(db)).
@@ -80,6 +103,7 @@ func main() {
 		POST(basePath+"/promo", handler.CreatePromo(db)).
 		PATCH(basePath+"/promo/:id", handler.UpdatePromo(db)).
 		DELETE(basePath+"/promo/:id", handler.DeletePromo(db))
+
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

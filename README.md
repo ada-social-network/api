@@ -26,6 +26,20 @@ if you need help use the following command:
 
 ```
 ./ada-api --help
+
+Usage of ada-api:
+  -auth
+        Use api authentication (default true)
+  -graceful-timeout duration
+        the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m (default 15s)
+  -http-host string
+        Default interface (default "0.0.0.0")
+  -http-port int
+        Default port (default 8080)
+  -mode string
+        Running mode, can be 'debug', 'release' or 'test' (default "release")
+  -sqlite-dsn string
+        sqlite database file (dsn) that will store data (default "gorm.db")
 ```
 
 ## Development

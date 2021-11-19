@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 // Content of an error
@@ -13,14 +14,24 @@ type Content struct {
 	Message string `json:"message"`
 }
 
+// AlreadyExist respond with an already exist error
+func AlreadyExist(c *gin.Context, field, value string) {
+	Conflict(c, fmt.Errorf("this %s (%s) is already taken", field, value))
+}
+
+// Conflict respond with a conflict error
+func Conflict(c *gin.Context, err error) {
+	HTTPError(c, http.StatusConflict, err.Error(), err)
+}
+
 // Internal respond with an internal error
 func Internal(c *gin.Context, err error) {
 	HTTPError(c, http.StatusInternalServerError, "Internal error", err)
 }
 
 // Validation respond with a validation error
-func Validation(c *gin.Context, err error) {
-	HTTPError(c, http.StatusBadRequest, "Validation error", err)
+func Validation(c *gin.Context, err validator.ValidationErrors) {
+	HTTPError(c, http.StatusBadRequest, err.Error(), err)
 }
 
 // NotFound respond with a not found error
