@@ -9,11 +9,10 @@ import (
 )
 
 type userRegister struct {
-	LastName    string `json:"last_name" binding:"required,min=2,max=20"`
-	FirstName   string `json:"first_name" binding:"required,min=2,max=20"`
-	Email       string `json:"email" binding:"required,email"`
-	DateOfBirth string `json:"date_of_birth" binding:"required"`
-	Password    string `json:"password" binding:"required,min=8,max=32"`
+	LastName  string `json:"last_name" binding:"required,min=2,max=20"`
+	FirstName string `json:"first_name" binding:"required,min=2,max=20"`
+	Email     string `json:"email" binding:"required,email"`
+	Password  string `json:"password" binding:"required,min=8,max=32"`
 }
 
 // Register register a user
@@ -34,11 +33,10 @@ func Register(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		user := &models.User{
-			LastName:    userRegister.LastName,
-			FirstName:   userRegister.FirstName,
-			Email:       userRegister.Email,
-			Password:    userRegister.Password,
-			DateOfBirth: userRegister.DateOfBirth,
+			LastName:  userRegister.LastName,
+			FirstName: userRegister.FirstName,
+			Email:     userRegister.Email,
+			Password:  userRegister.Password,
 		}
 
 		tx := db.First(&models.User{}, "email = ?", user.Email)

@@ -1,6 +1,7 @@
 package error
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -16,7 +17,7 @@ type Content struct {
 
 // AlreadyExist respond with an already exist error
 func AlreadyExist(c *gin.Context, field, value string) {
-	Conflict(c, fmt.Errorf("this %s (%s) is already taken", field, value))
+	Conflict(c, errors.New("this email is already taken"))
 }
 
 // Conflict respond with a conflict error
