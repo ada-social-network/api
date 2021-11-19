@@ -63,7 +63,6 @@ func main() {
 		Use(gin.Recovery()).
 		// Add in the response current version details
 		Use(middleware.Version(version)).
-
 		GET("/ping", handler.Ping)
 
 	authMiddleware, err := middleware.CreateAuthMiddleware(db)
@@ -84,26 +83,25 @@ func main() {
 
 	protected.
 		GET("/me", handler.MeHandler).
-		GET(basePath+"/posts", handler.ListPostHandler(db)).
-		GET(basePath+"/posts/:id", handler.GetPostHandler(db)).
-		POST(basePath+"/posts", handler.CreatePostHandler(db)).
-		PATCH(basePath+"/posts/:id", handler.UpdatePostHandler(db)).
-		DELETE(basePath+"/posts/:id", handler.DeletePostHandler(db)).
-		GET(basePath+"/users", handler.ListUserHandler(db)).
-		GET(basePath+"/users/:id", handler.GetUserHandler(db)).
-		POST(basePath+"/users", handler.CreateUserHandler(db)).
-		PATCH(basePath+"/users/:id", handler.UpdateUserHandler(db)).
-		DELETE(basePath+"/users/:id", handler.DeleteUserHandler(db)).
-		GET(basePath+"/bdaposts", handler.ListBdaPost(db)).
-		GET(basePath+"/bdaposts/:id", handler.GetBdaPost(db)).
-		POST(basePath+"/bdaposts", handler.CreateBdaPost(db)).
-		PATCH(basePath+"/bdaposts/:id", handler.UpdateBdaPost(db)).
-		DELETE(basePath+"/bdaposts/:id", handler.DeleteBdaPost(db)).
-		GET(basePath+"/promo", handler.ListPromo(db)).
-		POST(basePath+"/promo", handler.CreatePromo(db)).
-		PATCH(basePath+"/promo/:id", handler.UpdatePromo(db)).
-		DELETE(basePath+"/promo/:id", handler.DeletePromo(db))
-
+		GET("/posts", handler.ListPostHandler(db)).
+		GET("/posts/:id", handler.GetPostHandler(db)).
+		POST("/posts", handler.CreatePostHandler(db)).
+		PATCH("/posts/:id", handler.UpdatePostHandler(db)).
+		DELETE("/posts/:id", handler.DeletePostHandler(db)).
+		GET("/users", handler.ListUserHandler(db)).
+		GET("/users/:id", handler.GetUserHandler(db)).
+		POST("/users", handler.CreateUserHandler(db)).
+		PATCH("/users/:id", handler.UpdateUserHandler(db)).
+		DELETE("/users/:id", handler.DeleteUserHandler(db)).
+		GET("/bdaposts", handler.ListBdaPost(db)).
+		GET("/bdaposts/:id", handler.GetBdaPost(db)).
+		POST("/bdaposts", handler.CreateBdaPost(db)).
+		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
+		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET("/promo", handler.ListPromo(db)).
+		POST("/promo", handler.CreatePromo(db)).
+		PATCH("/promo/:id", handler.UpdatePromo(db)).
+		DELETE("/promo/:id", handler.DeletePromo(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
