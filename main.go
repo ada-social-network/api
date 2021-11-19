@@ -73,7 +73,7 @@ func main() {
 	r.Group(basePathAuth).
 		POST("/register", handler.Register(db)).
 		POST("/login", authMiddleware.LoginHandler).
-		GET("/renew", authMiddleware.RefreshHandler)
+		GET("/refresh", authMiddleware.RefreshHandler)
 
 	protected := r.Group(basePath)
 

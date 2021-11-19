@@ -14,15 +14,15 @@ Ping indicates if the server is working.
 - Base path: `/auth`
 - Content-Type: `application/json`
 
-| Name                    | Resource         | Response              | Code | Path            | Method   | Description               |     
-|-------------------------|------------------|--------------------   |------|--------------   |----------|---------------------------|
-| Register                | `UserRegister`   |    `User`             | 200  | `/register`     | `POST`   |  Register a new user      |
-| Login (not implemented) | `UserLogin`      |                       | 200  | `/login`        | `POST`   |        |
-| Renew (not implemented) | `TokenRenew`     |                       | 200  | `/renew`        | `GET`    |        |
+| Name     | Resource         | Response              | Code | Path            | Method   | Description               |     
+|----------|------------------|--------------------   |------|--------------   |----------|---------------------------|
+| Register | `UserRegister`   |    `User`             | 200  | `/register`     | `POST`   |  Register a new user      |
+| Login    | `UserLogin`      |    `Token`            | 200  | `/login`        | `POST`   |  Log in and create token  |                   |
+| Refresh  | `TokenRefresh`   |    `Token`            | 200  | `/refresh`      | `GET`    |  Refresh existing token   |                  |
 
 ### How to register
 
-You can register to the API blablablabalbl
+You can register to the API 
 ```shell
 curl --location --request POST 'http://localhost:8080/auth/register' \
 --header 'Content-Type: application/json' \
@@ -30,17 +30,67 @@ curl --location --request POST 'http://localhost:8080/auth/register' \
         "last_name": "Fanny",
         "first_name": "Armand",
         "email": "fannyarmand2@gmail.com",
-        "date_of_birth": "18/09/1986",
         "password": "secretpassword"
     
 }'
 ```
 
+**Sample:**
+
+```json
+{
+  "ID": 6,
+  "CreatedAt": "2021-11-19T15:59:58.407451298+01:00",
+  "UpdatedAt": "2021-11-19T15:59:58.407451298+01:00",
+  "DeletedAt": null,
+  "last_name": "Baba",
+  "first_name": "Ali",
+  "email": "ali@gmail.com",
+  "date_of_birth": "",
+  "apprentice_at": "",
+  "profil_pic": "",
+  "private_mail": "",
+  "instagram": "",
+  "facebook": "",
+  "github": "",
+  "linkedin": "",
+  "mbti": "",
+  "is_admin": false,
+  "promo_id": 0,
+  "bda_posts": null,
+  "posts": null
+}
+```
+
+
 In this example, localhost:8080 is the address of your API.
 
 ### How to login
 
+You can login :
+```shell
+curl --location --request POST 'http://localhost:8080/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+        "email": "ali@gmail.com",
+        "password": "alibabaalibaba"
+    
+}'
+```
+
+**Sample:**
+```json
+{
+"code": 200,
+"expire": "2021-11-19T17:06:58+01:00",
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzczMzgwMTgsImZpcnN0bmFtZSI6IkFsaSIsImlkIjoiYWxpQGdtYWlsLmNvbSIsImxhc3RuYW1lIjoiQmFiYSIsIm9yaWdfaWF0IjoxNjM3MzM0NDE4fQ.YUicgImgZI1fUK6XRh6DlD3k8H3XDk6opNSTM63kfw8"
+}
+```
+
 ### How to renew a token
+
+You can renew a token which is already existing:
+
 
 ### How to use API authenticated endpoint?
 
