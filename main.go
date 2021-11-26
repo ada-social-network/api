@@ -47,7 +47,7 @@ func main() {
 		log.Fatal("DB connection failed", err)
 	}
 
-	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{})
+	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{}, &models.Comment{})
 	if err != nil {
 		log.Fatal("Automigration failed", err)
 	}

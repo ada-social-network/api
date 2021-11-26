@@ -26,6 +26,7 @@ type User struct {
 	PromoID        uint      `json:"promo_id"`
 	BdaPosts       []BdaPost `json:"bda_posts"`
 	Posts          []Post    `json:"posts"`
+	Comments       []Comment `json:"comments"`
 }
 
 //HashPassword substitutes User.Password with its bcrypt hash
