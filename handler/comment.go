@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// ListComment respond a list of users
+// ListComment respond a list of comments
 func ListComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		comments := &[]models.Comment{}
@@ -24,7 +24,7 @@ func ListComment(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// CreateComment create a user
+// CreateComment create a comment
 func CreateComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		comments := &models.Comment{}
@@ -44,7 +44,7 @@ func CreateComment(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// DeleteComment delete a specific user
+// DeleteComment delete a specific comment
 func DeleteComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
@@ -59,7 +59,7 @@ func DeleteComment(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// GetComment get a specific user
+// GetComment get a specific comment
 func GetComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
@@ -80,7 +80,7 @@ func GetComment(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// UpdateComment update a specific user
+// UpdateComment update a specific comment
 func UpdateComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation

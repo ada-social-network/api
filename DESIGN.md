@@ -124,6 +124,11 @@ You can renew a token which is already existing:
 | Create Promo    | `Promo`     | `Promo`               | 200  | `/promos`        | `POST`   | Create a new promo |
 | Update Promo    | `Promo`     | `Promo`               | 200  | `/promos/:id`    | `PATCH`  | Update a promo|
 | Delete Promo    | `Promo`     | `<empty>`             | 204  | `/promos/:id`    | `DELETE` | Delete a promo |
+| List Comments     | `Comment`     | `Collection<Comment>`   | 200  | `/comments`        | `GET`    | Retrieve a collection of comment |
+| Create Comment    | `Comment`     | `Comment`               | 200  | `/comments`        | `POST`   | Create a new comment |
+| Update Comment    | `Comment`     | `Comment`               | 200  | `/comments/:id`    | `PATCH`  | Update a comment|
+| Delete Comment    | `Comment`     | `<empty>`             | 204  | `/comments/:id`    | `DELETE` | Delete a comment |
+
 
 ### Resource
 
@@ -327,5 +332,32 @@ A promo represents informations about a promo.
     "date_of_start": "05/10/2020",
     "date_of_end": "30/06/2021",
     "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School"
+}
+```
+### Comment
+
+A Comment represents a comment under a Post.
+
+| Key          | Type     | Creatable | Mutable | Required | Validation                | Description                            |
+|-----------   |----------|-----------|---------|----------|---------------------------|---------------------------------------|
+| `id`         | `uint`   | no        | no      | no       | no                        | Unique identifier for a `Comment` resource |
+| `content`    | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Content of a `Comment` resource        |
+| `user_id`    | `uint`   | no        | no      | yes      | no                        | User id of a `Comment` resource        |
+| `bdapost_id`    | `uint`   | no        | no      | yes      | no                        | Bdapost id of a `Comment` resource        |
+| `created_at` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format |
+| `updated_at` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format |
+| `deleted_at` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format |
+
+**Sample:**   
+
+```json
+{
+  "ID": 1,
+  "CreatedAt": "2021-11-05T16:54:49.182599198+01:00",
+  "UpdatedAt": "2021-11-05T16:54:49.182599198+01:00",
+  "DeletedAt": null,
+  "content": "lorem ipsum sit dolor set amet...",
+  "user_id": 1,
+  "bdapost_id": 1
 }
 ```
