@@ -101,7 +101,11 @@ func main() {
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).
-		DELETE("/promos/:id", handler.DeletePromo(db))
+		DELETE("/promos/:id", handler.DeletePromo(db)).
+		GET("/comments", handler.ListComment(db)).
+		POST("/comments", handler.CreateComment(db)).
+		PATCH("/comments/:id", handler.UpdateComment(db)).
+		DELETE("/comments/:id", handler.DeleteComment(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
