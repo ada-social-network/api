@@ -14,7 +14,6 @@ import (
 	"github.com/ada-social-network/api/handler"
 	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
-	"github.com/gin-gonic/contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -25,6 +24,22 @@ const (
 	basePath     = "/api/rest/v1"
 	basePathAuth = "/auth"
 )
+
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
 
 func main() {
 	var wait time.Duration
@@ -56,7 +71,7 @@ func main() {
 
 	r := gin.New()
 	r.
-		Use(cors.Default()).
+		Use(CORS()).
 		// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 		Use(gin.Logger()).
 		// Recovery middleware recovers from any panics and writes a 500 if there was one.
