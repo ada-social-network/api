@@ -8,7 +8,7 @@ import (
 
 // User define a user resource
 type User struct {
-	gorm.Model
+	Base
 	LastName       string    `json:"last_name" binding:"required,min=2,max=20"`
 	FirstName      string    `json:"first_name" binding:"required,min=2,max=20"`
 	Email          string    `json:"email" binding:"required,email" gorm:"unique"`
