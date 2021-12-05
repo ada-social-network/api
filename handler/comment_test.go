@@ -44,7 +44,7 @@ func TestCreateComment(t *testing.T) {
 		{
 			name: "valid comment",
 			args: args{
-				comment: models.Comment{Content: "lorem ipsum", UserID: 1},
+				comment: models.Comment{Content: "lorem ipsum", UserID: 1, BdapostID: 3},
 			},
 			want: want{
 				count:      1,
