@@ -119,6 +119,7 @@ func main() {
 		PATCH("/promos/:id", handler.UpdatePromo(db)).
 		DELETE("/promos/:id", handler.DeletePromo(db)).
 		GET("/comments", handler.ListComment(db)).
+		GET("/comments/bda/:id", handler.GetBdaComments(db)).
 		POST("/comments", handler.CreateComment(db)).
 		PATCH("/comments/:id", handler.UpdateComment(db)).
 		DELETE("/comments/:id", handler.DeleteComment(db))

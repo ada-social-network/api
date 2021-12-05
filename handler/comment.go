@@ -80,6 +80,27 @@ func GetComment(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// GetBdaComments get comments of a bda post
+func GetBdaComments(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		id, _ := c.Params.Get("id")
+		comments := &[]models.Comment{}
+
+		result := db.Find(comments, "bdapost_id = ?", id)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "Comment", id, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		c.JSON(200, comments)
+	}
+}
+
 // UpdateComment update a specific comment
 func UpdateComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
