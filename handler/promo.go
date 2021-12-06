@@ -50,7 +50,7 @@ func DeletePromo(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.Promo{}, id)
+		result := db.Delete(&models.Promo{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -66,7 +66,7 @@ func UpdatePromo(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		promo := &models.Promo{}
 
-		result := db.First(promo, id)
+		result := db.First(promo, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "Promo", id, result.Error)
