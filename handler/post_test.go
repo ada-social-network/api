@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/ada-social-network/api/models"
 	commonTesting "github.com/ada-social-network/api/testing"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func TestListPostHandler(t *testing.T) {
@@ -44,7 +45,10 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "valid post",
 			args: args{
-				post: models.Post{Content: "lorem ipsum", UserID: 1},
+				post: models.Post{
+					Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
+					Content: "lorem ipsum", UserID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
+				},
 			},
 			want: want{
 				count:      1,
@@ -89,7 +93,7 @@ func TestCreatePostHandler(t *testing.T) {
 				t.Errorf("CreatePostHandler want:%d, got:%d", tt.want.statusCode, res.Code)
 			}
 
-			tx := db.First(&models.Post{}, post.ID)
+			tx := db.First(&models.Post{}, "id = ?", post.ID)
 			if tx.RowsAffected != tt.want.count {
 				t.Errorf("CreatePostHandler want:%d, got:%d", tt.want.count, tx.RowsAffected)
 			}
@@ -102,14 +106,14 @@ func TestDeletePostHandler(t *testing.T) {
 	res, ctx, _ := commonTesting.InitHTTPTest()
 
 	db.Create(&models.Post{
-		Model:   gorm.Model{},
-		Content: "123",
+		Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
+		Content: "lorem ipsum",
 	})
 
 	ctx.Params = gin.Params{
 		{
 			Key:   "id",
-			Value: "123",
+			Value: "80a08d36-cfea-4898-aee3-6902fa562f0b",
 		},
 	}
 
@@ -119,7 +123,7 @@ func TestDeletePostHandler(t *testing.T) {
 		t.Errorf("DeletePostHandler want:%d, got:%d", 204, res.Code)
 	}
 
-	tx := db.First(&models.Post{}, 123)
+	tx := db.First(&models.Post{}, "id = ?", 123)
 	if tx.RowsAffected != 0 {
 		t.Errorf("DeletePostHandler Post should be deleted")
 	}
@@ -146,14 +150,14 @@ func TestGetPostHandler(t *testing.T) {
 			name: "nominal",
 			args: args{
 				post: &models.Post{
-					Model: gorm.Model{
-						ID: 122,
+					Base: models.Base{
+						ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
 					},
 				},
 				params: gin.Params{
 					{
 						Key:   "id",
-						Value: "122",
+						Value: "80a08d36-cfea-4898-aee3-6902fa562f0b",
 					},
 				},
 			},
@@ -165,13 +169,13 @@ func TestGetPostHandler(t *testing.T) {
 			name: "not found",
 			args: args{
 				post: &models.Post{
-					Model:   gorm.Model{},
+					Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
 					Content: "125",
 				},
 				params: gin.Params{
 					{
 						Key:   "id",
-						Value: "125",
+						Value: "99999999-9999-9999-9999-999999999999",
 					},
 				},
 			},

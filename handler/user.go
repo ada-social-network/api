@@ -49,7 +49,7 @@ func DeleteUserHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
-		result := db.Delete(&models.User{}, id)
+		result := db.Delete(&models.User{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -66,7 +66,7 @@ func GetUserHandler(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		user := &models.User{}
 
-		result := db.First(user, id)
+		result := db.First(user, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "User", id, result.Error)
@@ -87,7 +87,7 @@ func UpdateUserHandler(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		user := &models.User{}
 
-		result := db.First(user, id)
+		result := db.First(user, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "User", id, result.Error)

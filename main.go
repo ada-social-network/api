@@ -25,6 +25,7 @@ const (
 	basePathAuth = "/auth"
 )
 
+// CORS used for adding cors support
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
