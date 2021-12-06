@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"testing"
-	"time"
 
 	"github.com/ada-social-network/api/models"
 	commonTesting "github.com/ada-social-network/api/testing"
@@ -103,28 +102,9 @@ func TestDeleteUserHandler(t *testing.T) {
 	res, ctx, _ := commonTesting.InitHTTPTest()
 
 	db.Create(&models.User{
-		ID:             123,
-		CreatedAt:      time.Time{},
-		UpdatedAt:      time.Time{},
-		DeletedAt:      gorm.DeletedAt{},
-		LastName:       "",
-		FirstName:      "",
-		Email:          "",
-		Password:       "",
-		DateOfBirth:    "",
-		Apprenticeship: "",
-		ProfilPic:      "",
-		PrivateMail:    "",
-		Instagram:      "",
-		Facebook:       "",
-		Github:         "",
-		Linkedin:       "",
-		MBTI:           "",
-		Admin:          false,
-		PromoID:        0,
-		BdaPosts:       []models.BdaPost{},
-		Posts:          []models.Post{},
-		Comments:       []models.Comment{},
+		Model: gorm.Model{
+			ID: 123,
+		},
 	})
 
 	ctx.Params = gin.Params{
