@@ -1,6 +1,8 @@
 # Start by building the application.
 FROM golang:1.17-bullseye as build
 
+ARG VERSION=dev
+
 WORKDIR /go/src/app
 
 ADD go.mod .
@@ -10,7 +12,7 @@ RUN go mod download
 
 ADD . /go/src/app
 
-RUN go build -o /go/bin/ada-api .
+RUN go build -o /go/bin/ada-api -ldflags="-X 'main.version=${VERSION}'" .
 
 # Now copy it into our base image.
 FROM debian
