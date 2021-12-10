@@ -114,6 +114,7 @@ func main() {
 		POST("/bdaposts", handler.CreateBdaPost(db)).
 		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
 		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).

@@ -24,16 +24,7 @@ func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*models.User); ok {
-				return jwt.MapClaims{
-					identityKey: v.Email,
-					"firstname": v.FirstName,
-					"lastname":  v.LastName,
-				}
-			}
-			return jwt.MapClaims{}
-		},
+
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &models.User{
@@ -59,8 +50,18 @@ func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 			if err != nil {
 				return nil, jwt.ErrFailedAuthentication
 			}
-
 			return user, nil
+		},
+		PayloadFunc: func(data interface{}) jwt.MapClaims {
+			if v, ok := data.(*models.User); ok {
+				return jwt.MapClaims{
+					identityKey: v.Email,
+					"firstname": v.FirstName,
+					"admin":     v.Admin,
+					"ID":        v.ID,
+				}
+			}
+			return jwt.MapClaims{}
 		},
 		// TokenLookup is a string in the form of "<source>:<name>" that is used
 		// to extract token from the request.

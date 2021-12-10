@@ -107,3 +107,19 @@ func UpdateBdaPost(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(200, bdaPost)
 	}
 }
+
+// ListBdaPostComments get comments of a bda post
+func ListBdaPostComments(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := c.Params.Get("id")
+		comments := &[]models.Comment{}
+
+		result := db.Find(comments, "bdapost_id = ?", id)
+		if result.Error != nil {
+			httpError.Internal(c, result.Error)
+			return
+		}
+
+		c.JSON(200, comments)
+	}
+}
