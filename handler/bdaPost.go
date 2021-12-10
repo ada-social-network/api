@@ -50,7 +50,7 @@ func DeleteBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.BdaPost{}, id)
+		result := db.Delete(&models.BdaPost{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -66,7 +66,7 @@ func GetBdaPost(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		bdaPost := &models.BdaPost{}
 
-		result := db.First(bdaPost, id)
+		result := db.First(bdaPost, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "BdaPost", id, result.Error)
@@ -86,7 +86,7 @@ func UpdateBdaPost(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		bdaPost := &models.BdaPost{}
 
-		result := db.First(bdaPost, id)
+		result := db.First(bdaPost, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "BdaPost", id, result.Error)

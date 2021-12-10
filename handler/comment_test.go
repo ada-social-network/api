@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/ada-social-network/api/models"
 	commonTesting "github.com/ada-social-network/api/testing"
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 func TestListCommentHandler(t *testing.T) {
@@ -44,7 +45,12 @@ func TestCreateComment(t *testing.T) {
 		{
 			name: "valid comment",
 			args: args{
-				comment: models.Comment{Content: "lorem ipsum", UserID: 1, BdapostID: 3},
+				comment: models.Comment{
+					Base:      models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
+					Content:   "lorem ipsum",
+					BdapostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
+					UserID:    uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
+				},
 			},
 			want: want{
 				count:      1,
@@ -89,7 +95,7 @@ func TestCreateComment(t *testing.T) {
 				t.Errorf("CreateComment want:%d, got:%d", tt.want.statusCode, res.Code)
 			}
 
-			tx := db.First(&models.Comment{}, comment.UserID)
+			tx := db.First(&models.Comment{}, "id = ?", comment.ID)
 			if tx.RowsAffected != tt.want.count {
 				t.Errorf("CreateComment want:%d, got:%d", tt.want.count, tx.RowsAffected)
 			}
@@ -100,16 +106,19 @@ func TestCreateComment(t *testing.T) {
 func TestDeleteComment(t *testing.T) {
 	db := commonTesting.InitDB(&models.Comment{})
 	res, ctx, _ := commonTesting.InitHTTPTest()
+	id := uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")
 
-	db.Create(&models.Comment{
-		Model:   gorm.Model{},
-		Content: "123",
-	})
+	comment := &models.Comment{
+		Base:    models.Base{ID: id},
+		Content: "lorem ipsum",
+	}
+
+	db.Create(comment)
 
 	ctx.Params = gin.Params{
 		{
 			Key:   "id",
-			Value: "123",
+			Value: id.String(),
 		},
 	}
 
@@ -119,7 +128,7 @@ func TestDeleteComment(t *testing.T) {
 		t.Errorf("DeleteComment want:%d, got:%d", 204, res.Code)
 	}
 
-	tx := db.First(&models.Comment{}, 123)
+	tx := db.First(&models.Comment{}, "id = ?", 123)
 	if tx.RowsAffected != 0 {
 		t.Errorf("DeleteComment Comment should be deleted")
 	}
@@ -146,14 +155,14 @@ func TestGetComment(t *testing.T) {
 			name: "nominal",
 			args: args{
 				comment: &models.Comment{
-					Model: gorm.Model{
-						ID: 122,
+					Base: models.Base{
+						ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
 					},
 				},
 				params: gin.Params{
 					{
 						Key:   "id",
-						Value: "122",
+						Value: "80a08d36-cfea-4898-aee3-6902fa562f0b",
 					},
 				},
 			},
@@ -165,13 +174,13 @@ func TestGetComment(t *testing.T) {
 			name: "not found",
 			args: args{
 				comment: &models.Comment{
-					Model:   gorm.Model{},
+					Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
 					Content: "125",
 				},
 				params: gin.Params{
 					{
 						Key:   "id",
-						Value: "125",
+						Value: "99999999-9999-9999-9999-999999999999",
 					},
 				},
 			},
