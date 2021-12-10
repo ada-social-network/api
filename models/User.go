@@ -1,6 +1,7 @@
 package models
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/gorm"
@@ -8,7 +9,7 @@ import (
 
 // User define a user resource
 type User struct {
-	gorm.Model
+	Base
 	LastName       string    `json:"last_name" binding:"required,min=2,max=20"`
 	FirstName      string    `json:"first_name" binding:"required,min=2,max=20"`
 	Email          string    `json:"email" binding:"required,email" gorm:"unique"`
@@ -23,7 +24,7 @@ type User struct {
 	Linkedin       string    `json:"linkedin"`
 	MBTI           string    `json:"mbti"`
 	Admin          bool      `json:"is_admin"`
-	PromoID        uint      `json:"promo_id"`
+	PromoID        uuid.UUID `gorm:"type=uuid" json:"promo_id"`
 	BdaPosts       []BdaPost `json:"bda_posts"`
 	Posts          []Post    `json:"posts"`
 	Comments       []Comment `json:"comments"`

@@ -50,7 +50,7 @@ func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.Post{}, id)
+		result := db.Delete(&models.Post{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -66,7 +66,7 @@ func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		post := &models.Post{}
 
-		result := db.First(post, id)
+		result := db.First(post, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "Post", id, result.Error)
@@ -86,7 +86,7 @@ func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		post := &models.Post{}
 
-		result := db.First(post, id)
+		result := db.First(post, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "Post", id, result.Error)

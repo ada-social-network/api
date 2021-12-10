@@ -3,10 +3,11 @@ package handler
 import (
 	"errors"
 
-	httpError "github.com/ada-social-network/api/error"
-	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	httpError "github.com/ada-social-network/api/error"
+	"github.com/ada-social-network/api/models"
 )
 
 // ListComment respond a list of comments
@@ -49,7 +50,7 @@ func DeleteComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
-		result := db.Delete(&models.Comment{}, id)
+		result := db.Delete(&models.Comment{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -66,7 +67,7 @@ func GetComment(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		comments := &models.Comment{}
 
-		result := db.First(comments, id)
+		result := db.First(comments, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "Comment", id, result.Error)
@@ -87,7 +88,7 @@ func UpdateComment(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		comments := &models.Comment{}
 
-		result := db.First(comments, id)
+		result := db.First(comments, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "Comment", id, result.Error)
