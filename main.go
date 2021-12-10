@@ -25,6 +25,7 @@ const (
 	basePathAuth = "/auth"
 )
 
+// CORS helps the front
 func CORS() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
@@ -113,6 +114,7 @@ func main() {
 		POST("/bdaposts", handler.CreateBdaPost(db)).
 		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
 		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).

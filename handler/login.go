@@ -12,7 +12,8 @@ func MeHandler(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	user, _ := c.Get("id")
 	c.JSON(200, gin.H{
-		"userID":    claims["id"],
+		"userID":    claims["ID"],
+		"admin":     claims["admin"],
 		"userEmail": user.(*models.User).Email,
 	})
 }
