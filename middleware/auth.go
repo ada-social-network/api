@@ -3,10 +3,12 @@ package middleware
 import (
 	"time"
 
-	"github.com/ada-social-network/api/models"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
+
+	"github.com/ada-social-network/api/models"
 )
 
 type loginRequest struct {
@@ -14,7 +16,8 @@ type loginRequest struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
-var identityKey = "id"
+// IdentityKey is the key to identify a user
+var IdentityKey = "id"
 
 // CreateAuthMiddleware provide a JWT authentication middleware
 func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
@@ -23,12 +26,16 @@ func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 		Key:         []byte("secret key"),
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
-		IdentityKey: identityKey,
+		IdentityKey: IdentityKey,
 
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &models.User{
-				Email: claims[identityKey].(string),
+				Base:      models.Base{ID: uuid.FromStringOrNil(claims[IdentityKey].(string))},
+				Email:     claims["email"].(string),
+				FirstName: claims["firstname"].(string),
+				LastName:  claims["lastname"].(string),
+				Admin:     claims["admin"].(bool),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -55,10 +62,11 @@ func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*models.User); ok {
 				return jwt.MapClaims{
-					identityKey: v.Email,
+					IdentityKey: v.ID,
 					"firstname": v.FirstName,
+					"lastname":  v.LastName,
 					"admin":     v.Admin,
-					"ID":        v.ID,
+					"email":     v.Email,
 				}
 			}
 			return jwt.MapClaims{}

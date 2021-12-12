@@ -27,13 +27,21 @@ func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
 // CreatePostHandler create a post
 func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		post := &models.Post{}
-
-		err := c.ShouldBindJSON(post)
+		user, err := GetCurrentUser(c)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
+
+		post := &models.Post{}
+
+		err = c.ShouldBindJSON(post)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		post.UserID = user.ID
 
 		result := db.Create(post)
 		if result.Error != nil {

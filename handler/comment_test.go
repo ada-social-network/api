@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 
+	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
 	commonTesting "github.com/ada-social-network/api/testing"
 )
@@ -30,6 +31,7 @@ func TestListCommentHandler(t *testing.T) {
 func TestCreateComment(t *testing.T) {
 	type args struct {
 		comment models.Comment
+		user    *models.User
 	}
 
 	type want struct {
@@ -45,11 +47,11 @@ func TestCreateComment(t *testing.T) {
 		{
 			name: "valid comment",
 			args: args{
+				user: &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				comment: models.Comment{
 					Base:      models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
 					Content:   "lorem ipsum",
 					BdapostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
-					UserID:    uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
 				},
 			},
 			want: want{
@@ -60,7 +62,18 @@ func TestCreateComment(t *testing.T) {
 		{
 			name: "invalid comment",
 			args: args{
+				user:    &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				comment: models.Comment{Content: "l"},
+			},
+			want: want{
+				count:      0,
+				statusCode: 500,
+			},
+		},
+		{
+			name: "missing user",
+			args: args{
+				comment: models.Comment{Content: "lorem ipsum"},
 			},
 			want: want{
 				count:      0,
@@ -70,6 +83,7 @@ func TestCreateComment(t *testing.T) {
 		{
 			name: "empty comment",
 			args: args{
+				user:    &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				comment: models.Comment{},
 			},
 			want: want{
@@ -85,6 +99,8 @@ func TestCreateComment(t *testing.T) {
 			res, ctx, _ := commonTesting.InitHTTPTest()
 
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.comment)
+
+			ctx.Set(middleware.IdentityKey, tt.args.user)
 
 			CreateComment(db)(ctx)
 

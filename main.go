@@ -98,7 +98,7 @@ func main() {
 	}
 
 	protected.
-		GET("/me", handler.MeHandler).
+		GET("/me", handler.MeHandler(db)).
 		GET("/posts", handler.ListPostHandler(db)).
 		GET("/posts/:id", handler.GetPostHandler(db)).
 		POST("/posts", handler.CreatePostHandler(db)).

@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 
+	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
 	commonTesting "github.com/ada-social-network/api/testing"
 )
@@ -30,6 +31,7 @@ func TestListPostHandler(t *testing.T) {
 func TestCreatePostHandler(t *testing.T) {
 	type args struct {
 		post models.Post
+		user *models.User
 	}
 
 	type want struct {
@@ -45,9 +47,11 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "valid post",
 			args: args{
+				user: &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				post: models.Post{
 					Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
-					Content: "lorem ipsum", UserID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
+					Title:   "foo bar",
+					Content: "lorem ipsum",
 				},
 			},
 			want: want{
@@ -58,7 +62,18 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "invalid post",
 			args: args{
+				user: &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				post: models.Post{Content: "l"},
+			},
+			want: want{
+				count:      0,
+				statusCode: 500,
+			},
+		},
+		{
+			name: "missing user",
+			args: args{
+				post: models.Post{Content: "lorem ipsum"},
 			},
 			want: want{
 				count:      0,
@@ -68,6 +83,7 @@ func TestCreatePostHandler(t *testing.T) {
 		{
 			name: "empty post",
 			args: args{
+				user: &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				post: models.Post{},
 			},
 			want: want{
@@ -81,6 +97,9 @@ func TestCreatePostHandler(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			db := commonTesting.InitDB(&models.Post{})
 			res, ctx, _ := commonTesting.InitHTTPTest()
+
+			// set user in the current context
+			ctx.Set(middleware.IdentityKey, tt.args.user)
 
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.post)
 
