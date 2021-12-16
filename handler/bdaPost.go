@@ -3,10 +3,11 @@ package handler
 import (
 	"errors"
 
-	httpError "github.com/ada-social-network/api/error"
-	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+
+	httpError "github.com/ada-social-network/api/error"
+	"github.com/ada-social-network/api/models"
 )
 
 // ListBdaPost respond a list of bda posts
@@ -27,13 +28,21 @@ func ListBdaPost(db *gorm.DB) gin.HandlerFunc {
 // CreateBdaPost create a bda post
 func CreateBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		bdaPost := &models.BdaPost{}
-
-		err := c.ShouldBindJSON(bdaPost)
+		user, err := GetCurrentUser(c)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
+
+		bdaPost := &models.BdaPost{}
+
+		err = c.ShouldBindJSON(bdaPost)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		bdaPost.UserID = user.ID
 
 		result := db.Create(bdaPost)
 		if result.Error != nil {

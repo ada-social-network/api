@@ -28,20 +28,28 @@ func ListComment(db *gorm.DB) gin.HandlerFunc {
 // CreateComment create a comment
 func CreateComment(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		comments := &models.Comment{}
-		err := c.ShouldBindJSON(comments)
+		user, err := GetCurrentUser(c)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
 
-		result := db.Create(comments)
+		comment := &models.Comment{}
+		err = c.ShouldBindJSON(comment)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		comment.UserID = user.ID
+
+		result := db.Create(comment)
 		if result.Error != nil {
 			httpError.Internal(c, err)
 			return
 		}
 
-		c.JSON(200, comments)
+		c.JSON(200, comment)
 	}
 }
 
