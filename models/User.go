@@ -10,22 +10,22 @@ import (
 // User define a user resource
 type User struct {
 	Base
-	LastName       string    `json:"last_name" binding:"required,min=2,max=20"`
-	FirstName      string    `json:"first_name" binding:"required,min=2,max=20"`
+	LastName       string    `json:"lastName" binding:"required,min=2,max=20"`
+	FirstName      string    `json:"firstName" binding:"required,min=2,max=20"`
 	Email          string    `json:"email" binding:"required,email" gorm:"unique"`
 	Password       string    `json:"-"`
-	DateOfBirth    string    `json:"date_of_birth"`
-	Apprenticeship string    `json:"apprentice_at"`
-	ProfilPic      string    `json:"profil_pic"`
-	PrivateMail    string    `json:"private_mail"`
+	DateOfBirth    string    `json:"dateOfBirth"`
+	Apprenticeship string    `json:"apprenticeAt"`
+	ProfilPic      string    `json:"profilPic"`
+	PrivateMail    string    `json:"privateMail"`
 	Instagram      string    `json:"instagram"`
 	Facebook       string    `json:"facebook"`
 	Github         string    `json:"github"`
 	Linkedin       string    `json:"linkedin"`
 	MBTI           string    `json:"mbti"`
-	Admin          bool      `json:"is_admin"`
-	PromoID        uuid.UUID `gorm:"type=uuid" json:"promo_id"`
-	BdaPosts       []BdaPost `json:"bda_posts"`
+	Admin          bool      `json:"isAdmin"`
+	PromoID        uuid.UUID `gorm:"type=uuid" json:"promoId"`
+	BdaPosts       []BdaPost `json:"bdaPosts"`
 	Posts          []Post    `json:"posts"`
 	Comments       []Comment `json:"comments"`
 }
