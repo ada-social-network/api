@@ -3,8 +3,8 @@ package models
 // Promo define a promo resource
 type Promo struct {
 	Base
-	PromoName string `json:"promo_name"`
-	StartDate string `json:"date_of_start"`
-	EndDate   string `json:"date_of_end"`
+	PromoName string `json:"promo"`
+	StartDate string `json:"dateOfStart"`
+	EndDate   string `json:"dateOfEnd"`
 	Bio       string `json:"biography"`
 }
