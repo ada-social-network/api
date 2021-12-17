@@ -123,7 +123,7 @@ func ListBdaPostComments(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		comments := &[]models.Comment{}
 
-		result := db.Find(comments, "bdapostId = ?", id)
+		result := db.Find(comments, "bdapost_id= ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
