@@ -28,6 +28,7 @@ if you need help use the following command:
 ./ada-api --help
 
 Usage of ada-api:
+
   -auth
         Use api authentication (default true)
   -graceful-timeout duration
@@ -57,6 +58,8 @@ Usage of ada-api:
   - lint: `golangci-lint run`
   - test: `go test ./...`
   - build: `go build -o ada-api .`
+- For releasing the application:
+  - version: `./script/release.sh v1.0.0`
 
 ### Hooks
 

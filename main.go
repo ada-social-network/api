@@ -19,8 +19,9 @@ import (
 	"gorm.io/gorm"
 )
 
+var version = "dev"
+
 const (
-	version      = "dev"
 	basePath     = "/api/rest/v1"
 	basePathAuth = "/auth"
 )
@@ -49,8 +50,10 @@ func main() {
 	var mode string
 	var dsn string
 	var withAuth bool
+	var showVersion bool
 
 	flag.BoolVar(&withAuth, "auth", true, "Use api authentication")
+	flag.BoolVar(&showVersion, "version", false, "Show application current version")
 	flag.IntVar(&port, "http-port", 8080, "Default port")
 	flag.StringVar(&host, "http-host", "0.0.0.0", "Default interface")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
@@ -58,6 +61,10 @@ func main() {
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
 	flag.Parse()
 
+	if showVersion {
+		fmt.Printf("Current version: %s\n", version)
+		return
+	}
 	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("DB connection failed", err)
