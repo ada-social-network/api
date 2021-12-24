@@ -28,8 +28,8 @@ You can register to the API
 curl --location --request POST 'http://localhost:8080/auth/register' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-        "last_name": "Fanny",
-        "first_name": "Armand",
+        "lastName": "Fanny",
+        "firstName": "Armand",
         "email": "fannyarmand2@gmail.com",
         "password": "secretpassword"
     
@@ -40,25 +40,25 @@ curl --location --request POST 'http://localhost:8080/auth/register' \
 
 ```json
 {
-  "ID": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-  "CreatedAt": "2021-11-19T15:59:58.407451298+01:00",
-  "UpdatedAt": "2021-11-19T15:59:58.407451298+01:00",
-  "DeletedAt": null,
-  "last_name": "Baba",
-  "first_name": "Ali",
+  "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
+  "createdAt": "2021-11-19T15:59:58.407451298+01:00",
+  "updatedAt": "2021-11-19T15:59:58.407451298+01:00",
+  "deletedAt": null,
+  "lastName": "Baba",
+  "firstName": "Ali",
   "email": "ali@gmail.com",
-  "date_of_birth": "",
-  "apprentice_at": "",
-  "profil_pic": "",
-  "private_mail": "",
+  "dateOfBirth": "",
+  "apprenticeAt": "",
+  "profilPic": "",
+  "privateMail": "",
   "instagram": "",
   "facebook": "",
   "github": "",
   "linkedin": "",
   "mbti": "",
-  "is_admin": false,
-  "promo_id": "80a08d36-cfea-4898-aee3-6902fa562f0a",
-  "bda_posts": null,
+  "isAdmin": false,
+  "promoId": "80a08d36-cfea-4898-aee3-6902fa562f0a",
+  "bdaPosts": null,
   "posts": null
 }
 ```
@@ -135,11 +135,11 @@ You can renew a token which is already existing:
 
 All resources will be represented with the following fields:
 
-| Key          | Type     | Description                         |
-|--------------|----------|-------------------------------------|
-| `created_at` | `string` | Date of creation in RFC 3339 format |
-| `updated_at` | `string` | Date of updation in RFC 3339 format |
-| `deleted_at` | `string` | Date of deletion in RFC 3339 format |
+| Key         | Type     | Description                         |
+|-------------|----------|-------------------------------------|
+| `createdAt` | `string` | Date of creation in RFC 3339 format |
+| `updatedAt` | `string` | Date of updation in RFC 3339 format |
+| `deletedAt` | `string` | Date of deletion in RFC 3339 format |
 
 ### Collection
 
@@ -151,14 +151,14 @@ For example:
 [
   {
     "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-    "created_at": "2021-10-13T10:52:11.50932133+02:00",
-    "updated_at": "2021-10-13T10:52:11.50932133+02:00",
+    "createdAt": "2021-10-13T10:52:11.50932133+02:00",
+    "updatedAt": "2021-10-13T10:52:11.50932133+02:00",
     "content": "lorem ipsum sit dolor set amet..."
   },
   {
     "id": "80a08d36-cfea-4898-aee3-6902fa562f2c",
-    "created_at": "2021-10-13T12:52:11.50932133+02:00",
-    "updated_at": "2021-10-13T12:52:11.50932133+02:00",
+    "createdAt": "2021-10-13T12:52:11.50932133+02:00",
+    "updatedAt": "2021-10-13T12:52:11.50932133+02:00",
     "content": "foo bar..."
   }
 ]
@@ -202,27 +202,27 @@ A Ping represents a dummy response .
 
 A Post represents a message .
 
-| Key          | Type     | Creatable | Mutable | Required | Validation                | Description                             |
-|--------------|----------|-----------|---------|----------|---------------------------|-----------------------------------------|
-| `id`         | `string` | no        | no      | no       | no                        | Unique identifier for a `Post` resource |
-| `title`      | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Title of a `Post` resource              |
-| `content`    | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Content of a `Post` resource            |
-| `user_id`    | `string` | no        | no      | no       | no                        | User id of a `Post` resource            |
-| `created_at` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format     |
-| `updated_at` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format     |
-| `deleted_at` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format     |
+| Key         | Type     | Creatable | Mutable | Required | Validation                | Description                             |
+|-------------|----------|-----------|---------|----------|---------------------------|-----------------------------------------|
+| `id`        | `string` | no        | no      | no       | no                        | Unique identifier for a `Post` resource |
+| `title`     | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Title of a `Post` resource              |
+| `content`   | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Content of a `Post` resource            |
+| `userId`    | `string` | no        | no      | no       | no                        | User id of a `Post` resource            |
+| `createdAt` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format     |
+| `updatedAt` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format     |
+| `deletedAt` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format     |
 
 **Sample:**
 
 ```json
 {
-  "ID": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-  "CreatedAt": "2021-11-05T16:54:49.182599198+01:00",
-  "UpdatedAt": "2021-11-05T16:54:49.182599198+01:00",
-  "DeletedAt": null,
+  "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
+  "createdAt": "2021-11-05T16:54:49.182599198+01:00",
+  "updatedAt": "2021-11-05T16:54:49.182599198+01:00",
+  "deletedAt": null,
   "title": " Titre",
   "content": "lorem ipsum sit dolor set amet...",
-  "user_id": "80a08d36-cfea-4898-aee3-6902fa562f8d"
+  "userId": "80a08d36-cfea-4898-aee3-6902fa562f8d"
 }
 ```
 
@@ -230,27 +230,27 @@ A Post represents a message .
 
 A Bda Post represents a message.
 
-| Key          | Type     | Creatable | Mutable | Required | Validation                | Description                                |
-|--------------|----------|-----------|---------|----------|---------------------------|--------------------------------------------|
-| `id`         | `string` | no        | no      | no       | no                        | Unique identifier for a `BdaPost` resource |
-| `title`      | `string` | yes       | no      | yes      | `required,min=4,max=1024` | Title of a `BdaPost` resource              |
-| `content`    | `string` | yes       | no      | yes      | `required,min=4,max=1024` | Content of a `BdaPost` resource            |
-| `user_id`    | `string` | no        | no      | no       | no                        | User id of a `BdaPost` resource            |
-| `created_at` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format        |
-| `updated_at` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format        |
-| `deleted_at` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format        |
+| Key         | Type     | Creatable | Mutable | Required | Validation                | Description                                |
+|-------------|----------|-----------|---------|----------|---------------------------|--------------------------------------------|
+| `id`        | `string` | no        | no      | no       | no                        | Unique identifier for a `BdaPost` resource |
+| `title`     | `string` | yes       | no      | yes      | `required,min=4,max=1024` | Title of a `BdaPost` resource              |
+| `content`   | `string` | yes       | no      | yes      | `required,min=4,max=1024` | Content of a `BdaPost` resource            |
+| `userId`    | `string` | no        | no      | no       | no                        | User id of a `BdaPost` resource            |
+| `createdAt` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format        |
+| `updatedAt` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format        |
+| `deletedAt` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format        |
 
 **Sample:**
 
 ```json
 {
-  "ID": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-  "CreatedAt": "2021-11-05T17:04:13.475674216+01:00",
-  "UpdatedAt": "2021-11-05T17:04:13.475674216+01:00",
-  "DeletedAt": null,
+  "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
+  "createdAt": "2021-11-05T17:04:13.475674216+01:00",
+  "updatedAt": "2021-11-05T17:04:13.475674216+01:00",
+  "deletedAt": null,
   "title": " Titre",
   "content": "lorem ipsum sit dolor set amet...",
-  "user_id": "80a08d36-cfea-4898-aee3-6902fa562f9k"
+  "userId": "80a08d36-cfea-4898-aee3-6902fa562f9k"
 }
 ```
 
@@ -258,52 +258,52 @@ A Bda Post represents a message.
 
 A User represents informations about a user.
 
-| Key             | Type                  | Creatable | Mutable | Required | Validation               | Description                             |                           
-|-----------------|-----------------------|-----------|---------|----------|--------------------------|-----------------------------------------|
-| `id`            | `string`              | no        | no      | no       | no                       | Unique identifier for a `User` resource |
-| `last_name`     | `string`              | yes       | no      | yes      | `required,min=2,max=20 ` | Last name of a `User` resource          |
-| `first_name`    | `string`              | yes       | no      | yes      | `required,min=2,max=20`  | First name of a `User` resource         |
-| `email`         | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` resource              |
-| `date_of_birth` | `string`              | yes       | no      | yes      | no                       | Date of birth of a `User` resource      |
-| `apprentice_at` | `string`              | yes       | yes     | no       | no                       | Enterprise of a `User` resource         |
-| `profil_pic`    | `string`              | yes       | yes     | no       | no                       | Profil pic of a `User` resource         |
-| `private_mail`  | `string`              | yes       | yes     | no       | no                       | Private email of a `User` resource      |
-| `instagram`     | `string`              | yes       | yes     | no       | no                       | Instagram Page of a `User` resource     |
-| `facebook`      | `string`              | yes       | yes     | no       | no                       | Facebook Page of a `User` resource      |
-| `github`        | `string`              | yes       | yes     | no       | no                       | Github Page of a `User` resource        |
-| `linkedin`      | `string`              | yes       | yes     | no       | no                       | Linkedin Page of a `User` resource      |
-| `mbti`          | `string`              | yes       | no      | no       | no                       | Profil mbti of a `User` resource        |
-| `is_admin`      | `bool`                | no        | no      | no       | no                       | Profil admin of a `User` resource       |
-| `promo_id`      | `string`              | yes       | no      | no       | no                       | Promo id of a `User` resource           |
-| `bda_posts`     | `Collection<BdaPost>` | no        | no      | no       | no                       | Bda Posts of a `User` resource          |
-| `posts`         | `Collection<Post>`    | no        | no      | no       | no                       | Posts of a `User` resource              |
-| `created_at`    | `string`              | no        | no      | no       | no                       | Date of creation in RFC 3339 format     |
-| `updated_at`    | `string`              | no        | no      | no       | no                       | Date of updation in RFC 3339 format     |
-| `deleted_at`    | `string`              | no        | no      | no       | no                       | Date of deletion in RFC 3339 format     |
+| Key            | Type                  | Creatable | Mutable | Required | Validation               | Description                             |                           
+|----------------|-----------------------|-----------|---------|----------|--------------------------|-----------------------------------------|
+| `id`           | `string`              | no        | no      | no       | no                       | Unique identifier for a `User` resource |
+| `lastName`     | `string`              | yes       | no      | yes      | `required,min=2,max=20 ` | Last name of a `User` resource          |
+| `firstName`    | `string`              | yes       | no      | yes      | `required,min=2,max=20`  | First name of a `User` resource         |
+| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` resource              |
+| `dateOfBirth`  | `string`              | yes       | no      | yes      | no                       | Date of birth of a `User` resource      |
+| `apprenticeAt` | `string`              | yes       | yes     | no       | no                       | Enterprise of a `User` resource         |
+| `profilPic`    | `string`              | yes       | yes     | no       | no                       | Profil pic of a `User` resource         |
+| `privateMail`  | `string`              | yes       | yes     | no       | no                       | Private email of a `User` resource      |
+| `instagram`    | `string`              | yes       | yes     | no       | no                       | Instagram Page of a `User` resource     |
+| `facebook`     | `string`              | yes       | yes     | no       | no                       | Facebook Page of a `User` resource      |
+| `github`       | `string`              | yes       | yes     | no       | no                       | Github Page of a `User` resource        |
+| `linkedin`     | `string`              | yes       | yes     | no       | no                       | Linkedin Page of a `User` resource      |
+| `mbti`         | `string`              | yes       | no      | no       | no                       | Profil mbti of a `User` resource        |
+| `isAdmin`      | `bool`                | no        | no      | no       | no                       | Profil admin of a `User` resource       |
+| `promoId`      | `string`              | yes       | no      | no       | no                       | Promo id of a `User` resource           |
+| `bdaPosts`     | `Collection<BdaPost>` | no        | no      | no       | no                       | Bda Posts of a `User` resource          |
+| `posts`        | `Collection<Post>`    | no        | no      | no       | no                       | Posts of a `User` resource              |
+| `createdAt`    | `string`              | no        | no      | no       | no                       | Date of creation in RFC 3339 format     |
+| `updatedAt`    | `string`              | no        | no      | no       | no                       | Date of updation in RFC 3339 format     |
+| `deletedAt`    | `string`              | no        | no      | no       | no                       | Date of deletion in RFC 3339 format     |
 
 **Sample:**
 
 ```json
 {
-  "ID": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-  "CreatedAt": "2021-11-05T16:16:26.259246323+01:00",
-  "UpdatedAt": "2021-11-05T16:16:26.259246323+01:00",
-  "DeletedAt": null,
-  "last_name": "Lovelace",
-  "first_name": "Ada",
+  "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
+  "createdAt": "2021-11-05T16:16:26.259246323+01:00",
+  "updatedAt": "2021-11-05T16:16:26.259246323+01:00",
+  "deletedAt": null,
+  "lastName": "Lovelace",
+  "firstName": "Ada",
   "email": "lovelace@gmail.com",
-  "date_of_birth": "01/01/2020",
-  "apprentice_at": "Ada Tech School",
-  "profil_pic": "https://www.seekpng.com/png/detail/506-5061704_cool-profile-avatar-picture-cool-picture-for-profile.png",
-  "private_mail": "ada@google.com",
+  "dateOfBirth": "01/01/2020",
+  "apprenticeAt": "Ada Tech School",
+  "profilPic": "https://www.seekpng.com/png/detail/506-5061704_cool-profile-avatar-picture-cool-picture-for-profile.png",
+  "privateMail": "ada@google.com",
   "instagram": "https://www.instagram.com/adatechschool/",
   "facebook": "https://www.facebook.com/AdaTechSchool",
   "github": "https://github.com/ada-social-network/",
   "linkedin": "https://www.linkedin.com/",
   "mbti": "INFP",
-  "is_admin": true,
-  "promo_id": "80a08d36-cfea-4898-aee3-6902fa562f0e",
-  "BdaPost": null
+  "isAdmin": true,
+  "promoId": "80a08d36-cfea-4898-aee3-6902fa562f0e",
+  "bdaPost": null
 }
 ```
 
@@ -311,28 +311,28 @@ A User represents informations about a user.
 
 A promo represents informations about a promo.
 
-| Key             | Type     | Creatable | Mutable | Required | Validation | Description                              |                           
-|-----------------|----------|-----------|---------|----------|------------|------------------------------------------|
-| `id`            | `string` | no        | no      | no       | no         | Unique identifier for a `Promo` resource |
-| `promo_name`    | `string` | yes       | no      | no       | no         | Promo name of a `Promo` resource         |
-| `date_of_start` | `string` | yes       | no      | no       | no         | Date of start of a `Promo` resource      |
-| `date_of_end`   | `string` | yes       | no      | no       | no         | Date of end of a `Promo` resource        |
-| `biography`     | `string` | yes       | no      | no       | no         | Biography of a `Promo` resource          |
-| `created_at`    | `string` | no        | no      | no       | no         | Date of creation in RFC 3339 format      |
-| `updated_at`    | `string` | no        | no      | no       | no         | Date of updation in RFC 3339 format      |
-| `deleted_at`    | `string` | no        | no      | no       | no         | Date of deletion in RFC 3339 format      |
+| Key           | Type     | Creatable | Mutable | Required | Validation | Description                              |                           
+|---------------|----------|-----------|---------|----------|------------|------------------------------------------|
+| `id`          | `string` | no        | no      | no       | no         | Unique identifier for a `Promo` resource |
+| `promoName`   | `string` | yes       | no      | no       | no         | Promo name of a `Promo` resource         |
+| `dateOfStart` | `string` | yes       | no      | no       | no         | Date of start of a `Promo` resource      |
+| `dateOfEnd`   | `string` | yes       | no      | no       | no         | Date of end of a `Promo` resource        |
+| `biography`   | `string` | yes       | no      | no       | no         | Biography of a `Promo` resource          |
+| `createdAt`   | `string` | no        | no      | no       | no         | Date of creation in RFC 3339 format      |
+| `updatedAt`   | `string` | no        | no      | no       | no         | Date of updation in RFC 3339 format      |
+| `deletedAt`   | `string` | no        | no      | no       | no         | Date of deletion in RFC 3339 format      |
 
 **Sample:**
 
 ```json
 {
-  "ID": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-  "CreatedAt": "2021-11-19T15:15:16.218234962+01:00",
-  "UpdatedAt": "2021-11-19T15:15:16.218234962+01:00",
-  "DeletedAt": null,
-  "promo_name": "Béatrice Worsley",
-  "date_of_start": "05/10/2020",
-  "date_of_end": "30/06/2021",
+  "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
+  "createdAt": "2021-11-19T15:15:16.218234962+01:00",
+  "updatedAt": "2021-11-19T15:15:16.218234962+01:00",
+  "deletedAt": null,
+  "promoName": "Béatrice Worsley",
+  "dateOfStart": "05/10/2020",
+  "dateOfEnd": "30/06/2021",
   "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School"
 }
 ```
@@ -341,26 +341,26 @@ A promo represents informations about a promo.
 
 A Comment represents a comment under a Post.
 
-| Key          | Type     | Creatable | Mutable | Required | Validation                | Description                                |
-|--------------|----------|-----------|---------|----------|---------------------------|--------------------------------------------|
-| `id`         | `string` | no        | no      | no       | no                        | Unique identifier for a `Comment` resource |
-| `content`    | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Content of a `Comment` resource            |
-| `user_id`    | `string` | no        | no      | no       | no                        | User id of a `Comment` resource            |
-| `bdapost_id` | `string` | no        | no      | yes      | no                        | Bdapost id of a `Comment` resource         |
-| `created_at` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format        |
-| `updated_at` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format        |
-| `deleted_at` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format        |
+| Key         | Type     | Creatable | Mutable | Required | Validation                | Description                                |
+|-------------|----------|-----------|---------|----------|---------------------------|--------------------------------------------|
+| `id`        | `string` | no        | no      | no       | no                        | Unique identifier for a `Comment` resource |
+| `content`   | `string` | yes       | yes     | yes      | `required,min=4,max=1024` | Content of a `Comment` resource            |
+| `userId`    | `string` | no        | no      | no       | no                        | User id of a `Comment` resource            |
+| `bdapostId` | `string` | no        | no      | yes      | no                        | Bdapost id of a `Comment` resource         |
+| `createdAt` | `string` | no        | no      | no       | no                        | Date of creation in RFC 3339 format        |
+| `updatedAt` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format        |
+| `deletedAt` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format        |
 
 **Sample:**
 
 ```json
 {
-  "ID": "80a08d36-cfea-4898-aee3-6902fa562f1d",
-  "CreatedAt": "2021-11-05T16:54:49.182599198+01:00",
-  "UpdatedAt": "2021-11-05T16:54:49.182599198+01:00",
-  "DeletedAt": null,
+  "id": "80a08d36-cfea-4898-aee3-6902fa562f1d",
+  "createdAt": "2021-11-05T16:54:49.182599198+01:00",
+  "updatedAt": "2021-11-05T16:54:49.182599198+01:00",
+  "deletedAt": null,
   "content": "lorem ipsum sit dolor set amet...",
-  "user_id": "80a08d36-cfea-4898-aee3-6902fa562f8e",
-  "bdapost_id": "80a08d36-cfea-4898-aee3-6902fa562f9c"
+  "userId": "80a08d36-cfea-4898-aee3-6902fa562f8e",
+  "bdapostId": "80a08d36-cfea-4898-aee3-6902fa562f9c"
 }
 ```
