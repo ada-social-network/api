@@ -89,9 +89,20 @@ curl --location --request POST 'http://localhost:8080/auth/login' \
 }
 ```
 
-### How to renew a token
+### How to refresh a token
 
-You can renew a token which is already existing:
+You can renew an expired token:
+
+```shell
+curl --location --request GET 'http://localhost:8080/auth/refresh' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzc5MjU2NzMsImZpcnN0bmFtZSI6IkFsaSIsImlkIjoiYWxpQGdtYWlsLmNvbSIsImxhc3RuYW1lIjoiQmFiYSIsIm9yaWdfaWF0IjoxNjM3OTIyMDczfQ.GKpWcKhI_DbVOlByFfxwyR99il7XgCHJzNmEfp-l7zw'
+```
+
+### How to refresh a token using axios
+
+A token have to be renew if we have a forbidden (403) on a request because the token is expiring after one hour. But it can be done easily with an interceptor axios.
+You can use and adapt the following article for example:
+[Using Axios interceptors for refreshing your API token](https://thedutchlab.com/blog/using-axios-interceptors-for-refreshing-your-api-token)
 
 ### How to use API authenticated endpoint?
 
