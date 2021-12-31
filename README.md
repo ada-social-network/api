@@ -41,6 +41,8 @@ Usage of ada-api:
         Running mode, can be 'debug', 'release' or 'test' (default "release")
   -sqlite-dsn string
         sqlite database file (dsn) that will store data (default "gorm.db")
+  -version
+        Show application current version
 ```
 
 ## Development
