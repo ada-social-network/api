@@ -8,11 +8,11 @@ import (
 	"github.com/ada-social-network/api/models"
 )
 
-// ListPromoUsers get users of a promo
+// ListPromoUsers get users from the same promo
 func ListPromoUsers(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
-		promoUsers := &[]models.Promo{}
+		promoUsers := &[]models.User{}
 
 		result := db.Find(promoUsers, "promo_id= ?", id)
 		if result.Error != nil {
