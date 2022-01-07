@@ -1,0 +1,797 @@
+{
+	"info": {
+		"_postman_id": "3351cc6c-6b4d-48db-98b3-03fabd2c83f9",
+		"name": "ADA Social Network",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mzc5MjU2NzMsImZpcnN0bmFtZSI6IkFsaSIsImlkIjoiYWxpQGdtYWlsLmNvbSIsImxhc3RuYW1lIjoiQmFiYSIsIm9yaWdfaWF0IjoxNjM3OTIyMDczfQ.GKpWcKhI_DbVOlByFfxwyR99il7XgCHJzNmEfp-l7zw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"lastName\": \"Armand\",\n        \"firstName\": \"Fanny\",\n        \"email\": \"fannyarmand@gmail.com\",\n        \"password\": \"password\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/register",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"email\": \"fannyarmand2@gmail.com\",\n        \"password\": \"secretpassword\"\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/auth/login",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renew",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzczMzk5ODksImZpcnN0bmFtZSI6IkFsaSIsImlkIjoiYWxpQGdtYWlsLmNvbSIsImxhc3RuYW1lIjoiQmFiYSIsIm9yaWdfaWF0IjoxNjM3MzM2Mzg5fQ.5aeHY7IxqjaX1hvrwyYaH7bR2nGE1C9bauFtLw1lvLM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/auth/refresh",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Api",
+			"item": [
+				{
+					"name": "Users",
+					"item": [
+						{
+							"name": "List Users",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/users",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/users/1",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"lastName\": \"Loulou\",\n        \"firstName\": \"Bilou\",\n        \"email\": \"loulou@gmail.com\",\n        \"password\": \"loulou\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/users",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"lastName\": \"Fanny\",\n        \"firstName\": \"Armand\",\n        \"email\": \"fannyarma@gmail.com\",\n        \"dateOfBirth\": \"18/09/1986\",\n        \"password\": \"secretpassword\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/users/a686fdd0-c258-4a8c-a1f9-68657d104cad",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"users",
+										"a686fdd0-c258-4a8c-a1f9-68657d104cad"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/users/80a08d36-cfea-4898-aee3-6902fa562fab",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"users",
+										"80a08d36-cfea-4898-aee3-6902fa562fab"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Posts",
+					"item": [
+						{
+							"name": "List Posts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/posts",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"posts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Post",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/posts/b31ceb51-7384-415e-a0e2-025ae721f1e9",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"posts",
+										"b31ceb51-7384-415e-a0e2-025ae721f1e9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Post",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"ceci est un titre\",\n    \"content\": \"ceci est un nouveau post\"\n        \n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/posts",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"posts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Post",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"titre modifié\",\n     \"content\": \"ceci est mon post modifié\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/posts/f7547b23-fbc9-4718-a7d6-bbf52fa75b17",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"posts",
+										"f7547b23-fbc9-4718-a7d6-bbf52fa75b17"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Post",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"last_name\": \"El Mourabet\",\n        \"first_name\": \"Salma\",\n        \"email\": \"salma@gmail.com\",\n        \"date_of_birth\": \"16/08/1993\",\n        \"password\": \"Blabliblou45\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/posts/f7547b23-fbc9-4718-a7d6-bbf52fa75b17",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"posts",
+										"f7547b23-fbc9-4718-a7d6-bbf52fa75b17"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Promos",
+					"item": [
+						{
+							"name": "List Promos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/promos",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"promos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Promo",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"promoName\": \"Béatrice Worsley\",\n        \"dateOfStart\": \"05/10/2020\",\n        \"dateOfEnd\": \"01/06/2022\",\n        \"biography\": \"the best promotion of the school\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/promos",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"promos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Promo",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n       \"date_of_end\": \"10/06/2022\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/promos/dc61cbce-18f7-41a4-b72d-c13eae50de12",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"promos",
+										"dc61cbce-18f7-41a4-b72d-c13eae50de12"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Promo",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"last_name\": \"El Mourabet\",\n        \"first_name\": \"Salma\",\n        \"email\": \"salma@gmail.com\",\n        \"date_of_birth\": \"16/08/1993\",\n        \"password\": \"Blabliblou45\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/promos/c5dc15af-50e4-4e73-80c4-b8d05b1090fe",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"promos",
+										"c5dc15af-50e4-4e73-80c4-b8d05b1090fe"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Comments",
+					"item": [
+						{
+							"name": "List Comments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/comments",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create comment",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n       \n        \"bdapostId\": \"a0958153-f7f1-476f-a407-dffdf1d1beec\",\n        \"content\": \"ceci est un super commentaire\"\n\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/comments",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update comment",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"content\": \"ceci est mon commentaire modifié\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/comments/1a7bbedd-78fb-4f92-9d28-4c2d10bab48d",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"comments",
+										"1a7bbedd-78fb-4f92-9d28-4c2d10bab48d"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete comment",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"last_name\": \"El Mourabet\",\n        \"first_name\": \"Salma\",\n        \"email\": \"salma@gmail.com\",\n        \"date_of_birth\": \"16/08/1993\",\n        \"password\": \"Blabliblou45\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/comments/1a7bbedd-78fb-4f92-9d28-4c2d10bab48d",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"comments",
+										"1a7bbedd-78fb-4f92-9d28-4c2d10bab48d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Bdaposts",
+					"item": [
+						{
+							"name": "Comments",
+							"item": [
+								{
+									"name": "List Comments",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{host}}/api/rest/v1/bdaposts/3b691131-da0f-4d7e-92c6-a6d3c5951a59/comments",
+											"host": [
+												"{{host}}"
+											],
+											"path": [
+												"api",
+												"rest",
+												"v1",
+												"bdaposts",
+												"3b691131-da0f-4d7e-92c6-a6d3c5951a59",
+												"comments"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "List Bdaposts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/api/rest/v1/bdaposts",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"bdaposts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Bdapost",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n       \"title\": \"Titre du bda post\",\n       \"content\": \"blablabla bli blou bli\",\n       \"userId\": \"87a698b1-4e50-476e-ae8b-237008154aaa\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/bdaposts",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"bdaposts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Bdapost",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n     \"content\": \"ceci est mon bdapost modifié\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/bdaposts/a0958153-f7f1-476f-a407-dffdf1d1beec",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"bdaposts",
+										"a0958153-f7f1-476f-a407-dffdf1d1beec"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Bdapost",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n        \"last_name\": \"El Mourabet\",\n        \"first_name\": \"Salma\",\n        \"email\": \"salma@gmail.com\",\n        \"date_of_birth\": \"16/08/1993\",\n        \"password\": \"Blabliblou45\"\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/rest/v1/bdaposts/c1eefe2e-3308-4021-ae91-d36fb7602c5d",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"rest",
+										"v1",
+										"bdaposts",
+										"c1eefe2e-3308-4021-ae91-d36fb7602c5d"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbiI6ZmFsc2UsImVtYWlsIjoiZmFubnlhcm1hbmRAZ21haWwuY29tIiwiZXhwIjoxNjQwMzQzMzQxLCJmaXJzdG5hbWUiOiJGYW5ueSIsImlkIjoiZDBiNjI4OGYtY2U1ZC00MGYyLThkZmMtOTZkNDFjYWM4YzUyIiwibGFzdG5hbWUiOiJBcm1hbmQiLCJvcmlnX2lhdCI6MTY0MDMzOTc0MX0.j8MBbTcrwhZCtqhQoALK13Nom1FnueK8bhPtswL9JBs",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:8080"
+		}
+	]
+}
