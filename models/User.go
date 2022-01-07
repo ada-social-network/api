@@ -1,6 +1,7 @@
 package models
 
 import (
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 
 	"gorm.io/gorm"
@@ -23,7 +24,7 @@ type User struct {
 	Linkedin       string    `json:"linkedin"`
 	MBTI           string    `json:"mbti"`
 	Admin          bool      `json:"isAdmin"`
-	Promo          []Promo   `json:"promo"`
+	PromoID        uuid.UUID `gorm:"type=uuid" json:"promoId"`
 	BdaPosts       []BdaPost `json:"bdaPosts"`
 	Posts          []Post    `json:"posts"`
 	Comments       []Comment `json:"comments"`
