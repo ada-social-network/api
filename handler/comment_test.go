@@ -51,7 +51,7 @@ func TestCreateComment(t *testing.T) {
 				comment: models.Comment{
 					Base:      models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
 					Content:   "lorem ipsum",
-					BdapostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
+					BdaPostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
 				},
 			},
 			want: want{

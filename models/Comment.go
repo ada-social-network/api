@@ -6,7 +6,7 @@ import uuid "github.com/satori/go.uuid"
 type Comment struct {
 	Base
 	UserID    uuid.UUID `gorm:"type=uuid" json:"userId" `
-	BdapostID uuid.UUID `gorm:"type=uuid" json:"bdapostId" binding:"required"`
+	BdaPostID uuid.UUID `gorm:"type=uuid" json:"bdapostId" binding:"required"`
 	Content   string    `json:"content" binding:"required"`
 }
 
