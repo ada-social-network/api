@@ -70,7 +70,8 @@ func main() {
 		log.Fatal("DB connection failed", err)
 	}
 
-	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{}, &models.Comment{}, &models.Category{}, &models.Topic{})
+	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{}, &models.Comment{}, &models.Category{}, &models.Topic{}, &models.Like{})
+
 	if err != nil {
 		log.Fatal("Automigration failed", err)
 	}
@@ -121,6 +122,8 @@ func main() {
 		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
 		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
 		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
+		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
+		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).

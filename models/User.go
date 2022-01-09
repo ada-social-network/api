@@ -33,6 +33,7 @@ type User struct {
 	Posts          []Post    `json:"posts"`
 	Comments       []Comment `json:"comments"`
 	Topics         []Topic   `json:"topics"`
+	Likes          []Like    `json:"likes"`
 }
 
 //HashPassword substitutes User.Password with its bcrypt hash

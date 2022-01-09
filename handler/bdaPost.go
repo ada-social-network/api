@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 
 	httpError "github.com/ada-social-network/api/error"
@@ -130,5 +131,60 @@ func ListBdaPostComments(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		c.JSON(200, comments)
+	}
+}
+
+// CreateBdaPostLike create a like
+func CreateBdaPostLike(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, err := GetCurrentUser(c)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		bdapostID, _ := c.Params.Get("id")
+
+		like := &models.Like{}
+
+		err = c.ShouldBindJSON(like)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		bdaPostUUID, err := uuid.FromString(bdapostID)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+		like.BdaPostID = bdaPostUUID
+		like.UserID = user.ID
+
+		result := db.Create(like)
+		if result.Error != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		c.JSON(200, like)
+	}
+}
+
+// ListBdaPostLikes get likes of a bda post
+func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := c.Params.Get("id")
+		likes := &[]models.Like{}
+
+		result := db.Find(likes, "bda_post_id= ?", id)
+		if result.Error != nil {
+			httpError.Internal(c, result.Error)
+			return
+		}
+
+		count := result.RowsAffected
+
+		c.JSON(200, count)
 	}
 }

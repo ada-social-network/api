@@ -8,6 +8,7 @@ type Comment struct {
 	UserID    uuid.UUID `gorm:"type=uuid" json:"userId" `
 	BdaPostID uuid.UUID `gorm:"type=uuid" json:"bdapostId" binding:"required"`
 	Content   string    `json:"content" binding:"required"`
+	Likes     []Like
 }
 
 // we do not have comment for all posts for now only for BDA
