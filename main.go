@@ -70,7 +70,7 @@ func main() {
 		log.Fatal("DB connection failed", err)
 	}
 
-	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{}, &models.Comment{})
+	err = db.AutoMigrate(&models.Post{}, &models.User{}, &models.BdaPost{}, &models.Promo{}, &models.Comment{}, &models.Category{}, &models.Topic{})
 	if err != nil {
 		log.Fatal("Automigration failed", err)
 	}
@@ -108,7 +108,6 @@ func main() {
 		GET("/me", handler.MeHandler(db)).
 		GET("/posts", handler.ListPostHandler(db)).
 		GET("/posts/:id", handler.GetPostHandler(db)).
-		POST("/posts", handler.CreatePostHandler(db)).
 		PATCH("/posts/:id", handler.UpdatePostHandler(db)).
 		DELETE("/posts/:id", handler.DeletePostHandler(db)).
 		GET("/users", handler.ListUserHandler(db)).
@@ -129,7 +128,17 @@ func main() {
 		GET("/comments", handler.ListComment(db)).
 		POST("/comments", handler.CreateComment(db)).
 		PATCH("/comments/:id", handler.UpdateComment(db)).
-		DELETE("/comments/:id", handler.DeleteComment(db))
+		DELETE("/comments/:id", handler.DeleteComment(db)).
+		GET("/categories", handler.ListCategories(db)).
+		POST("/categories", handler.CreateCategory(db)).
+		DELETE("/categories/:id", handler.DeleteCategory(db)).
+		GET("/categories/:id/topics", handler.ListCategoryTopics(db)).
+		GET("/topics", handler.ListTopics(db)).
+		POST("/categories/:id/topics", handler.CreateTopic(db)).
+		PATCH("/topics/:id", handler.UpdateTopic(db)).
+		DELETE("/topics/:id", handler.DeleteTopic(db)).
+		GET("/topics/:id/posts", handler.ListTopicPosts(db)).
+		POST("/topics/:id/posts", handler.CreatePost(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

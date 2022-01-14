@@ -6,6 +6,7 @@ import (
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -24,15 +25,15 @@ func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// CreatePostHandler create a post
-func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
+// CreatePost create a post
+func CreatePost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, err := GetCurrentUser(c)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
-
+		id, _ := c.Params.Get("id")
 		post := &models.Post{}
 
 		err = c.ShouldBindJSON(post)
@@ -42,6 +43,12 @@ func CreatePostHandler(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		post.UserID = user.ID
+		topicUuid, err := uuid.FromString(id)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+		post.TopicID = topicUuid
 
 		result := db.Create(post)
 		if result.Error != nil {
