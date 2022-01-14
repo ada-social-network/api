@@ -122,16 +122,16 @@ func main() {
 		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
 		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
 		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
+		GET("/bdaposts/:id/comments/:commentId", handler.GetBdaPostComment(db)).
+		POST("/bdaposts/:id/comments", handler.CreateBdaPostComment(db)).
+		PATCH("/bdaposts/:id/comments/:commentId", handler.UpdateBdaPostComment(db)).
+		DELETE("bdaposts/:id/comments/:commentId", handler.DeleteBdaPostComment(db)).
 		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
 		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).
 		DELETE("/promos/:id", handler.DeletePromo(db)).
-		GET("/comments", handler.ListComment(db)).
-		POST("/comments", handler.CreateComment(db)).
-		PATCH("/comments/:id", handler.UpdateComment(db)).
-		DELETE("/comments/:id", handler.DeleteComment(db)).
 		GET("/categories", handler.ListCategories(db)).
 		POST("/categories", handler.CreateCategory(db)).
 		DELETE("/categories/:id", handler.DeleteCategory(db)).

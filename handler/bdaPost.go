@@ -118,13 +118,116 @@ func UpdateBdaPost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// CreateBdaPostComment create a comment
+func CreateBdaPostComment(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, err := GetCurrentUser(c)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		bdapostID, _ := c.Params.Get("id")
+
+		comment := &models.Comment{}
+		err = c.ShouldBindJSON(comment)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		bdaPostUUID, err := uuid.FromString(bdapostID)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+		comment.BdaPostID = bdaPostUUID
+		comment.UserID = user.ID
+
+		result := db.Create(comment)
+		if result.Error != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		c.JSON(200, comment)
+	}
+}
+
+// UpdateBdaPostComment update a specific comment
+func UpdateBdaPostComment(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		commentID, _ := c.Params.Get("commentId")
+		comment := &models.Comment{}
+
+		result := db.First(comment, "id = ?", commentID)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "Comment", commentID, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		err := c.ShouldBindJSON(comment)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		db.Save(comment)
+
+		c.JSON(200, comment)
+	}
+}
+
+// DeleteBdaPostComment delete a specific comment
+func DeleteBdaPostComment(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		commentID, _ := c.Params.Get("commentId")
+
+		result := db.Delete(&models.Comment{}, "id = ?", commentID)
+		if result.Error != nil {
+			httpError.Internal(c, result.Error)
+			return
+		}
+
+		c.JSON(204, nil)
+	}
+}
+
+// GetBdaPostComment get a specific comment
+func GetBdaPostComment(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		commentID, _ := c.Params.Get("commentId")
+
+		comment := &models.Comment{}
+
+		result := db.First(comment, "id = ?", commentID)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "Comment", commentID, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		c.JSON(200, comment)
+	}
+}
+
 // ListBdaPostComments get comments of a bda post
 func ListBdaPostComments(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 		comments := &[]models.Comment{}
 
-		result := db.Find(comments, "bdapost_id= ?", id)
+		result := db.Find(comments, "bda_post_id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
