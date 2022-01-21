@@ -17,7 +17,11 @@ type User struct {
 	DateOfBirth    string    `json:"dateOfBirth"`
 	Apprenticeship string    `json:"apprenticeAt"`
 	ProfilPic      string    `json:"profilPic"`
+	Biography      string    `json:"biography"`
+	CoverPic       string    `json:"coverPic"`
 	PrivateMail    string    `json:"privateMail"`
+	ProjectPerso   string    `json:"projectPerso"`
+	ProjectPro     string    `json:"projectro"`
 	Instagram      string    `json:"instagram"`
 	Facebook       string    `json:"facebook"`
 	Github         string    `json:"github"`
@@ -28,6 +32,7 @@ type User struct {
 	BdaPosts       []BdaPost `json:"bdaPosts"`
 	Posts          []Post    `json:"posts"`
 	Comments       []Comment `json:"comments"`
+	Topics         []Topic   `json:"topics"`
 }
 
 //HashPassword substitutes User.Password with its bcrypt hash
