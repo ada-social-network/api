@@ -286,8 +286,23 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		count := result.RowsAffected
+		// count := result.RowsAffected
 
-		c.JSON(200, count)
+		c.JSON(200, likes)
+	}
+}
+
+// DeleteBdaPostLike delete a specific like
+func DeleteBdaPostLike(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := c.Params.Get("likeId")
+
+		result := db.Delete(&models.Post{}, "id = ?", id)
+		if result.Error != nil {
+			httpError.Internal(c, result.Error)
+			return
+		}
+
+		c.JSON(204, nil)
 	}
 }

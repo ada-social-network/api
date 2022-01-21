@@ -111,6 +111,9 @@ func main() {
 		GET("/posts/:id", handler.GetPostHandler(db)).
 		PATCH("/posts/:id", handler.UpdatePostHandler(db)).
 		DELETE("/posts/:id", handler.DeletePostHandler(db)).
+		GET("/posts/:id/likes", handler.ListPostLikes(db)).
+		POST("/posts/:id/likes", handler.CreatePostLike(db)).
+		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
 		GET("/users", handler.ListUserHandler(db)).
 		GET("/users/:id", handler.GetUserHandler(db)).
 		POST("/users", handler.CreateUserHandler(db)).
@@ -128,6 +131,7 @@ func main() {
 		DELETE("bdaposts/:id/comments/:commentId", handler.DeleteBdaPostComment(db)).
 		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
 		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
+		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		GET("/promos/:id/users", handler.ListPromoUsers(db)).

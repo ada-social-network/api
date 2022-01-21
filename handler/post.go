@@ -122,3 +122,73 @@ func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(200, post)
 	}
 }
+
+// CreatePostLike create a like
+func CreatePostLike(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, err := GetCurrentUser(c)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		postID, _ := c.Params.Get("id")
+
+		like := &models.Like{}
+
+		err = c.ShouldBindJSON(like)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		bdaPostUUID, err := uuid.FromString(postID)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+		like.BdaPostID = bdaPostUUID
+		like.UserID = user.ID
+
+		result := db.Create(like)
+		if result.Error != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		c.JSON(200, like)
+	}
+}
+
+// ListPostLikes get likes of a post
+func ListPostLikes(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := c.Params.Get("id")
+		likes := &[]models.Like{}
+
+		result := db.Find(likes, "bda_post_id= ?", id)
+		if result.Error != nil {
+			httpError.Internal(c, result.Error)
+			return
+		}
+
+		// count := result.RowsAffected
+
+		c.JSON(200, likes)
+	}
+}
+
+// DeletePostLike delete a specific like
+func DeletePostLike(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := c.Params.Get("likeId")
+
+		result := db.Delete(&models.Post{}, "id = ?", id)
+		if result.Error != nil {
+			httpError.Internal(c, result.Error)
+			return
+		}
+
+		c.JSON(204, nil)
+	}
+}
