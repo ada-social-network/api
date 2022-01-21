@@ -11,7 +11,7 @@ import (
 	"github.com/ada-social-network/api/models"
 )
 
-// Listtopics respond a list of topics
+// ListTopics respond a list of topics
 func ListTopics(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		topics := &[]models.Topic{}
@@ -45,12 +45,12 @@ func CreateTopic(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		topic.UserID = user.ID
-		catUuid, err := uuid.FromString(id)
+		catUUID, err := uuid.FromString(id)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
-		topic.CategoryID = catUuid
+		topic.CategoryID = catUUID
 
 		result := db.Create(topic)
 		if result.Error != nil {

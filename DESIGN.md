@@ -144,7 +144,7 @@ You can use and adapt the following article for example:
 | Create Promo           | `Promo`   | `Promo`               | 200  | `/promos`                           | `POST`   | Create a new promo                |
 | Update Promo           | `Promo`   | `Promo`               | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                    |
 | Delete Promo           | `Promo`   | `<empty>`             | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                    |
-
+| Get Users Promo        | `Promo`   | `Users`               | 204  | `/promos/:id/users`                 | `GET` | Get users of a promo 
 
 ### Resource
 
@@ -336,7 +336,9 @@ A promo represents informations about a promo.
 | `createdAt`   | `string` | no        | no      | no       | no         | Date of creation in RFC 3339 format      |
 | `updatedAt`   | `string` | no        | no      | no       | no         | Date of updation in RFC 3339 format      |
 | `deletedAt`   | `string` | no        | no      | no       | no         | Date of deletion in RFC 3339 format      |
-
+| `Users`       | `Collection<Users>`
+                           | no        | no      | no       | no         | Multiple `User` of a `Promo`            |
+                           
 **Sample:**
 
 ```json
@@ -348,7 +350,8 @@ A promo represents informations about a promo.
   "promoName": "Béatrice Worsley",
   "dateOfStart": "05/10/2020",
   "dateOfEnd": "30/06/2021",
-  "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School"
+  "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School",
+  "users":"['80a08d36-cfea-4898-aee3-6902fa562f1d','c20ccc44-7ac6-11ec-90d6-0242ac120003']"
 }
 ```
 

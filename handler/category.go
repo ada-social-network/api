@@ -8,7 +8,7 @@ import (
 	"github.com/ada-social-network/api/models"
 )
 
-// ListCategory respond a list of categories
+// ListCategories respond a list of categories
 func ListCategories(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		categories := &[]models.Category{}

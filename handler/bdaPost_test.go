@@ -22,7 +22,7 @@ func TestListBdaPostComments(t *testing.T) {
 
 	tx := db.Create(&models.Comment{BdaPostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")})
 	if tx.Error != nil {
-		t.Errorf("ListBdaPostComments response should not have an error: %w", tx.Error)
+		t.Error("ListBdaPostComments response should not have an error: %w", tx.Error)
 	}
 
 	ListBdaPostComments(db)(ctx)
