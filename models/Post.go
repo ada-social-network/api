@@ -10,4 +10,5 @@ type Post struct {
 	// By default, gorm will try to use UserID as a foreign key to the model User
 	UserID  uuid.UUID `gorm:"type=uuid" json:"userId"`
 	TopicID uuid.UUID `gorm:"type=uuid" json:"topicId"`
+	Likes   []Like
 }

@@ -12,26 +12,34 @@ import (
 	commonTesting "github.com/ada-social-network/api/testing"
 )
 
-func TestListCommentHandler(t *testing.T) {
+func TestListBdaPostComments(t *testing.T) {
 	db := commonTesting.InitDB(&models.Comment{})
 	res, ctx, _ := commonTesting.InitHTTPTest()
+	ctx.Params = []gin.Param{{
+		Key:   "id",
+		Value: "80a08d36-cfea-4898-aee3-6902fa562f1d"},
+	}
 
-	db.Create(&models.Comment{})
+	tx := db.Create(&models.Comment{BdaPostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")})
+	if tx.Error != nil {
+		t.Errorf("ListBdaPostComments response should not have an error: %w", tx.Error)
+	}
 
-	ListComment(db)(ctx)
+	ListBdaPostComments(db)(ctx)
 
 	got := &[]models.Comment{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
 
 	if len(*got) == 0 {
-		t.Error("ListComment response should not be empty")
+		t.Error("ListBdaPostComments response should not be empty")
 	}
 }
 
-func TestCreateComment(t *testing.T) {
+func TestCreateBdaPostComment(t *testing.T) {
 	type args struct {
 		comment models.Comment
 		user    *models.User
+		bdaPost *models.BdaPost
 	}
 
 	type want struct {
@@ -47,11 +55,11 @@ func TestCreateComment(t *testing.T) {
 		{
 			name: "valid comment",
 			args: args{
-				user: &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
+				user:    &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
+				bdaPost: &models.BdaPost{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				comment: models.Comment{
-					Base:      models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
-					Content:   "lorem ipsum",
-					BdapostID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
+					Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
+					Content: "lorem ipsum",
 				},
 			},
 			want: want{
@@ -63,6 +71,7 @@ func TestCreateComment(t *testing.T) {
 			name: "invalid comment",
 			args: args{
 				user:    &models.User{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
+				bdaPost: &models.BdaPost{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 				comment: models.Comment{Content: "l"},
 			},
 			want: want{
@@ -74,6 +83,7 @@ func TestCreateComment(t *testing.T) {
 			name: "missing user",
 			args: args{
 				comment: models.Comment{Content: "lorem ipsum"},
+				bdaPost: &models.BdaPost{Base: models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f1d")}},
 			},
 			want: want{
 				count:      0,
@@ -101,8 +111,12 @@ func TestCreateComment(t *testing.T) {
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.comment)
 
 			ctx.Set(middleware.IdentityKey, tt.args.user)
+			ctx.Params = []gin.Param{{
+				Key:   "id",
+				Value: "80a08d36-cfea-4898-aee3-6902fa562f1d"},
+			}
 
-			CreateComment(db)(ctx)
+			CreateBdaPostComment(db)(ctx)
 
 			comment := &models.Comment{}
 			_ = json.Unmarshal(res.Body.Bytes(), comment)
@@ -119,7 +133,7 @@ func TestCreateComment(t *testing.T) {
 	}
 }
 
-func TestDeleteComment(t *testing.T) {
+func TestDeleteBdaPostComment(t *testing.T) {
 	db := commonTesting.InitDB(&models.Comment{})
 	res, ctx, _ := commonTesting.InitHTTPTest()
 	id := uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")
@@ -133,24 +147,24 @@ func TestDeleteComment(t *testing.T) {
 
 	ctx.Params = gin.Params{
 		{
-			Key:   "id",
+			Key:   "commentId",
 			Value: id.String(),
 		},
 	}
 
-	DeleteComment(db)(ctx)
+	DeleteBdaPostComment(db)(ctx)
 
 	if res.Code != 204 {
 		t.Errorf("DeleteComment want:%d, got:%d", 204, res.Code)
 	}
 
-	tx := db.First(&models.Comment{}, "id = ?", 123)
+	tx := db.First(&models.Comment{}, "id = ?", id)
 	if tx.RowsAffected != 0 {
 		t.Errorf("DeleteComment Comment should be deleted")
 	}
 }
 
-func TestGetComment(t *testing.T) {
+func TestGetBdaPostComment(t *testing.T) {
 	db := commonTesting.InitDB(&models.Comment{})
 
 	type args struct {
@@ -174,10 +188,11 @@ func TestGetComment(t *testing.T) {
 					Base: models.Base{
 						ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b"),
 					},
+					Content: "Lorem ipsum",
 				},
 				params: gin.Params{
 					{
-						Key:   "id",
+						Key:   "commentId",
 						Value: "80a08d36-cfea-4898-aee3-6902fa562f0b",
 					},
 				},
@@ -191,11 +206,11 @@ func TestGetComment(t *testing.T) {
 			args: args{
 				comment: &models.Comment{
 					Base:    models.Base{ID: uuid.FromStringOrNil("80a08d36-cfea-4898-aee3-6902fa562f0b")},
-					Content: "125",
+					Content: "Lorem ipsum",
 				},
 				params: gin.Params{
 					{
-						Key:   "id",
+						Key:   "commentId",
 						Value: "99999999-9999-9999-9999-999999999999",
 					},
 				},
@@ -214,7 +229,7 @@ func TestGetComment(t *testing.T) {
 
 			ctx.Params = tt.args.params
 
-			GetComment(db)(ctx)
+			GetBdaPostComment(db)(ctx)
 
 			if res.Code != tt.want.code {
 				t.Errorf("GetCommentHandler want:%d, got:%d", tt.want.code, res.Code)
