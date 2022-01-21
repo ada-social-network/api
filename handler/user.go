@@ -87,8 +87,7 @@ func UpdateUserHandler(db *gorm.DB) gin.HandlerFunc {
 		id, _ := c.Params.Get("id")
 		user := &models.User{}
 
-		// we omit password because if a hashed password is present it will be re-encrypted
-		result := db.Omit("Password").First(user, "id = ?", id)
+		result := db.First(user, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "User", id, result.Error)
@@ -104,7 +103,8 @@ func UpdateUserHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		db.Save(user)
+		// we omit password because if a hashed password is present it will be re-encrypted
+		db.Omit("Password").Save(user)
 
 		c.JSON(200, user)
 	}
