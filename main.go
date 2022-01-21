@@ -123,6 +123,7 @@ func main() {
 		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
+		GET("/promos/:id/users", handler.ListPromoUsers(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).
 		DELETE("/promos/:id", handler.DeletePromo(db)).
 		GET("/comments", handler.ListComment(db)).
