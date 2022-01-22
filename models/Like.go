@@ -10,3 +10,9 @@ type Like struct {
 	PostID    uuid.UUID `gorm:"type=uuid" json:"postId"`
 	CommentID uuid.UUID `gorm:"type=uuid" json:"commentId"`
 }
+
+// CountAndLikes defines the count of likes and the likes associated to a resource
+type CountAndLikes struct {
+	Likes *[]Like
+	Count int
+}

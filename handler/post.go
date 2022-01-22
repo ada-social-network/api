@@ -172,9 +172,9 @@ func ListPostLikes(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// count := result.RowsAffected
+		count := result.RowsAffected
 
-		c.JSON(200, likes)
+		c.JSON(200, models.CountAndLikes{Likes: likes, Count: int(count)})
 	}
 }
 

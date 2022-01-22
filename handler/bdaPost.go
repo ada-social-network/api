@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
@@ -286,9 +285,9 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		// count := result.RowsAffected
+		count := result.RowsAffected
 
-		c.JSON(200, likes)
+		c.JSON(200, models.CountAndLikes{Likes: likes, Count: int(count)})
 	}
 }
 
