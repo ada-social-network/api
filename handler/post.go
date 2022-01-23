@@ -2,7 +2,6 @@ package handler
 
 import (
 	"errors"
-
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
@@ -123,6 +122,22 @@ func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// LikePostResponse defines the Like response for a Post
+type LikePostResponse struct {
+	models.Base
+	UserID uuid.UUID `gorm:"type=uuid" json:"userId" `
+	PostID uuid.UUID `gorm:"type=uuid" json:"postId"`
+}
+
+// createBdaPostLikeResponse map the values of like to likePostResponse
+func createPostLikeResponse(like models.Like) LikePostResponse {
+	return LikePostResponse{
+		Base:   like.Base,
+		UserID: like.UserID,
+		PostID: like.PostID,
+	}
+}
+
 // CreatePostLike create a like
 func CreatePostLike(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -142,13 +157,24 @@ func CreatePostLike(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		bdaPostUUID, err := uuid.FromString(postID)
+		PostUUID, err := uuid.FromString(postID)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
-		like.BdaPostID = bdaPostUUID
+		like.PostID = PostUUID
 		like.UserID = user.ID
+
+		tx := db.Where("user_id= ? AND post_id= ?", like.UserID, like.PostID).Find(like)
+		if tx.Error != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		if tx.RowsAffected > 0 {
+			httpError.AlreadyLiked(c, "user_id", like.UserID.String())
+			return
+		}
 
 		result := db.Create(like)
 		if result.Error != nil {
@@ -156,7 +182,7 @@ func CreatePostLike(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, like)
+		c.JSON(200, createPostLikeResponse(*like))
 	}
 }
 
@@ -172,9 +198,13 @@ func ListPostLikes(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		count := result.RowsAffected
+		likesResponse := []interface{}{}
 
-		c.JSON(200, models.CountAndLikes{Likes: likes, Count: int(count)})
+		for _, like := range *likes {
+			likesResponse = append(likesResponse, createPostLikeResponse(like))
+		}
+
+		c.JSON(200, NewCollection(likesResponse))
 	}
 }
 
@@ -183,7 +213,7 @@ func DeletePostLike(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("likeId")
 
-		result := db.Delete(&models.Post{}, "id = ?", id)
+		result := db.Delete(&models.Like{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return

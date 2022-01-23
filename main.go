@@ -17,6 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var version = "dev"
@@ -65,7 +66,9 @@ func main() {
 		fmt.Printf("Current version: %s\n", version)
 		return
 	}
-	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		log.Fatal("DB connection failed", err)
 	}
