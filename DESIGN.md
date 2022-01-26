@@ -118,11 +118,11 @@ You can use and adapt the following article for example:
 | Name                   | Resource  | Response              | Code | Path                                | Method   | Description                       |     
 |------------------------|-----------|-----------------------|------|-------------------------------------|----------|-----------------------------------|
 | Get Current User       | `User`    | `User`                | 200  | `/me`                               | `GET`    | Get the current user              |
-| List Posts             | `Post`    | `Collection<Post>`    | 200  | `/posts`                            | `GET`    | Retrieve a collection of post     |
-| Get Post               | `Post`    | `Post`                | 200  | `/posts/:id`                        | `GET`    | Get a specific post               |
-| Create Post            | `Post`    | `Post`                | 200  | `/posts`                            | `POST`   | Create a new post                 |
-| Update Post            | `Post`    | `Post`                | 200  | `/posts/:id`                        | `PATCH`  | Update a post                     |
-| Delete Post            | `Post`    | `<empty>`             | 204  | `/posts/:id`                        | `DELETE` | Delete a post                     |
+| List Posts             | `Post`    | `Collection<Post>`    | 200  | `/topics/:id/posts`                 | `GET`    | Retrieve a collection of post     |
+| Get Post               | `Post`    | `Post`                | 200  | `/topics/:id/posts/:postId`         | `GET`    | Get a specific post               |
+| Create Post            | `Post`    | `Post`                | 200  | `/topics/:id/posts`                 | `POST`   | Create a new post                 |
+| Update Post            | `Post`    | `Post`                | 200  | `/topics/:id/posts/:postId`         | `PATCH`  | Update a post                     |
+| Delete Post            | `Post`    | `<empty>`             | 204  | `/topics/:id/posts/:postId`         | `DELETE` | Delete a post                     |
 | List Users             | `User`    | `Collection<User>`    | 200  | `/users`                            | `GET`    | Retrieve a collection of user     |
 | Get User               | `User`    | `User`                | 200  | `/users/:id`                        | `GET`    | Get a specific user               |
 | Create User            | `User`    | `User`                | 200  | `/users`                            | `POST`   | Create a new user                 |
@@ -144,7 +144,7 @@ You can use and adapt the following article for example:
 | Create Promo           | `Promo`   | `Promo`               | 200  | `/promos`                           | `POST`   | Create a new promo                |
 | Update Promo           | `Promo`   | `Promo`               | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                    |
 | Delete Promo           | `Promo`   | `<empty>`             | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                    |
-| Get Users Promo        | `Promo`   | `Users`               | 204  | `/promos/:id/users`                 | `GET` | Get users of a promo 
+| Get Users Promo        | `Promo`   | `Users`               | 204  | `/promos/:id/users`                 | `GET`    | Get users of a promo              |
 
 ### Resource
 

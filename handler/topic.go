@@ -31,7 +31,7 @@ func GetTopic(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// Listtopics respond a list of topics
+// ListTopics respond a list of topics
 func ListTopics(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		topics := &[]models.Topic{}
@@ -122,21 +122,5 @@ func UpdateTopic(db *gorm.DB) gin.HandlerFunc {
 		db.Save(topic)
 
 		c.JSON(200, topic)
-	}
-}
-
-// ListTopicPosts get posts of a topic
-func ListTopicPosts(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		posts := &[]models.Post{}
-
-		result := db.Find(posts, "topic_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, posts)
 	}
 }
