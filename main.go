@@ -143,7 +143,7 @@ func main() {
 		DELETE("/topics/:id", handler.DeleteTopic(db)).
 		GET("/topics/:id/posts", handler.ListTopicPosts(db)).
 		POST("/topics/:id/posts", handler.CreatePost(db)).
-		PATCH("/users/:id/password", handler.UpdateUserPassword(db))
+		PATCH("/users/:id/password", handler.UpdateUserHandler(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
