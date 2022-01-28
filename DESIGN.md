@@ -144,7 +144,8 @@ You can use and adapt the following article for example:
 | Create Promo           | `Promo`   | `Promo`               | 200  | `/promos`                           | `POST`   | Create a new promo                |
 | Update Promo           | `Promo`   | `Promo`               | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                    |
 | Delete Promo           | `Promo`   | `<empty>`             | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                    |
-| Get Users Promo        | `Promo`   | `Users`               | 204  | `/promos/:id/users`                 | `GET` | Get users of a promo 
+| Get Users Promo        | `Promo`   | `Users`               | 204  | `/promos/:id/users`                 | `GET`    | Get users of a promo 
+| Update User Password   | `User`    | `<empty>`             | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user 
 
 ### Resource
 
@@ -278,7 +279,10 @@ A User represents informations about a user.
 | `id`           | `string`              | no        | no      | no       | no                       | Unique identifier for a `User` resource |
 | `lastName`     | `string`              | yes       | no      | yes      | `required,min=2,max=20 ` | Last name of a `User` resource          |
 | `firstName`    | `string`              | yes       | no      | yes      | `required,min=2,max=20`  | First name of a `User` resource         |
-| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` resource              |
+| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` 
+resource          
+| `Password`     | `string`              | no       | yes      | yes      | no                       | Hashed password of a `User` 
+resource              |
 | `dateOfBirth`  | `string`              | yes       | no      | yes      | no                       | Date of birth of a `User` resource      |
 | `apprenticeAt` | `string`              | yes       | yes     | no       | no                       | Enterprise of a `User` resource         |
 | `profilPic`    | `string`              | yes       | yes     | no       | no                       | Profil pic of a `User` resource         |
@@ -307,6 +311,7 @@ A User represents informations about a user.
   "lastName": "Lovelace",
   "firstName": "Ada",
   "email": "lovelace@gmail.com",
+  "password": "$2a$10$cO3VM1aifnDImyhXqs1/xu9Oz1/NTjufIwyVivo2uuFHC2iI2DUCy",
   "dateOfBirth": "01/01/2020",
   "apprenticeAt": "Ada Tech School",
   "profilPic": "https://www.seekpng.com/png/detail/506-5061704_cool-profile-avatar-picture-cool-picture-for-profile.png",
