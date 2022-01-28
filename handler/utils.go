@@ -23,3 +23,14 @@ func GetCurrentUser(c *gin.Context) (*models.User, error) {
 
 	return u, nil
 }
+
+// Collection defines the count of items and items
+type Collection struct {
+	Items []interface{} `json:"items"`
+	Count int           `json:"count"`
+}
+
+// NewCollection create a new collection
+func NewCollection(items []interface{}) *Collection {
+	return &Collection{Items: items, Count: len(items)}
+}

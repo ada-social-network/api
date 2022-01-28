@@ -11,6 +11,26 @@ import (
 	"github.com/ada-social-network/api/models"
 )
 
+// GetTopic get a specific bda post
+func GetTopic(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id, _ := c.Params.Get("id")
+		topic := &models.Topic{}
+
+		result := db.First(topic, "id = ?", id)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "Topic", id, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		c.JSON(200, topic)
+	}
+}
+
 // ListTopics respond a list of topics
 func ListTopics(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
