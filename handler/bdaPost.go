@@ -287,11 +287,7 @@ func CreateBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		if tx.RowsAffected > 0 {
-			result := db.Delete(&models.Like{}, "id = ?", like.ID)
-			if result.Error != nil {
-				httpError.Internal(c, result.Error)
-				return
-			}
+			httpError.AlreadyLiked(c, "user_id", like.UserID.String())
 			return
 		}
 
@@ -327,7 +323,7 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-/*// DeleteBdaPostLike delete a specific like
+// DeleteBdaPostLike delete a specific like
 func DeleteBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("likeId")
@@ -340,4 +336,4 @@ func DeleteBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 
 		c.JSON(204, nil)
 	}
-}*/
+}
