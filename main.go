@@ -148,6 +148,7 @@ func main() {
 		POST("/categories/:id/topics", handler.CreateTopic(db)).
 		PATCH("/topics/:id", handler.UpdateTopic(db)).
 		DELETE("/topics/:id", handler.DeleteTopic(db)).
+		GET("/topics/:id", handler.GetTopic(db)).
 		GET("/topics/:id/posts", handler.ListTopicPosts(db)).
 		POST("/topics/:id/posts", handler.CreatePost(db))
 

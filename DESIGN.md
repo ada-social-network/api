@@ -115,6 +115,7 @@ You can use and adapt the following article for example:
 - Authentication: `true`
 - Rights: `anyone`
 
+
 | Name                   | Resource  | Response                          | Code | Path                                | Method   | Description                                |     
 |------------------------|-----------|-----------------------------------|------|-------------------------------------|----------|--------------------------------------------|
 | Get Current User       | `User`    | `User`                            | 200  | `/me`                               | `GET`    | Get the current user                       |
@@ -148,6 +149,7 @@ You can use and adapt the following article for example:
 | Create Promo           | `Promo`   | `Promo`                           | 200  | `/promos`                           | `POST`   | Create a new promo                         |
 | Update Promo           | `Promo`   | `Promo`                           | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                             |
 | Delete Promo           | `Promo`   | `<empty>`                         | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                             |
+
 
 
 ### Resource
@@ -330,16 +332,17 @@ A User represents informations about a user.
 
 A promo represents informations about a promo.
 
-| Key           | Type     | Creatable | Mutable | Required | Validation | Description                              |                           
-|---------------|----------|-----------|---------|----------|------------|------------------------------------------|
-| `id`          | `string` | no        | no      | no       | no         | Unique identifier for a `Promo` resource |
-| `promoName`   | `string` | yes       | no      | no       | no         | Promo name of a `Promo` resource         |
-| `dateOfStart` | `string` | yes       | no      | no       | no         | Date of start of a `Promo` resource      |
-| `dateOfEnd`   | `string` | yes       | no      | no       | no         | Date of end of a `Promo` resource        |
-| `biography`   | `string` | yes       | no      | no       | no         | Biography of a `Promo` resource          |
-| `createdAt`   | `string` | no        | no      | no       | no         | Date of creation in RFC 3339 format      |
-| `updatedAt`   | `string` | no        | no      | no       | no         | Date of updation in RFC 3339 format      |
-| `deletedAt`   | `string` | no        | no      | no       | no         | Date of deletion in RFC 3339 format      |
+| Key           | Type               | Creatable | Mutable | Required | Validation | Description                              |                           
+|---------------|--------------------|-----------|---------|----------|------------|------------------------------------------|
+| `id`          | `string`           | no        | no      | no       | no         | Unique identifier for a `Promo` resource |
+| `promoName`   | `string`           | yes       | no      | no       | no         | Promo name of a `Promo` resource         |
+| `dateOfStart` | `string`           | yes       | no      | no       | no         | Date of start of a `Promo` resource      |
+| `dateOfEnd`   | `string`           | yes       | no      | no       | no         | Date of end of a `Promo` resource        |
+| `biography`   | `string`           | yes       | no      | no       | no         | Biography of a `Promo` resource          |
+| `createdAt`   | `string`           | no        | no      | no       | no         | Date of creation in RFC 3339 format      |
+| `updatedAt`   | `string`           | no        | no      | no       | no         | Date of updation in RFC 3339 format      |
+| `deletedAt`   | `string`           | no        | no      | no       | no         | Date of deletion in RFC 3339 format      |
+| `users`       | `Collection<User>` | no        | no      | no       | no         | Multiple `User` of a `Promo`             |            |                                          |
 
 **Sample:**
 
@@ -352,7 +355,68 @@ A promo represents informations about a promo.
   "promoName": "Béatrice Worsley",
   "dateOfStart": "05/10/2020",
   "dateOfEnd": "30/06/2021",
-  "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School"
+  "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School",
+  "users":"['80a08d36-cfea-4898-aee3-6902fa562f1d','c20ccc44-7ac6-11ec-90d6-0242ac120003']"
+}
+```
+
+### Category
+
+A Category represents informations about a category.
+
+
+| Key         | Type                | Creatable | Mutable | Required | Validation | Description                                 |
+|-------------|---------------------|-----------|---------|----------|------------|---------------------------------------------|
+| `id`        | `string`            | no        | no      | no       | no         | Unique identifier for a `Category` resource |
+| `name`      | `string`            | yes       | no      | yes      | no         | Name of a `Category` resource               |
+| `topics`    | `Collection<Topic>` | no        | no      | no       | no         | Multiple `Topic` of a `Category`            |
+| `createdAt` | `string`            | no        | no      | no       | no         | Date of creation in RFC 3339 format         |
+| `updatedAt` | `string`            | no        | no      | no       | no         | Date of updation in RFC 3339 format         |
+| `deletedAt` | `string`            | no        | no      | no       | no         | Date of deletion in RFC 3339 format         |
+
+**Sample:**
+
+```json
+{
+    "id": "7907465b-7507-4fa4-a649-b9d90a17bb58",
+    "createdAt": "2022-01-26T22:00:54.12918234+01:00",
+    "updatedAt": "2022-01-26T22:00:54.12918234+01:00",
+    "deletedAt": null,
+    "name": "first category",
+    "topics": null
+}
+```
+
+### Topic
+
+A Topic represents informations about a topic.
+
+| Key          | Type               | Creatable | Mutable | Required | Validation                | Description                              |
+|--------------|--------------------|-----------|---------|----------|---------------------------|------------------------------------------|
+| `id`         | `string`           | no        | no      | no       | no                        | Unique identifier for a `Topic` resource |
+| `name`       | `string`           | yes       | no      | yes      | no                        | Name of a `Topic` resource               |
+| `content`    | `string`           | yes       | no      | yes      | `required,min=4,max=1024` | Content of a `Topic` resource            |
+| `userId`     | `string`           | no        | no      | no       | no                        | User id of a `Topic` resource            |
+| `categoryId` | `string`           | no        | no      | yes      | no                        | Category id of a `Topic` resource        |
+| `posts`      | `Collection<Post>` | no        | no      | no       | no                        | Multiple `Post` of a `Topic`             |
+| `createdAt`  | `string`           | no        | no      | no       | no                        | Date of creation in RFC 3339 format      |
+| `updatedAt`  | `string`           | no        | no      | no       | no                        | Date of updation in RFC 3339 format      |
+| `deletedAt`  | `string`           | no        | no      | no       | no                        | Date of deletion in RFC 3339 format      |
+
+
+**Sample:**
+
+```json
+{
+    "id": "91b61685-d73a-468d-a98e-5984218bec87",
+    "createdAt": "2022-01-28T11:33:37.280422692+01:00",
+    "updatedAt": "2022-01-28T11:33:37.280422692+01:00",
+    "deletedAt": null,
+    "name": "ceci est un topic",
+    "content": "lorem ipsum",
+    "userId": "412c0459-9dad-4720-9438-70db28e32ae3",
+    "categoryId": "7907465b-7507-4fa4-a649-b9d90a17bb58",
+    "posts": null
 }
 ```
 

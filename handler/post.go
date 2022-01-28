@@ -42,12 +42,12 @@ func CreatePost(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		post.UserID = user.ID
-		topicUuid, err := uuid.FromString(id)
+		topicUUID, err := uuid.FromString(id)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
-		post.TopicID = topicUuid
+		post.TopicID = topicUUID
 
 		result := db.Create(post)
 		if result.Error != nil {
