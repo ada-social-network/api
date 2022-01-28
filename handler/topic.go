@@ -31,7 +31,7 @@ func GetTopic(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// Listtopics respond a list of topics
+// ListTopics respond a list of topics
 func ListTopics(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		topics := &[]models.Topic{}
