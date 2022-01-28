@@ -135,6 +135,9 @@ func main() {
 		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
 		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
 		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
+		GET("/comments/:id/likes", handler.ListCommentLikes(db)).
+		POST("/comments/:id/likes", handler.CreateCommentLike(db)).
+		DELETE("/comments/:id/likes/:likeId", handler.DeleteCommentLike(db)).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		GET("/promos/:id/users", handler.ListPromoUsers(db)).

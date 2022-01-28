@@ -142,6 +142,9 @@ You can use and adapt the following article for example:
 | Delete BdaPost Comment | `Comment` | `<empty>`                         | 204  | `/bdaposts/:id/comments/:commentId` | `DELETE` | Delete a comment                           |
 | List BdaPost Comments  | `Comment` | `Collection<Comment>`             | 200  | `/bdaposts/:id/comments`            | `GET`    | Retrieve a collection of comment           |
 | Get BdaPost Comment    | `Comment` | `Comment`                         | 200  | `/bdaposts/:id/comments/:commentId` | `GET`    | Retrieve a specific comment                |
+| List Comment Likes     | `Like`    | `Collection<LikeCommentResponse>` | 200  | `/comments/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
+| Create Comment Like    | `Like`    | `LikeCommentResponse`             | 200  | `/comments/:id/likes`               | `POST`   | Create a new like                          |
+| Delete Comment Like    | `Like`    | `<empty>`                         | 204  | `/comments/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
 | List BdaPost Likes     | `Like`    | `Collection<LikeBdaPostResponse>` | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
 | Create BdaPost Like    | `Like`    | `LikeBdaPostResponse`             | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                          |
 | Delete BdaPost Like    | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
