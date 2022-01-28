@@ -20,6 +20,11 @@ func AlreadyExist(c *gin.Context, field, value string) {
 	Conflict(c, errors.New("this email is already taken"))
 }
 
+// AlreadyLiked respond with an already liked error
+func AlreadyLiked(c *gin.Context, field, value string) {
+	Conflict(c, errors.New("resource already liked by this user"))
+}
+
 // Conflict respond with a conflict error
 func Conflict(c *gin.Context, err error) {
 	HTTPError(c, http.StatusConflict, err.Error(), err)
