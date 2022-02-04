@@ -205,7 +205,7 @@ func ListPostLikes(db *gorm.DB) gin.HandlerFunc {
 			likesResponse = append(likesResponse, createPostLikeResponse(like))
 		}
 
-		c.JSON(200, NewCollection(likesResponse, true)) //true = bullshit
+		c.JSON(200, NewCollection(likesResponse)) //true = bullshit
 	}
 }
 

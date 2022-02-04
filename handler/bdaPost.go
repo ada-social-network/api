@@ -324,11 +324,11 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			httpError.Internal(c, tx.Error)
 			return
 		}
-		var isLiked bool
+		var isLikedByCurrent bool
 		if tx.RowsAffected == 0 {
-			isLiked = false
+			isLikedByCurrent = false
 		} else {
-			isLiked = true
+			isLikedByCurrent = true
 		}
 
 		likesResponse := []interface{}{}
@@ -337,7 +337,7 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			likesResponse = append(likesResponse, createBdaPostLikeResponse(like))
 		}
 
-		c.JSON(200, NewCollection(likesResponse, isLiked))
+		c.JSON(200, NewLikeCollection(likesResponse, isLikedByCurrent))
 	}
 }
 
