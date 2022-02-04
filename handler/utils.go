@@ -26,6 +26,12 @@ func GetCurrentUser(c *gin.Context) (*models.User, error) {
 
 // Collection defines the count of items and items
 type Collection struct {
+	Items []interface{} `json:"items"`
+	Count int           `json:"count"`
+}
+
+//LikeColletion defines the count of items and items and if is liked by c user
+type LikeCollection struct {
 	Items            []interface{} `json:"items"`
 	Count            int           `json:"count"`
 	isLikedByCurrent bool          `json:"isLiked"`
@@ -36,6 +42,6 @@ func NewCollection(items []interface{}) *Collection {
 	return &Collection{Items: items, Count: len(items)}
 }
 
-func NewLikeCollection(items []interface{}, isLikedByCurrent bool) *Collection {
-	return &Collection{Items: items, Count: len(items), isLikedByCurrent: isLikedByCurrent}
+func NewLikeCollection(items []interface{}, isLikedByCurrent bool) *LikeCollection {
+	return &LikeCollection{Items: items, Count: len(items), isLikedByCurrent: isLikedByCurrent}
 }
