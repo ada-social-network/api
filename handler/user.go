@@ -6,8 +6,67 @@ import (
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
+
+// UserResponse define a user response
+type UserResponse struct {
+	models.Base
+	LastName       string           `json:"lastName" binding:"required,min=2,max=20"`
+	FirstName      string           `json:"firstName" binding:"required,min=2,max=20"`
+	Email          string           `json:"email" binding:"required,email" gorm:"unique"`
+	DateOfBirth    string           `json:"dateOfBirth"`
+	Apprenticeship string           `json:"apprenticeAt"`
+	ProfilPic      string           `json:"profilPic"`
+	Biography      string           `json:"biography"`
+	CoverPic       string           `json:"coverPic"`
+	PrivateMail    string           `json:"privateMail"`
+	ProjectPerso   string           `json:"projectPerso"`
+	ProjectPro     string           `json:"projectro"`
+	Instagram      string           `json:"instagram"`
+	Facebook       string           `json:"facebook"`
+	Github         string           `json:"github"`
+	Linkedin       string           `json:"linkedin"`
+	MBTI           string           `json:"mbti"`
+	Admin          bool             `json:"isAdmin"`
+	PromoID        uuid.UUID        `gorm:"type=uuid" json:"promoId"`
+	BdaPosts       []models.BdaPost `json:"bdaPosts"`
+	Posts          []models.Post    `json:"posts"`
+	Comments       []models.Comment `json:"comments"`
+	Topics         []models.Topic   `json:"topics"`
+	Likes          []models.Like    `json:"likes"`
+}
+
+// createUserResponse map the values of user to createUserResponse
+func createUserResponse(user models.User) UserResponse {
+	return UserResponse{
+		Base:           user.Base,
+		LastName:       user.LastName,
+		FirstName:      user.FirstName,
+		Email:          user.Email,
+		DateOfBirth:    user.DateOfBirth,
+		Apprenticeship: user.Apprenticeship,
+		ProfilPic:      user.ProfilPic,
+		Biography:      user.Biography,
+		CoverPic:       user.CoverPic,
+		PrivateMail:    user.PrivateMail,
+		ProjectPerso:   user.ProjectPerso,
+		ProjectPro:     user.ProjectPro,
+		Instagram:      user.Instagram,
+		Facebook:       user.Facebook,
+		Github:         user.Github,
+		Linkedin:       user.Linkedin,
+		MBTI:           user.MBTI,
+		Admin:          user.Admin,
+		PromoID:        user.PromoID,
+		BdaPosts:       user.BdaPosts,
+		Posts:          user.Posts,
+		Comments:       user.Comments,
+		Topics:         user.Topics,
+		Likes:          user.Likes,
+	}
+}
 
 // ListUserHandler respond a list of users
 func ListUserHandler(db *gorm.DB) gin.HandlerFunc {
@@ -110,6 +169,6 @@ func UpdateUserHandler(db *gorm.DB) gin.HandlerFunc {
 			db.Save(user)
 		}
 
-		c.JSON(200, user)
+		c.JSON(200, createUserResponse(*user))
 	}
 }

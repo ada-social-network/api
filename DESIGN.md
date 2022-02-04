@@ -115,7 +115,6 @@ You can use and adapt the following article for example:
 - Authentication: `true`
 - Rights: `anyone`
 
-
 | Name                   | Resource  | Response                          | Code | Path                                | Method   | Description                                |     
 |------------------------|-----------|-----------------------------------|------|-------------------------------------|----------|--------------------------------------------|
 | Get Current User       | `User`    | `User`                            | 200  | `/me`                               | `GET`    | Get the current user                       |
@@ -129,7 +128,8 @@ You can use and adapt the following article for example:
 | Delete Post Like       | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
 | List Users             | `User`    | `Collection<User>`                | 200  | `/users`                            | `GET`    | Retrieve a collection of user              |
 | Get User               | `User`    | `User`                            | 200  | `/users/:id`                        | `GET`    | Get a specific user                        |
-| Create User            | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
+| Update User Password   | `User`    | `<empty>`                         | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user 
+|Create User             | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
 | Update User            | `User`    | `User`                            | 200  | `/users/:id`                        | `PATCH`  | Update a user                              |
 | Delete User            | `User`    | `<empty>`                         | 204  | `/users/:id`                        | `DELETE` | Delete a user  
 | Update User password   | `User`    | `User`                            | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user                             |
@@ -155,7 +155,10 @@ You can use and adapt the following article for example:
 | Delete Promo           | `Promo`   | `<empty>`                         | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                             |
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6099f1455ffce2c287900b28ef5369524ce427d0
 ### Resource
 
 All resources will be represented with the following fields:
