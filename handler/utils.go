@@ -34,7 +34,7 @@ type Collection struct {
 type LikeCollection struct {
 	Items            []interface{} `json:"items"`
 	Count            int           `json:"count"`
-	isLikedByCurrent bool          `json:"isLiked"`
+	IsLikedByCurrent bool          `json:"isLiked"`
 }
 
 // NewCollection create a new collection
@@ -43,5 +43,5 @@ func NewCollection(items []interface{}) *Collection {
 }
 
 func NewLikeCollection(items []interface{}, isLikedByCurrent bool) *LikeCollection {
-	return &LikeCollection{Items: items, Count: len(items), isLikedByCurrent: isLikedByCurrent}
+	return &LikeCollection{Items: items, Count: len(items), IsLikedByCurrent: isLikedByCurrent}
 }
