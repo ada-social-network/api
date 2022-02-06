@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"time"
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
@@ -69,13 +70,56 @@ func DeleteBdaPost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// BdaPostResponse defines the bdaPost response for the method get bdaPost
+type BdaPostResponse struct {
+	ID      uuid.UUID `json:"id"`
+	Title   string    `json:"title"`
+	Content string    `json:"content"`
+	UserID  uuid.UUID `json:"userId"`
+
+	Comments []models.Comment `json:"comments"`
+	Likes    []models.Like    `json:"likes"`
+
+	IsLikedByCurrentUser bool      `json:"isLikedByCurrentUser"`
+	CreatedAt            time.Time `json:"createdAt"`
+	UpdatedAt            time.Time `json:"updatedAt"`
+}
+
+// CreateBdaPostResponse map the values of bdaPost, likes, comments and user on a BdaPostResponse and check if the bdaPoost is likedByCurrentUser
+func CreateBdaPostResponse(bdaPost *models.BdaPost, likes []models.Like, comments []models.Comment, currentUser *models.User) BdaPostResponse {
+	isLikedByCurrentUser := false
+
+	for _, like := range bdaPost.Likes {
+		if like.UserID == currentUser.ID {
+			isLikedByCurrentUser = true
+		}
+	}
+
+	return BdaPostResponse{
+		ID:                   bdaPost.ID,
+		Title:                bdaPost.Title,
+		Content:              bdaPost.Content,
+		UserID:               bdaPost.UserID,
+		Comments:             comments,
+		Likes:                likes,
+		IsLikedByCurrentUser: isLikedByCurrentUser,
+		CreatedAt:            bdaPost.CreatedAt,
+		UpdatedAt:            bdaPost.UpdatedAt,
+	}
+}
+
 // GetBdaPost get a specific bda post
 func GetBdaPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 		bdaPost := &models.BdaPost{}
+		user, err := GetCurrentUser(c)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
 
-		result := db.First(bdaPost, "id = ?", id)
+		result := db.Preload("Likes").Preload("Comments").First(bdaPost, "id = ?", id)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				httpError.NotFound(c, "BdaPost", id, result.Error)
@@ -85,7 +129,7 @@ func GetBdaPost(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, bdaPost)
+		c.JSON(200, CreateBdaPostResponse(bdaPost, bdaPost.Likes, bdaPost.Comments, user))
 	}
 }
 
@@ -262,7 +306,7 @@ func CreateBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		bdapostID, _ := c.Params.Get("id")
+		bdaPostID, _ := c.Params.Get("id")
 
 		like := &models.Like{}
 
@@ -272,7 +316,7 @@ func CreateBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		bdaPostUUID, err := uuid.FromString(bdapostID)
+		bdaPostUUID, err := uuid.FromString(bdaPostID)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
@@ -306,29 +350,11 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 		likes := &[]models.Like{}
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
 
 		result := db.Find(likes, "bda_post_id= ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
-		}
-
-		var liked = &models.Like{}
-		tx := db.Where("user_id= ? AND bda_post_id= ?", user.ID, id).Find(liked)
-		if tx.Error != nil {
-			httpError.Internal(c, tx.Error)
-			return
-		}
-		var isLiked bool
-		if tx.RowsAffected == 0 {
-			isLiked = false
-		} else {
-			isLiked = true
 		}
 
 		likesResponse := []interface{}{}
@@ -337,7 +363,7 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			likesResponse = append(likesResponse, createBdaPostLikeResponse(like))
 		}
 
-		c.JSON(200, NewCollection(likesResponse, isLiked))
+		c.JSON(200, NewCollection(likesResponse))
 	}
 }
 
