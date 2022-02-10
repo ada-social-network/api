@@ -154,11 +154,6 @@ You can use and adapt the following article for example:
 | Update Promo           | `Promo`   | `Promo`                           | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                             |
 | Delete Promo           | `Promo`   | `<empty>`                         | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                             |
 
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 6099f1455ffce2c287900b28ef5369524ce427d0
 ### Resource
 
 All resources will be represented with the following fields:
