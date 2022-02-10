@@ -121,7 +121,7 @@ func UpdateBdaPost(db *gorm.DB) gin.HandlerFunc {
 type LikeBdaPostResponse struct {
 	models.Base
 	UserID    uuid.UUID `gorm:"type=uuid" json:"userId" `
-	BdaPostID uuid.UUID `gorm:"type=uuid" json:"bdapostId"`
+	BdaPostID uuid.UUID `gorm:"type=uuid" json:"bdaPostId"`
 }
 
 // createBdaPostLikeResponse map the values of like to likeBdaPostResponse
@@ -142,7 +142,7 @@ func CreateBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		bdapostID, _ := c.Params.Get("id")
+		bdaPostID, _ := c.Params.Get("id")
 
 		like := &models.Like{}
 
@@ -152,7 +152,7 @@ func CreateBdaPostLike(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		bdaPostUUID, err := uuid.FromString(bdapostID)
+		bdaPostUUID, err := uuid.FromString(bdaPostID)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
@@ -204,11 +204,10 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			httpError.Internal(c, tx.Error)
 			return
 		}
-		var isLikedByCurrent bool
-		if tx.RowsAffected == 0 {
-			isLikedByCurrent = false
-		} else {
-			isLikedByCurrent = true
+
+		var isLikedByCurrentUser bool
+		if tx.RowsAffected > 0 {
+			isLikedByCurrentUser = true
 		}
 
 		likesResponse := []interface{}{}
@@ -217,7 +216,7 @@ func ListBdaPostLikes(db *gorm.DB) gin.HandlerFunc {
 			likesResponse = append(likesResponse, createBdaPostLikeResponse(like))
 		}
 
-		c.JSON(200, NewLikeCollection(likesResponse, isLikedByCurrent))
+		c.JSON(200, NewLikeCollection(likesResponse, isLikedByCurrentUser))
 	}
 }
 

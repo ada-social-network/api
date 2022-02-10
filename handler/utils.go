@@ -30,11 +30,11 @@ type Collection struct {
 	Count int           `json:"count"`
 }
 
-//LikeColletion defines the count of items and items and if is liked by c user
+//LikeCollection defines the count of items and items and if is liked by current user
 type LikeCollection struct {
-	Items            []interface{} `json:"items"`
-	Count            int           `json:"count"`
-	IsLikedByCurrent bool          `json:"isLiked"`
+	Items                []interface{} `json:"items"`
+	Count                int           `json:"count"`
+	IsLikedByCurrentUser bool          `json:"isLikedByCurrentUser"`
 }
 
 // NewCollection create a new collection
@@ -42,6 +42,7 @@ func NewCollection(items []interface{}) *Collection {
 	return &Collection{Items: items, Count: len(items)}
 }
 
-func NewLikeCollection(items []interface{}, isLikedByCurrent bool) *LikeCollection {
-	return &LikeCollection{Items: items, Count: len(items), IsLikedByCurrent: isLikedByCurrent}
+// NewLikeCollection create a new collection with a boolean for likes
+func NewLikeCollection(items []interface{}, isLikedByCurrentUser bool) *LikeCollection {
+	return &LikeCollection{Items: items, Count: len(items), IsLikedByCurrentUser: isLikedByCurrentUser}
 }
