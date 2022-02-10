@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
 	"github.com/gin-gonic/gin"
