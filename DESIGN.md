@@ -115,7 +115,6 @@ You can use and adapt the following article for example:
 - Authentication: `true`
 - Rights: `anyone`
 
-
 | Name                   | Resource  | Response                          | Code | Path                                | Method   | Description                                |     
 |------------------------|-----------|-----------------------------------|------|-------------------------------------|----------|--------------------------------------------|
 | Get Current User       | `User`    | `User`                            | 200  | `/me`                               | `GET`    | Get the current user                       |
@@ -129,9 +128,11 @@ You can use and adapt the following article for example:
 | Delete Post Like       | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
 | List Users             | `User`    | `Collection<User>`                | 200  | `/users`                            | `GET`    | Retrieve a collection of user              |
 | Get User               | `User`    | `User`                            | 200  | `/users/:id`                        | `GET`    | Get a specific user                        |
-| Create User            | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
+| Update User Password   | `User`    | `<empty>`                         | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user 
+|Create User             | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
 | Update User            | `User`    | `User`                            | 200  | `/users/:id`                        | `PATCH`  | Update a user                              |
-| Delete User            | `User`    | `<empty>`                         | 204  | `/users/:id`                        | `DELETE` | Delete a user                              |
+| Delete User            | `User`    | `<empty>`                         | 204  | `/users/:id`                        | `DELETE` | Delete a user  
+| Update User password   | `User`    | `User`                            | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user                             |
 | List  BdaPosts         | `BdaPost` | `Collection<BdaPost>`             | 200  | `/bdaposts`                         | `GET`    | Retrieve a collection of bda post          |
 | Get BdaPost            | `BdaPost` | `BdaPost`                         | 200  | `/bdaposts/:id`                     | `GET`    | Get a specific bda post                    |
 | Create  BdaPost        | `BdaPost` | `BdaPost`                         | 200  | `/bdaposts`                         | `POST`   | Create a new bda post                      |
@@ -142,6 +143,9 @@ You can use and adapt the following article for example:
 | Delete BdaPost Comment | `Comment` | `<empty>`                         | 204  | `/bdaposts/:id/comments/:commentId` | `DELETE` | Delete a comment                           |
 | List BdaPost Comments  | `Comment` | `Collection<Comment>`             | 200  | `/bdaposts/:id/comments`            | `GET`    | Retrieve a collection of comment           |
 | Get BdaPost Comment    | `Comment` | `Comment`                         | 200  | `/bdaposts/:id/comments/:commentId` | `GET`    | Retrieve a specific comment                |
+| List Comment Likes     | `Like`    | `Collection<LikeCommentResponse>` | 200  | `/comments/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
+| Create Comment Like    | `Like`    | `LikeCommentResponse`             | 200  | `/comments/:id/likes`               | `POST`   | Create a new like                          |
+| Delete Comment Like    | `Like`    | `<empty>`                         | 204  | `/comments/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
 | List BdaPost Likes     | `Like`    | `Collection<LikeBdaPostResponse>` | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
 | Create BdaPost Like    | `Like`    | `LikeBdaPostResponse`             | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                          |
 | Delete BdaPost Like    | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
@@ -149,8 +153,6 @@ You can use and adapt the following article for example:
 | Create Promo           | `Promo`   | `Promo`                           | 200  | `/promos`                           | `POST`   | Create a new promo                         |
 | Update Promo           | `Promo`   | `Promo`                           | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                             |
 | Delete Promo           | `Promo`   | `<empty>`                         | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                             |
-
-
 
 ### Resource
 
@@ -284,7 +286,10 @@ A User represents informations about a user.
 | `id`           | `string`              | no        | no      | no       | no                       | Unique identifier for a `User` resource |
 | `lastName`     | `string`              | yes       | no      | yes      | `required,min=2,max=20 ` | Last name of a `User` resource          |
 | `firstName`    | `string`              | yes       | no      | yes      | `required,min=2,max=20`  | First name of a `User` resource         |
-| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` resource              |
+| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` 
+resource          
+| `Password`     | `string`              | no       | yes      | yes      | no                       | Hashed password of a `User` 
+resource              |
 | `dateOfBirth`  | `string`              | yes       | no      | yes      | no                       | Date of birth of a `User` resource      |
 | `apprenticeAt` | `string`              | yes       | yes     | no       | no                       | Enterprise of a `User` resource         |
 | `profilPic`    | `string`              | yes       | yes     | no       | no                       | Profil pic of a `User` resource         |
@@ -313,6 +318,7 @@ A User represents informations about a user.
   "lastName": "Lovelace",
   "firstName": "Ada",
   "email": "lovelace@gmail.com",
+  "password": "$2a$10$cO3VM1aifnDImyhXqs1/xu9Oz1/NTjufIwyVivo2uuFHC2iI2DUCy",
   "dateOfBirth": "01/01/2020",
   "apprenticeAt": "Ada Tech School",
   "profilPic": "https://www.seekpng.com/png/detail/506-5061704_cool-profile-avatar-picture-cool-picture-for-profile.png",

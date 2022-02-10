@@ -130,7 +130,7 @@ type LikePostResponse struct {
 	PostID uuid.UUID `gorm:"type=uuid" json:"postId"`
 }
 
-// createBdaPostLikeResponse map the values of like to likePostResponse
+// createPostLikeResponse map the values of like to likePostResponse
 func createPostLikeResponse(like models.Like) LikePostResponse {
 	return LikePostResponse{
 		Base:   like.Base,
