@@ -110,6 +110,7 @@ func main() {
 
 	protected.
 		GET("/me", handler.MeHandler(db)).
+		PATCH("/me/password", handler.UpdatePassword(db)).
 		GET("/posts", handler.ListPostHandler(db)).
 		GET("/posts/:id", handler.GetPostHandler(db)).
 		PATCH("/posts/:id", handler.UpdatePostHandler(db)).
@@ -153,8 +154,7 @@ func main() {
 		DELETE("/topics/:id", handler.DeleteTopic(db)).
 		GET("/topics/:id", handler.GetTopic(db)).
 		GET("/topics/:id/posts", handler.ListTopicPosts(db)).
-		POST("/topics/:id/posts", handler.CreatePost(db)).
-		PATCH("/users/:id/password", handler.UpdateUserHandler(db))
+		POST("/topics/:id/posts", handler.CreatePost(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

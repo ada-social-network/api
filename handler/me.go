@@ -34,3 +34,38 @@ func MeHandler(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(200, u)
 	}
 }
+
+// UpdatePasswordRequest is the request for the password change
+type UpdatePasswordRequest struct {
+	Password string `json:"password"`
+}
+
+// UpdatePassword update a specific user
+func UpdatePassword(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		user, err := GetCurrentUser(c)
+		if err != nil {
+			httpError.Internal(c, err)
+		}
+
+		updatePasswordRequest := &UpdatePasswordRequest{}
+		err = c.ShouldBindJSON(updatePasswordRequest)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		hashedPassword, err := models.HashPassword(updatePasswordRequest.Password)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		tx := db.Model(&user).Update("password", hashedPassword)
+		if tx.Error != nil {
+			httpError.Internal(c, err)
+		}
+
+		c.JSON(204, nil)
+	}
+}
