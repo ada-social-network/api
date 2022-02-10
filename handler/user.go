@@ -16,6 +16,7 @@ type UserResponse struct {
 	LastName       string           `json:"lastName" binding:"required,min=2,max=20"`
 	FirstName      string           `json:"firstName" binding:"required,min=2,max=20"`
 	Email          string           `json:"email" binding:"required,email" gorm:"unique"`
+	Password       string           `json:"password"`
 	DateOfBirth    string           `json:"dateOfBirth"`
 	Apprenticeship string           `json:"apprenticeAt"`
 	ProfilPic      string           `json:"profilPic"`
@@ -38,34 +39,39 @@ type UserResponse struct {
 	Likes          []models.Like    `json:"likes"`
 }
 
-// createUserResponse map the values of user to createUserResponse
-func createUserResponse(user models.User) UserResponse {
-	return UserResponse{
-		Base:           user.Base,
-		LastName:       user.LastName,
-		FirstName:      user.FirstName,
-		Email:          user.Email,
-		DateOfBirth:    user.DateOfBirth,
-		Apprenticeship: user.Apprenticeship,
-		ProfilPic:      user.ProfilPic,
-		Biography:      user.Biography,
-		CoverPic:       user.CoverPic,
-		PrivateMail:    user.PrivateMail,
-		ProjectPerso:   user.ProjectPerso,
-		ProjectPro:     user.ProjectPro,
-		Instagram:      user.Instagram,
-		Facebook:       user.Facebook,
-		Github:         user.Github,
-		Linkedin:       user.Linkedin,
-		MBTI:           user.MBTI,
-		Admin:          user.Admin,
-		PromoID:        user.PromoID,
-		BdaPosts:       user.BdaPosts,
-		Posts:          user.Posts,
-		Comments:       user.Comments,
-		Topics:         user.Topics,
-		Likes:          user.Likes,
+// createUserResponse map the values of all users to a list of createUserResponse
+func createUsersResponse(users []models.User) []UserResponse {
+	usersList := []UserResponse{}
+	for _, u := range users {
+		usersList = append(usersList, UserResponse{
+			Base:           u.Base,
+			LastName:       u.LastName,
+			FirstName:      u.FirstName,
+			Email:          u.Email,
+			DateOfBirth:    u.DateOfBirth,
+			Apprenticeship: u.Apprenticeship,
+			ProfilPic:      u.ProfilPic,
+			Biography:      u.Biography,
+			CoverPic:       u.CoverPic,
+			PrivateMail:    u.PrivateMail,
+			ProjectPerso:   u.ProjectPerso,
+			ProjectPro:     u.ProjectPro,
+			Instagram:      u.Instagram,
+			Facebook:       u.Facebook,
+			Github:         u.Github,
+			Linkedin:       u.Linkedin,
+			MBTI:           u.MBTI,
+			Admin:          u.Admin,
+			PromoID:        u.PromoID,
+			BdaPosts:       u.BdaPosts,
+			Posts:          u.Posts,
+			Comments:       u.Comments,
+			Topics:         u.Topics,
+			Likes:          u.Likes,
+		})
 	}
+
+	return usersList
 }
 
 // ListUserHandler respond a list of users
@@ -79,7 +85,7 @@ func ListUserHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, users)
+		c.JSON(200, createUsersResponse(*users))
 	}
 }
 
@@ -118,6 +124,36 @@ func DeleteUserHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// createUserResponse map the values of user to createUserResponse
+func createUserResponse(user models.User) UserResponse {
+	return UserResponse{
+		Base:           user.Base,
+		LastName:       user.LastName,
+		FirstName:      user.FirstName,
+		Email:          user.Email,
+		DateOfBirth:    user.DateOfBirth,
+		Apprenticeship: user.Apprenticeship,
+		ProfilPic:      user.ProfilPic,
+		Biography:      user.Biography,
+		CoverPic:       user.CoverPic,
+		PrivateMail:    user.PrivateMail,
+		ProjectPerso:   user.ProjectPerso,
+		ProjectPro:     user.ProjectPro,
+		Instagram:      user.Instagram,
+		Facebook:       user.Facebook,
+		Github:         user.Github,
+		Linkedin:       user.Linkedin,
+		MBTI:           user.MBTI,
+		Admin:          user.Admin,
+		PromoID:        user.PromoID,
+		BdaPosts:       user.BdaPosts,
+		Posts:          user.Posts,
+		Comments:       user.Comments,
+		Topics:         user.Topics,
+		Likes:          user.Likes,
+	}
+}
+
 // GetUserHandler get a specific user
 func GetUserHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -135,7 +171,7 @@ func GetUserHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, user)
+		c.JSON(200, createUserResponse(*user))
 	}
 }
 
