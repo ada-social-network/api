@@ -34,16 +34,17 @@ type User struct {
 	Likes          []Like    `json:"likes"`
 }
 
+//ComparePassword compares User.Password hash with raw password
+func (user *User) ComparePassword(password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+}
+
 // HashPassword hashes password
 func HashPassword(password string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}
-	return string(hash), nil
-}
 
-//ComparePassword compares User.Password hash with raw password
-func (user *User) ComparePassword(password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	return string(hash), nil
 }

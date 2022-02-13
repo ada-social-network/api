@@ -6,13 +6,13 @@ package handler
 
 	db.Create(&models.Post{})
 
-	ListPostHandler(db)(ctx)
+	ListPost(db)(ctx)
 
 	got := &[]models.Post{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
 
 	if len(*got) == 0 {
-		t.Error("ListPostHandler response should not be empty")
+		t.Error("ListPost response should not be empty")
 	}
 }
 
@@ -124,15 +124,15 @@ func TestDeletePostHandler(t *testing.T) {
 		},
 	}
 
-	DeletePostHandler(db)(ctx)
+	DeletePost(db)(ctx)
 
 	if res.Code != 204 {
-		t.Errorf("DeletePostHandler want:%d, got:%d", 204, res.Code)
+		t.Errorf("DeletePost want:%d, got:%d", 204, res.Code)
 	}
 
 	tx := db.First(&models.Post{}, "id = ?", 123)
 	if tx.RowsAffected != 0 {
-		t.Errorf("DeletePostHandler Post should be deleted")
+		t.Errorf("DeletePost Post should be deleted")
 	}
 }
 
@@ -200,10 +200,10 @@ func TestGetPostHandler(t *testing.T) {
 
 			ctx.Params = tt.args.params
 
-			GetPostHandler(db)(ctx)
+			GetPost(db)(ctx)
 
 			if res.Code != tt.want.code {
-				t.Errorf("GetPostHandler want:%d, got:%d", tt.want.code, res.Code)
+				t.Errorf("GetPost want:%d, got:%d", tt.want.code, res.Code)
 			}
 		})
 	}
