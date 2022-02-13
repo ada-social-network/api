@@ -10,8 +10,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// ListPostHandler respond a list of posts
-func ListPostHandler(db *gorm.DB) gin.HandlerFunc {
+// ListPost respond a list of posts
+func ListPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		posts := &[]models.Post{}
 
@@ -60,8 +60,8 @@ func CreatePost(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// DeletePostHandler delete a specific post
-func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
+// DeletePost delete a specific post
+func DeletePost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 
@@ -75,8 +75,8 @@ func DeletePostHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// GetPostHandler get a specific post
-func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
+// GetPost get a specific post
+func GetPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 		post := &models.Post{}
@@ -95,8 +95,8 @@ func GetPostHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// UpdatePostHandler update a specific post
-func UpdatePostHandler(db *gorm.DB) gin.HandlerFunc {
+// UpdatePost update a specific post
+func UpdatePost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
 		post := &models.Post{}

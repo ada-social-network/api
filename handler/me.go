@@ -10,8 +10,8 @@ import (
 	"github.com/ada-social-network/api/models"
 )
 
-// MeHandler provide informations about the connected user
-func MeHandler(db *gorm.DB) gin.HandlerFunc {
+// Me provide informations about the connected user
+func Me(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, exist := c.Get("id")
 		if !exist {
@@ -31,7 +31,7 @@ func MeHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, u)
+		c.JSON(200, createUserResponse(u))
 	}
 }
 

@@ -17,13 +17,13 @@ func TestListUserHandler(t *testing.T) {
 
 	db.Create(&models.User{})
 
-	ListUserHandler(db)(ctx)
+	ListUser(db)(ctx)
 
 	got := &[]models.User{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
 
 	if len(*got) == 0 {
-		t.Error("ListUserHandler response should not be empty")
+		t.Error("ListUser response should not be empty")
 	}
 }
 
@@ -81,18 +81,18 @@ func TestCreateUserHandler(t *testing.T) {
 
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.user)
 
-			CreateUserHandler(db)(ctx)
+			CreateUser(db)(ctx)
 
 			user := &models.User{}
 			_ = json.Unmarshal(res.Body.Bytes(), user)
 
 			if res.Code != tt.want.statusCode {
-				t.Errorf("CreateUserHandler want:%d, got:%d", tt.want.statusCode, res.Code)
+				t.Errorf("CreateUser want:%d, got:%d", tt.want.statusCode, res.Code)
 			}
 
 			tx := db.First(&models.User{}, "id = ?", user.ID)
 			if tx.RowsAffected != tt.want.count {
-				t.Errorf("CreateUserHandler want:%d, got:%d", tt.want.count, tx.RowsAffected)
+				t.Errorf("CreateUser want:%d, got:%d", tt.want.count, tx.RowsAffected)
 			}
 		})
 	}
@@ -114,14 +114,14 @@ func TestDeleteUserHandler(t *testing.T) {
 		},
 	}
 
-	DeleteUserHandler(db)(ctx)
+	DeleteUser(db)(ctx)
 
 	if res.Code != 204 {
-		t.Errorf("DeleteUserHandler want:%d, got:%d", 204, res.Code)
+		t.Errorf("DeleteUser want:%d, got:%d", 204, res.Code)
 	}
 
 	tx := db.First(&models.User{}, "id = ?", "80a08d36-cfea-4898-aee3-6902fa562f0b")
 	if tx.RowsAffected != 0 {
-		t.Errorf("DeleteUserHandler User should be deleted")
+		t.Errorf("DeleteUser User should be deleted")
 	}
 }
