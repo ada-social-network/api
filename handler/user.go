@@ -16,7 +16,6 @@ type UserResponse struct {
 	LastName       string           `json:"lastName" binding:"required,min=2,max=20"`
 	FirstName      string           `json:"firstName" binding:"required,min=2,max=20"`
 	Email          string           `json:"email" binding:"required,email" gorm:"unique"`
-	Password       string           `json:"password"`
 	DateOfBirth    string           `json:"dateOfBirth"`
 	Apprenticeship string           `json:"apprenticeAt"`
 	ProfilPic      string           `json:"profilPic"`
@@ -39,43 +38,8 @@ type UserResponse struct {
 	Likes          []models.Like    `json:"likes"`
 }
 
-// createUserResponse map the values of all users to a list of createUserResponse
-func createUsersResponse(users []models.User) []UserResponse {
-	usersList := []UserResponse{}
-	for _, u := range users {
-		usersList = append(usersList, UserResponse{
-			Base:           u.Base,
-			LastName:       u.LastName,
-			FirstName:      u.FirstName,
-			Email:          u.Email,
-			DateOfBirth:    u.DateOfBirth,
-			Apprenticeship: u.Apprenticeship,
-			ProfilPic:      u.ProfilPic,
-			Biography:      u.Biography,
-			CoverPic:       u.CoverPic,
-			PrivateMail:    u.PrivateMail,
-			ProjectPerso:   u.ProjectPerso,
-			ProjectPro:     u.ProjectPro,
-			Instagram:      u.Instagram,
-			Facebook:       u.Facebook,
-			Github:         u.Github,
-			Linkedin:       u.Linkedin,
-			MBTI:           u.MBTI,
-			Admin:          u.Admin,
-			PromoID:        u.PromoID,
-			BdaPosts:       u.BdaPosts,
-			Posts:          u.Posts,
-			Comments:       u.Comments,
-			Topics:         u.Topics,
-			Likes:          u.Likes,
-		})
-	}
-
-	return usersList
-}
-
-// ListUserHandler respond a list of users
-func ListUserHandler(db *gorm.DB) gin.HandlerFunc {
+// ListUser respond a list of users
+func ListUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		users := &[]models.User{}
 
@@ -85,15 +49,21 @@ func ListUserHandler(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(200, createUsersResponse(*users))
+		c.JSON(200, createUsersResponse(users))
 	}
 }
 
-// CreateUserHandler create a user
-func CreateUserHandler(db *gorm.DB) gin.HandlerFunc {
+// CreateUser create a user
+func CreateUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user := &models.User{}
 		err := c.ShouldBindJSON(user)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		user.Password, err = models.HashPassword(user.Password)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
@@ -109,11 +79,11 @@ func CreateUserHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// DeleteUserHandler delete a specific user
-func DeleteUserHandler(db *gorm.DB) gin.HandlerFunc {
+// DeleteUser delete a specific user
+func DeleteUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 		id, _ := c.Params.Get("id")
+
 		result := db.Delete(&models.User{}, "id = ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
@@ -124,8 +94,70 @@ func DeleteUserHandler(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// GetUser get a specific user
+func GetUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		id, _ := c.Params.Get("id")
+		user := &models.User{}
+
+		result := db.First(user, "id = ?", id)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "User", id, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		c.JSON(200, createUserResponse(user))
+	}
+}
+
+// UpdateUser update a specific user
+func UpdateUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+		id, _ := c.Params.Get("id")
+		user := &models.User{}
+
+		result := db.Omit("Password").First(user, "id = ?", id)
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				httpError.NotFound(c, "User", id, result.Error)
+			} else {
+				httpError.Internal(c, result.Error)
+			}
+			return
+		}
+
+		err := c.ShouldBindJSON(user)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+
+		// we omit password because if a hashed password is present it will be re-encrypted
+		if user.Password == "" {
+			db.Omit("Password").Save(user)
+		} else {
+			hashedPassword, err := models.HashPassword(user.Password)
+			if err != nil {
+				httpError.Internal(c, err)
+				return
+			}
+
+			user.Password = hashedPassword
+			db.Save(user)
+		}
+
+		c.JSON(200, createUserResponse(user))
+	}
+}
+
 // createUserResponse map the values of user to createUserResponse
-func createUserResponse(user models.User) UserResponse {
+func createUserResponse(user *models.User) UserResponse {
 	return UserResponse{
 		Base:           user.Base,
 		LastName:       user.LastName,
@@ -154,57 +186,12 @@ func createUserResponse(user models.User) UserResponse {
 	}
 }
 
-// GetUserHandler get a specific user
-func GetUserHandler(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		id, _ := c.Params.Get("id")
-		user := &models.User{}
-
-		result := db.First(user, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "User", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
-		}
-
-		c.JSON(200, createUserResponse(*user))
+// createUserResponse map the values of all users to a list of createUserResponse
+func createUsersResponse(users *[]models.User) []UserResponse {
+	usersList := []UserResponse{}
+	for _, u := range *users {
+		usersList = append(usersList, createUserResponse(&u))
 	}
-}
 
-// UpdateUserHandler update a specific user
-func UpdateUserHandler(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		id, _ := c.Params.Get("id")
-		user := &models.User{}
-
-		result := db.Omit("Password").First(user, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "User", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
-		}
-
-		err := c.ShouldBindJSON(user)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		// we omit password because if a hashed password is present it will be re-encrypted
-		if user.Password == "" {
-			db.Omit("Password").Save(user)
-		} else {
-			db.Save(user)
-		}
-
-		c.JSON(200, createUserResponse(*user))
-	}
+	return usersList
 }

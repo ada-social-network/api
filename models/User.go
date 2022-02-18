@@ -3,8 +3,6 @@ package models
 import (
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
-
-	"gorm.io/gorm"
 )
 
 // User define a user resource
@@ -36,25 +34,17 @@ type User struct {
 	Likes          []Like    `json:"likes"`
 }
 
-//HashPassword substitutes User.Password with its bcrypt hash
-func (user *User) HashPassword() error {
-	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	user.Password = string(hash)
-	return nil
-}
-
 //ComparePassword compares User.Password hash with raw password
 func (user *User) ComparePassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 }
 
-//BeforeSave gorm hook
-func (user *User) BeforeSave(db *gorm.DB) (err error) {
-	if user.Password != "" {
-		return user.HashPassword()
+// HashPassword hashes password
+func HashPassword(password string) (string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
 	}
-	return nil
+
+	return string(hash), nil
 }

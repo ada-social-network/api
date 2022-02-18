@@ -109,19 +109,20 @@ func main() {
 	}
 
 	protected.
-		GET("/me", handler.MeHandler(db)).
-		GET("/posts", handler.ListPostHandler(db)).
-		GET("/posts/:id", handler.GetPostHandler(db)).
-		PATCH("/posts/:id", handler.UpdatePostHandler(db)).
-		DELETE("/posts/:id", handler.DeletePostHandler(db)).
+		GET("/me", handler.Me(db)).
+		PATCH("/me/password", handler.UpdatePassword(db)).
+		GET("/posts", handler.ListPost(db)).
+		GET("/posts/:id", handler.GetPost(db)).
+		PATCH("/posts/:id", handler.UpdatePost(db)).
+		DELETE("/posts/:id", handler.DeletePost(db)).
 		GET("/posts/:id/likes", handler.ListPostLikes(db)).
 		POST("/posts/:id/likes", handler.CreatePostLike(db)).
 		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
-		GET("/users", handler.ListUserHandler(db)).
-		GET("/users/:id", handler.GetUserHandler(db)).
-		POST("/users", handler.CreateUserHandler(db)).
-		PATCH("/users/:id", handler.UpdateUserHandler(db)).
-		DELETE("/users/:id", handler.DeleteUserHandler(db)).
+		GET("/users", handler.ListUser(db)).
+		GET("/users/:id", handler.GetUser(db)).
+		POST("/users", handler.CreateUser(db)).
+		PATCH("/users/:id", handler.UpdateUser(db)).
+		DELETE("/users/:id", handler.DeleteUser(db)).
 		GET("/bdaposts", handler.ListBdaPost(db)).
 		GET("/bdaposts/:id", handler.GetBdaPost(db)).
 		POST("/bdaposts", handler.CreateBdaPost(db)).
@@ -153,8 +154,7 @@ func main() {
 		DELETE("/topics/:id", handler.DeleteTopic(db)).
 		GET("/topics/:id", handler.GetTopic(db)).
 		GET("/topics/:id/posts", handler.ListTopicPosts(db)).
-		POST("/topics/:id/posts", handler.CreatePost(db)).
-		PATCH("/users/:id/password", handler.UpdateUserHandler(db))
+		POST("/topics/:id/posts", handler.CreatePost(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

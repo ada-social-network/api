@@ -118,6 +118,7 @@ You can use and adapt the following article for example:
 | Name                   | Resource  | Response                          | Code | Path                                | Method   | Description                                |     
 |------------------------|-----------|-----------------------------------|------|-------------------------------------|----------|--------------------------------------------|
 | Get Current User       | `User`    | `User`                            | 200  | `/me`                               | `GET`    | Get the current user                       |
+| Update User password   | `User`    | `<empty>`                         | 204  | `/me/password`                      | `PATCH`  | Update password of current user            |
 | List Posts             | `Post`    | `Collection<Post>`                | 200  | `/posts`                            | `GET`    | Retrieve a collection of post              |
 | Get Post               | `Post`    | `Post`                            | 200  | `/posts/:id`                        | `GET`    | Get a specific post                        |
 | Create Post            | `Post`    | `Post`                            | 200  | `/posts`                            | `POST`   | Create a new post                          |
@@ -128,11 +129,9 @@ You can use and adapt the following article for example:
 | Delete Post Like       | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
 | List Users             | `User`    | `Collection<User>`                | 200  | `/users`                            | `GET`    | Retrieve a collection of user              |
 | Get User               | `User`    | `User`                            | 200  | `/users/:id`                        | `GET`    | Get a specific user                        |
-| Update User Password   | `User`    | `<empty>`                         | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user 
-|Create User             | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
+| Create User            | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
 | Update User            | `User`    | `User`                            | 200  | `/users/:id`                        | `PATCH`  | Update a user                              |
-| Delete User            | `User`    | `<empty>`                         | 204  | `/users/:id`                        | `DELETE` | Delete a user  
-| Update User password   | `User`    | `User`                            | 200  | `/users/:id/password`               | `PATCH`  | Update password of a user                             |
+| Delete User            | `User`    | `<empty>`                         | 204  | `/users/:id`                        | `DELETE` | Delete a user                              |
 | List  BdaPosts         | `BdaPost` | `Collection<BdaPost>`             | 200  | `/bdaposts`                         | `GET`    | Retrieve a collection of bda post          |
 | Get BdaPost            | `BdaPost` | `BdaPost`                         | 200  | `/bdaposts/:id`                     | `GET`    | Get a specific bda post                    |
 | Create  BdaPost        | `BdaPost` | `BdaPost`                         | 200  | `/bdaposts`                         | `POST`   | Create a new bda post                      |
