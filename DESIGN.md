@@ -115,53 +115,53 @@ can be done easily with an interceptor axios. You can use and adapt the followin
 - Authentication: `true`
 - Rights: `anyone`
 
-| Name                   | Resource   | Response                          | Code | Path                                | Method   | Description                                |     
-|------------------------|------------|-----------------------------------|------|-------------------------------------|----------|--------------------------------------------|
-| Get Current User       | `User`     | `User`                            | 200  | `/me`                               | `GET`    | Get the current user                       |
-| Update User password   | `User`     | `<empty>`                         | 204  | `/me/password`                      | `PATCH`  | Update password of current user            |
-| List Posts             | `Post`     | `Collection<Post>`                | 200  | `/topics/:id/posts`                 | `GET`    | Retrieve a collection of post              |
-| Get Post               | `Post`     | `Post`                            | 200  | `/topics/:id/posts/:postId`         | `GET`    | Get a specific post                        |
-| Create Post            | `Post`     | `Post`                            | 200  | `/topics/:id/posts`                 | `POST`   | Create a new post                          |
-| Update Post            | `Post`     | `Post`                            | 200  | `/topics/:id/posts/:postId`         | `PATCH`  | Update a post                              |
-| Delete Post            | `Post`     | `<empty>`                         | 204  | `/topics/:id/posts/:postId`         | `DELETE` | Delete a post                              |
-| List Post Likes        | `Like`     | `Collection<LikePostResponse>`    | 200  | `/posts/:id/likes`                  | `GET`    | Retrieve a collection of likes and a count |
-| Create Post Like       | `Like`     | `LikePostResponse`                | 200  | `/posts/:id/likes`                  | `POST`   | Create a new like                          |
-| Delete Post Like       | `Like`     | `<empty>`                         | 204  | `/posts/:id/likes/:likeId`          | `DELETE` | Delete a like                              |
-| List Users             | `User`     | `Collection<User>`                | 200  | `/users`                            | `GET`    | Retrieve a collection of user              |
-| Get User               | `User`     | `User`                            | 200  | `/users/:id`                        | `GET`    | Get a specific user                        |
-| Create User            | `User`     | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
-| Update User            | `User`     | `User`                            | 200  | `/users/:id`                        | `PATCH`  | Update a user                              |
-| Delete User            | `User`     | `<empty>`                         | 204  | `/users/:id`                        | `DELETE` | Delete a user                              |
-| List  BdaPosts         | `BdaPost`  | `Collection<BdaPost>`             | 200  | `/bdaposts`                         | `GET`    | Retrieve a collection of bda post          |
-| Get BdaPost            | `BdaPost`  | `BdaPost`                         | 200  | `/bdaposts/:id`                     | `GET`    | Get a specific bda post                    |
-| Create  BdaPost        | `BdaPost`  | `BdaPost`                         | 200  | `/bdaposts`                         | `POST`   | Create a new bda post                      |
-| Update  BdaPost        | `BdaPost`  | `BdaPost`                         | 200  | `/bdaposts/:id`                     | `PATCH`  | Update a bda post                          |
-| Delete  BdaPost        | `BdaPost`  | `<empty>`                         | 204  | `/bdaposts/:id`                     | `DELETE` | Delete a bda post                          |
-| List BdaPost Likes     | `Like`     | `Collection<LikeBdaPostResponse>` | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
-| Create BdaPost Like    | `Like`     | `LikeBdaPostResponse`             | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                          |
-| Delete BdaPost Like    | `Like`     | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |   
-| Create BdaPost Comment | `Comment`  | `Comment`                         | 200  | `/bdaposts/:id/comments`            | `POST`   | Create a new comment                       |
-| Update BdaPost Comment | `Comment`  | `Comment`                         | 200  | `/bdaposts/:id/comments/:commentId` | `PATCH`  | Update a comment                           |
-| Delete BdaPost Comment | `Comment`  | `<empty>`                         | 204  | `/bdaposts/:id/comments/:commentId` | `DELETE` | Delete a comment                           |
-| List BdaPost Comments  | `Comment`  | `Collection<Comment>`             | 200  | `/bdaposts/:id/comments`            | `GET`    | Retrieve a collection of comment           |
-| Get BdaPost Comment    | `Comment`  | `Comment`                         | 200  | `/bdaposts/:id/comments/:commentId` | `GET`    | Retrieve a specific comment                |
-| List Comment Likes     | `Like`     | `Collection<LikeCommentResponse>` | 200  | `/comments/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
-| Create Comment Like    | `Like`     | `LikeCommentResponse`             | 200  | `/comments/:id/likes`               | `POST`   | Create a new like                          |
-| Delete Comment Like    | `Like`     | `<empty>`                         | 204  | `/comments/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
-| List Promos            | `Promo`    | `Collection<Promo>`               | 200  | `/promos`                           | `GET`    | Retrieve a collection of promo             |
-| Create Promo           | `Promo`    | `Promo`                           | 200  | `/promos`                           | `POST`   | Create a new promo                         |
-| Update Promo           | `Promo`    | `Promo`                           | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                             |
-| Delete Promo           | `Promo`    | `<empty>`                         | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                             |
-| Get Users Promo        | `Promo`    | `Users`                           | 204  | `/promos/:id/users`                 | `GET`    | Get users of a promo                       |
-| Create Category        | `Category` | `Category`        v               | 200  | `/categories`                       | `POST`   | Create a category                          |
-| List Categories        | `Category` | `Collection<Category>`            | 200  | `/categories`                       | `GET`    | List all categories                        |
-| Delete Category        | `Category` | `<empty>`                         | 204  | `/categories/:id`                   | `DELETE` | Delete a category                          |
-| Create Topic           | `Topic`    | `Topic`                           | 200  | `/categories/:id/topics`            | `POST`   | Create a topic                             |
-| List Category Topics   | `Topic`    | `Collection<Topic>`               | 200  | `/categories/:id/topics`            | `GET`    | Get all the topics of a category           |
-| List Topics            | `Topic`    | `Collection<Topic>`               | 200  | `/topics`                           | `GET`    | Get all the topics                         |
-| Get Topic              | `Topic`    | `Topic`                           | 200  | `/topics/:id`                       | `GET`    | Get a specific topic                       |
-| Update Topic           | `Topic`    | `Topic`                           | 200  | `/topics/:id`                       | `PATCH`  | Update a topic                             |
-| Delete Topic           | `Topic`    | `<empty>`                         | 204  | `/topics/:id`                       | `DELETE` | Delete a topic                             |
+| Name                   | Resource   | Response               | Code | Path                                | Method   | Description                                            |     
+|------------------------|------------|------------------------|------|-------------------------------------|----------|--------------------------------------------------------|
+| Get Current User       | `User`     | `User`                 | 200  | `/me`                               | `GET`    | Get the current user                                   |
+| Update User password   | `User`     | `<empty>`              | 204  | `/me/password`                      | `PATCH`  | Update password of current user                        |
+| List Posts             | `Post`     | `Collection<Post>`     | 200  | `/topics/:id/posts`                 | `GET`    | Retrieve a collection of post                          |
+| Get Post               | `Post`     | `Post`                 | 200  | `/topics/:id/posts/:postId`         | `GET`    | Get a specific post                                    |
+| Create Post            | `Post`     | `Post`                 | 200  | `/topics/:id/posts`                 | `POST`   | Create a new post                                      |
+| Update Post            | `Post`     | `Post`                 | 200  | `/topics/:id/posts/:postId`         | `PATCH`  | Update a post                                          |
+| Delete Post            | `Post`     | `<empty>`              | 204  | `/topics/:id/posts/:postId`         | `DELETE` | Delete a post                                          |
+| List Post Likes        | `Like`     | `LikeCollection`       | 200  | `/posts/:id/likes`                  | `GET`    | Retrieve a collection of likes with a count and a bool |
+| Create Post Like       | `Like`     | `LikePostResponse`     | 200  | `/posts/:id/likes`                  | `POST`   | Create a new like                                      |
+| Delete Post Like       | `Like`     | `<empty>`              | 204  | `/posts/:id/likes/:likeId`          | `DELETE` | Delete a like                                          |
+| List Users             | `User`     | `Collection<User>`     | 200  | `/users`                            | `GET`    | Retrieve a collection of user                          |
+| Get User               | `User`     | `User`                 | 200  | `/users/:id`                        | `GET`    | Get a specific user                                    |
+| Create User            | `User`     | `User`                 | 200  | `/users`                            | `POST`   | Create a new user                                      |
+| Update User            | `User`     | `User`                 | 200  | `/users/:id`                        | `PATCH`  | Update a user                                          |
+| Delete User            | `User`     | `<empty>`              | 204  | `/users/:id`                        | `DELETE` | Delete a user                                          |
+| List  BdaPosts         | `BdaPost`  | `Collection<BdaPost>`  | 200  | `/bdaposts`                         | `GET`    | Retrieve a collection of bda post                      |
+| Get BdaPost            | `BdaPost`  | `BdaPost`              | 200  | `/bdaposts/:id`                     | `GET`    | Get a specific bda post                                |
+| Create  BdaPost        | `BdaPost`  | `BdaPost`              | 200  | `/bdaposts`                         | `POST`   | Create a new bda post                                  |
+| Update  BdaPost        | `BdaPost`  | `BdaPost`              | 200  | `/bdaposts/:id`                     | `PATCH`  | Update a bda post                                      |
+| Delete  BdaPost        | `BdaPost`  | `<empty>`              | 204  | `/bdaposts/:id`                     | `DELETE` | Delete a bda post                                      |
+| List BdaPost Likes     | `Like`     | `LikeCollection`       | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes with a count and a bool |
+| Create BdaPost Like    | `Like`     | `LikeBdaPostResponse`  | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                                      |
+| Delete BdaPost Like    | `Like`     | `<empty>`              | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                                          |   
+| Create BdaPost Comment | `Comment`  | `Comment`              | 200  | `/bdaposts/:id/comments`            | `POST`   | Create a new comment                                   |
+| Update BdaPost Comment | `Comment`  | `Comment`              | 200  | `/bdaposts/:id/comments/:commentId` | `PATCH`  | Update a comment                                       |
+| Delete BdaPost Comment | `Comment`  | `<empty>`              | 204  | `/bdaposts/:id/comments/:commentId` | `DELETE` | Delete a comment                                       |
+| List BdaPost Comments  | `Comment`  | `Collection<Comment>`  | 200  | `/bdaposts/:id/comments`            | `GET`    | Retrieve a collection of comment                       |
+| Get BdaPost Comment    | `Comment`  | `Comment`              | 200  | `/bdaposts/:id/comments/:commentId` | `GET`    | Retrieve a specific comment                            |
+| List Comment Likes     | `Like`     | `LikeCollection`       | 200  | `/comments/:id/likes`               | `GET`    | Retrieve a collection of likes with a count and a bool |
+| Create Comment Like    | `Like`     | `LikeCommentResponse`  | 200  | `/comments/:id/likes`               | `POST`   | Create a new like                                      |
+| Delete Comment Like    | `Like`     | `<empty>`              | 204  | `/comments/:id/likes/:likeId`       | `DELETE` | Delete a like                                          |
+| List Promos            | `Promo`    | `Collection<Promo>`    | 200  | `/promos`                           | `GET`    | Retrieve a collection of promo                         |
+| Create Promo           | `Promo`    | `Promo`                | 200  | `/promos`                           | `POST`   | Create a new promo                                     |
+| Update Promo           | `Promo`    | `Promo`                | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                                         |
+| Delete Promo           | `Promo`    | `<empty>`              | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                                         |
+| Get Users Promo        | `Promo`    | `Users`                | 204  | `/promos/:id/users`                 | `GET`    | Get users of a promo                                   |
+| Create Category        | `Category` | `Category`             | 200  | `/categories`                       | `POST`   | Create a category                                      |
+| List Categories        | `Category` | `Collection<Category>` | 200  | `/categories`                       | `GET`    | List all categories                                    |
+| Delete Category        | `Category` | `<empty>`              | 204  | `/categories/:id`                   | `DELETE` | Delete a category                                      |
+| Create Topic           | `Topic`    | `Topic`                | 200  | `/categories/:id/topics`            | `POST`   | Create a topic                                         |
+| List Category Topics   | `Topic`    | `Collection<Topic>`    | 200  | `/categories/:id/topics`            | `GET`    | Get all the topics of a category                       |
+| List Topics            | `Topic`    | `Collection<Topic>`    | 200  | `/topics`                           | `GET`    | Get all the topics                                     |
+| Get Topic              | `Topic`    | `Topic`                | 200  | `/topics/:id`                       | `GET`    | Get a specific topic                                   |
+| Update Topic           | `Topic`    | `Topic`                | 200  | `/topics/:id`                       | `PATCH`  | Update a topic                                         |
+| Delete Topic           | `Topic`    | `<empty>`              | 204  | `/topics/:id`                       | `DELETE` | Delete a topic                                         |
 
 ### Resource
 
