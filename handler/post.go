@@ -13,9 +13,10 @@ import (
 // ListPost respond a list of posts
 func ListPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		id, _ := c.Params.Get("id")
 		posts := &[]models.Post{}
 
-		result := db.Find(&posts)
+		result := db.Find(posts, "topic_id= ?", id)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -63,9 +64,9 @@ func CreatePost(db *gorm.DB) gin.HandlerFunc {
 // DeletePost delete a specific post
 func DeletePost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+		postID, _ := c.Params.Get("postId")
 
-		result := db.Delete(&models.Post{}, "id = ?", id)
+		result := db.Delete(&models.Post{}, "id = ?", postID)
 		if result.Error != nil {
 			httpError.Internal(c, result.Error)
 			return
@@ -78,13 +79,13 @@ func DeletePost(db *gorm.DB) gin.HandlerFunc {
 // GetPost get a specific post
 func GetPost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+		postID, _ := c.Params.Get("postID")
 		post := &models.Post{}
 
-		result := db.First(post, "id = ?", id)
+		result := db.First(post, "id = ?", postID)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Post", id, result.Error)
+				httpError.NotFound(c, "Post", postID, result.Error)
 			} else {
 				httpError.Internal(c, result.Error)
 			}
@@ -98,13 +99,13 @@ func GetPost(db *gorm.DB) gin.HandlerFunc {
 // UpdatePost update a specific post
 func UpdatePost(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+		postID, _ := c.Params.Get("postID")
 		post := &models.Post{}
 
-		result := db.First(post, "id = ?", id)
+		result := db.First(post, "id = ?", postID)
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Post", id, result.Error)
+				httpError.NotFound(c, "Post", postID, result.Error)
 			} else {
 				httpError.Internal(c, result.Error)
 			}

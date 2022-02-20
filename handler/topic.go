@@ -124,19 +124,3 @@ func UpdateTopic(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(200, topic)
 	}
 }
-
-// ListTopicPosts get posts of a topic
-func ListTopicPosts(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		posts := &[]models.Post{}
-
-		result := db.Find(posts, "topic_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, posts)
-	}
-}
