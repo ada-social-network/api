@@ -100,8 +100,8 @@ curl --location --request GET 'http://localhost:8080/auth/refresh' \
 
 ### How to refresh a token using axios
 
-A token have to be renew if we have a forbidden (403) on a request because the token is expiring after one hour. But it can be done easily with an interceptor axios.
-You can use and adapt the following article for example:
+A token have to be renew if we have a forbidden (403) on a request because the token is expiring after one hour. But it
+can be done easily with an interceptor axios. You can use and adapt the following article for example:
 [Using Axios interceptors for refreshing your API token](https://thedutchlab.com/blog/using-axios-interceptors-for-refreshing-your-api-token)
 
 ### How to use API authenticated endpoint?
@@ -119,14 +119,14 @@ You can use and adapt the following article for example:
 |------------------------|-----------|-----------------------------------|------|-------------------------------------|----------|--------------------------------------------|
 | Get Current User       | `User`    | `User`                            | 200  | `/me`                               | `GET`    | Get the current user                       |
 | Update User password   | `User`    | `<empty>`                         | 204  | `/me/password`                      | `PATCH`  | Update password of current user            |
-| List Posts             | `Post`    | `Collection<Post>`                | 200  | `/posts`                            | `GET`    | Retrieve a collection of post              |
-| Get Post               | `Post`    | `Post`                            | 200  | `/posts/:id`                        | `GET`    | Get a specific post                        |
-| Create Post            | `Post`    | `Post`                            | 200  | `/posts`                            | `POST`   | Create a new post                          |
-| Update Post            | `Post`    | `Post`                            | 200  | `/posts/:id`                        | `PATCH`  | Update a post                              |
-| Delete Post            | `Post`    | `<empty>`                         | 204  | `/posts/:id`                        | `DELETE` | Delete a post                              |
-| List Post Likes        | `Like`    | `Collection<LikePostResponse>`    | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
-| Create Post Like       | `Like`    | `LikePostResponse`                | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                          |
-| Delete Post Like       | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
+| List Posts             | `Post`    | `Collection<Post>`                | 200  | `/topics/:id/posts`                 | `GET`    | Retrieve a collection of post              |
+| Get Post               | `Post`    | `Post`                            | 200  | `/topics/:id/posts/:postId`         | `GET`    | Get a specific post                        |
+| Create Post            | `Post`    | `Post`                            | 200  | `/topics/:id/posts`                 | `POST`   | Create a new post                          |
+| Update Post            | `Post`    | `Post`                            | 200  | `/topics/:id/posts/:postId`         | `PATCH`  | Update a post                              |
+| Delete Post            | `Post`    | `<empty>`                         | 204  | `/topics/:id/posts/:postId`         | `DELETE` | Delete a post                              |
+| List Post Likes        | `Like`    | `Collection<LikePostResponse>`    | 200  | `/posts/:id/likes`                  | `GET`    | Retrieve a collection of likes and a count |
+| Create Post Like       | `Like`    | `LikePostResponse`                | 200  | `/posts/:id/likes`                  | `POST`   | Create a new like                          |
+| Delete Post Like       | `Like`    | `<empty>`                         | 204  | `/posts/:id/likes/:likeId`          | `DELETE` | Delete a like                              |
 | List Users             | `User`    | `Collection<User>`                | 200  | `/users`                            | `GET`    | Retrieve a collection of user              |
 | Get User               | `User`    | `User`                            | 200  | `/users/:id`                        | `GET`    | Get a specific user                        |
 | Create User            | `User`    | `User`                            | 200  | `/users`                            | `POST`   | Create a new user                          |
@@ -137,6 +137,9 @@ You can use and adapt the following article for example:
 | Create  BdaPost        | `BdaPost` | `BdaPost`                         | 200  | `/bdaposts`                         | `POST`   | Create a new bda post                      |
 | Update  BdaPost        | `BdaPost` | `BdaPost`                         | 200  | `/bdaposts/:id`                     | `PATCH`  | Update a bda post                          |
 | Delete  BdaPost        | `BdaPost` | `<empty>`                         | 204  | `/bdaposts/:id`                     | `DELETE` | Delete a bda post                          |
+| List BdaPost Likes     | `Like`    | `Collection<LikeBdaPostResponse>` | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
+| Create BdaPost Like    | `Like`    | `LikeBdaPostResponse`             | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                          |
+| Delete BdaPost Like    | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |   
 | Create BdaPost Comment | `Comment` | `Comment`                         | 200  | `/bdaposts/:id/comments`            | `POST`   | Create a new comment                       |
 | Update BdaPost Comment | `Comment` | `Comment`                         | 200  | `/bdaposts/:id/comments/:commentId` | `PATCH`  | Update a comment                           |
 | Delete BdaPost Comment | `Comment` | `<empty>`                         | 204  | `/bdaposts/:id/comments/:commentId` | `DELETE` | Delete a comment                           |
@@ -145,13 +148,11 @@ You can use and adapt the following article for example:
 | List Comment Likes     | `Like`    | `Collection<LikeCommentResponse>` | 200  | `/comments/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
 | Create Comment Like    | `Like`    | `LikeCommentResponse`             | 200  | `/comments/:id/likes`               | `POST`   | Create a new like                          |
 | Delete Comment Like    | `Like`    | `<empty>`                         | 204  | `/comments/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
-| List BdaPost Likes     | `Like`    | `Collection<LikeBdaPostResponse>` | 200  | `/bdaposts/:id/likes`               | `GET`    | Retrieve a collection of likes and a count |
-| Create BdaPost Like    | `Like`    | `LikeBdaPostResponse`             | 200  | `/bdaposts/:id/likes`               | `POST`   | Create a new like                          |
-| Delete BdaPost Like    | `Like`    | `<empty>`                         | 204  | `/bdaposts/:id/likes/:likeId`       | `DELETE` | Delete a like                              |
 | List Promos            | `Promo`   | `Collection<Promo>`               | 200  | `/promos`                           | `GET`    | Retrieve a collection of promo             |
 | Create Promo           | `Promo`   | `Promo`                           | 200  | `/promos`                           | `POST`   | Create a new promo                         |
 | Update Promo           | `Promo`   | `Promo`                           | 200  | `/promos/:id`                       | `PATCH`  | Update a promo                             |
 | Delete Promo           | `Promo`   | `<empty>`                         | 204  | `/promos/:id`                       | `DELETE` | Delete a promo                             |
+| Get Users Promo        | `Promo`   | `Users`                           | 204  | `/promos/:id/users`                 | `GET`    | Get users of a promo                       |
 
 ### Resource
 
@@ -285,25 +286,23 @@ A User represents informations about a user.
 | `id`           | `string`              | no        | no      | no       | no                       | Unique identifier for a `User` resource |
 | `lastName`     | `string`              | yes       | no      | yes      | `required,min=2,max=20 ` | Last name of a `User` resource          |
 | `firstName`    | `string`              | yes       | no      | yes      | `required,min=2,max=20`  | First name of a `User` resource         |
-| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` 
-resource          
-| `Password`     | `string`              | no       | yes      | yes      | no                       | Hashed password of a `User` 
-resource              |
+| `email`        | `string`              | yes       | no      | yes      | `required,email`         | Email of a `User` resource              |
+| `Password`     | `string`              | no        | yes     | yes      | no                       | Hashed password of a `User`resource     |
 | `dateOfBirth`  | `string`              | yes       | no      | yes      | no                       | Date of birth of a `User` resource      |
 | `apprenticeAt` | `string`              | yes       | yes     | no       | no                       | Enterprise of a `User` resource         |
-| `profilPic`    | `string`              | yes       | yes     | no       | no                       | Profil pic of a `User` resource         |
-| `privateMail`  | `string`              | yes       | yes     | no       | no                       | Private email of a `User` resource      |
-| `instagram`    | `string`              | yes       | yes     | no       | no                       | Instagram Page of a `User` resource     |
-| `facebook`     | `string`              | yes       | yes     | no       | no                       | Facebook Page of a `User` resource      |
-| `github`       | `string`              | yes       | yes     | no       | no                       | Github Page of a `User` resource        |
+| `profilPic`    | `string`              | yes       | yes     | no       | no                       | Profil pic of a `User` resource         | 
+| `privateMail`  | `string`              | yes       | yes     | no       | no                       | Private email of a `User` resource      |                         
+| `instagram`    | `string`              | yes       | yes     | no       | no                       | Instagram Page of a `User` resource     | 
+| `facebook`     | `string`              | yes       | yes     | no       | no                       | Facebook Page of a `User` resource      | 
+| `github`       | `string`              | yes       | yes     | no       | no                       | Github Page of a `User` resource        |    
 | `linkedin`     | `string`              | yes       | yes     | no       | no                       | Linkedin Page of a `User` resource      |
 | `mbti`         | `string`              | yes       | no      | no       | no                       | Profil mbti of a `User` resource        |
-| `isAdmin`      | `bool`                | no        | no      | no       | no                       | Profil admin of a `User` resource       |
-| `promoId`      | `string`              | yes       | no      | no       | no                       | Promo id of a `User` resource           |
-| `bdaPosts`     | `Collection<BdaPost>` | no        | no      | no       | no                       | Bda Posts of a `User` resource          |
-| `posts`        | `Collection<Post>`    | no        | no      | no       | no                       | Posts of a `User` resource              |
+| `isAdmin`      | `bool`                | no        | no      | no       | no                       | Profil admin of a `User` resource       | 
+| `promoId`      | `string`              | yes       | no      | no       | no                       | Promo id of a `User` resource           |                                  
+| `bdaPosts`     | `Collection<BdaPost>` | no        | no      | no       | no                       | Bda Posts of a `User` resource          |              
+| `posts`        | `Collection<Post>`    | no        | no      | no       | no                       | Posts of a `User` resource              |        
 | `createdAt`    | `string`              | no        | no      | no       | no                       | Date of creation in RFC 3339 format     |
-| `updatedAt`    | `string`              | no        | no      | no       | no                       | Date of updation in RFC 3339 format     |
+| `updatedAt`    | `string`              | no        | no      | no       | no                       | Date of updation in RFC 3339 format     | 
 | `deletedAt`    | `string`              | no        | no      | no       | no                       | Date of deletion in RFC 3339 format     |
 
 **Sample:**
@@ -361,14 +360,13 @@ A promo represents informations about a promo.
   "dateOfStart": "05/10/2020",
   "dateOfEnd": "30/06/2021",
   "biography": "La seconde promo qui a vu le jour à l'école Ada Tech School",
-  "users":"['80a08d36-cfea-4898-aee3-6902fa562f1d','c20ccc44-7ac6-11ec-90d6-0242ac120003']"
+  "users": "['80a08d36-cfea-4898-aee3-6902fa562f1d','c20ccc44-7ac6-11ec-90d6-0242ac120003']"
 }
 ```
 
 ### Category
 
 A Category represents informations about a category.
-
 
 | Key         | Type                | Creatable | Mutable | Required | Validation | Description                                 |
 |-------------|---------------------|-----------|---------|----------|------------|---------------------------------------------|
@@ -383,12 +381,12 @@ A Category represents informations about a category.
 
 ```json
 {
-    "id": "7907465b-7507-4fa4-a649-b9d90a17bb58",
-    "createdAt": "2022-01-26T22:00:54.12918234+01:00",
-    "updatedAt": "2022-01-26T22:00:54.12918234+01:00",
-    "deletedAt": null,
-    "name": "first category",
-    "topics": null
+  "id": "7907465b-7507-4fa4-a649-b9d90a17bb58",
+  "createdAt": "2022-01-26T22:00:54.12918234+01:00",
+  "updatedAt": "2022-01-26T22:00:54.12918234+01:00",
+  "deletedAt": null,
+  "name": "first category",
+  "topics": null
 }
 ```
 
@@ -408,20 +406,19 @@ A Topic represents informations about a topic.
 | `updatedAt`  | `string`           | no        | no      | no       | no                        | Date of updation in RFC 3339 format      |
 | `deletedAt`  | `string`           | no        | no      | no       | no                        | Date of deletion in RFC 3339 format      |
 
-
 **Sample:**
 
 ```json
 {
-    "id": "91b61685-d73a-468d-a98e-5984218bec87",
-    "createdAt": "2022-01-28T11:33:37.280422692+01:00",
-    "updatedAt": "2022-01-28T11:33:37.280422692+01:00",
-    "deletedAt": null,
-    "name": "ceci est un topic",
-    "content": "lorem ipsum",
-    "userId": "412c0459-9dad-4720-9438-70db28e32ae3",
-    "categoryId": "7907465b-7507-4fa4-a649-b9d90a17bb58",
-    "posts": null
+  "id": "91b61685-d73a-468d-a98e-5984218bec87",
+  "createdAt": "2022-01-28T11:33:37.280422692+01:00",
+  "updatedAt": "2022-01-28T11:33:37.280422692+01:00",
+  "deletedAt": null,
+  "name": "ceci est un topic",
+  "content": "lorem ipsum",
+  "userId": "412c0459-9dad-4720-9438-70db28e32ae3",
+  "categoryId": "7907465b-7507-4fa4-a649-b9d90a17bb58",
+  "posts": null
 }
 ```
 
@@ -468,18 +465,17 @@ A like represents a like on a resource(can be Post, BdaPost, Comment)
 | `updatedAt` | `string` | no        | no      | no       | no                        | Date of updation in RFC 3339 format     |
 | `deletedAt` | `string` | no        | no      | no       | no                        | Date of deletion in RFC 3339 format     |
 
-
 **Sample:**
 
 ```json
 {
-"id": "05ad6bdf-da72-42fa-867d-427d9d10a0d6",
-"createdAt": "2022-01-14T18:16:59.469363507+01:00",
-"updatedAt": "2022-01-14T18:16:59.469363507+01:00",
-"deletedAt": null,
-"userId": "622977e4-0097-44ef-9089-29debe93058a",
-"bdapostId": "5ad258c5-4db6-4cc2-8798-f731196f32de",
-"postId": "00000000-0000-0000-0000-000000000000",
-"commentId": "00000000-0000-0000-0000-000000000000"
+  "id": "05ad6bdf-da72-42fa-867d-427d9d10a0d6",
+  "createdAt": "2022-01-14T18:16:59.469363507+01:00",
+  "updatedAt": "2022-01-14T18:16:59.469363507+01:00",
+  "deletedAt": null,
+  "userId": "622977e4-0097-44ef-9089-29debe93058a",
+  "bdapostId": "5ad258c5-4db6-4cc2-8798-f731196f32de",
+  "postId": "00000000-0000-0000-0000-000000000000",
+  "commentId": "00000000-0000-0000-0000-000000000000"
 }
 ```
