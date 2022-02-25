@@ -26,7 +26,6 @@ func ListCategories(db *gorm.DB) gin.HandlerFunc {
 // CreateCategory create a category
 func CreateCategory(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		category := &models.Category{}
 
 		err := c.ShouldBindJSON(category)
