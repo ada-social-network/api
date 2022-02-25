@@ -14,6 +14,7 @@ import (
 	"github.com/ada-social-network/api/handler"
 	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -108,7 +109,8 @@ func main() {
 		protected.Use(authMiddleware.MiddlewareFunc())
 	}
 
-	commentHandler := handler.NewComment(db)
+	commentRepository := repository.NewCommentRepository(db)
+	commentHandler := handler.NewCommentHandler(commentRepository)
 
 	protected.
 		GET("/me", handler.Me(db)).
