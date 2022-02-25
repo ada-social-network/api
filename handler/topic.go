@@ -11,7 +11,7 @@ import (
 	"github.com/ada-social-network/api/models"
 )
 
-// GetTopic get a specific bda post
+// GetTopic get a specific topic
 func GetTopic(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
@@ -82,7 +82,7 @@ func CreateTopic(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// DeleteTopic delete a specific topic and maybe we need to implement that it deletes all the posts of this topics ?
+// DeleteTopic delete a specific topic
 func DeleteTopic(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
@@ -97,7 +97,7 @@ func DeleteTopic(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
-// UpdateTopic update a specific bda post
+// UpdateTopic update a specific topic
 func UpdateTopic(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, _ := c.Params.Get("id")
@@ -122,21 +122,5 @@ func UpdateTopic(db *gorm.DB) gin.HandlerFunc {
 		db.Save(topic)
 
 		c.JSON(200, topic)
-	}
-}
-
-// ListTopicPosts get posts of a topic
-func ListTopicPosts(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		posts := &[]models.Post{}
-
-		result := db.Find(posts, "topic_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, posts)
 	}
 }

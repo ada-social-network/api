@@ -111,10 +111,11 @@ func main() {
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
-		GET("/posts", handler.ListPost(db)).
-		GET("/posts/:id", handler.GetPost(db)).
-		PATCH("/posts/:id", handler.UpdatePost(db)).
-		DELETE("/posts/:id", handler.DeletePost(db)).
+		GET("/topics/:id/posts", handler.ListPost(db)).
+		GET("/topics/:id/posts/:postId", handler.GetPost(db)).
+		POST("/topics/:id/posts", handler.CreatePost(db)).
+		PATCH("/topics/:id/posts/:postId", handler.UpdatePost(db)).
+		DELETE("/topics/:id/posts/:postId", handler.DeletePost(db)).
 		GET("/posts/:id/likes", handler.ListPostLikes(db)).
 		POST("/posts/:id/likes", handler.CreatePostLike(db)).
 		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
@@ -128,14 +129,14 @@ func main() {
 		POST("/bdaposts", handler.CreateBdaPost(db)).
 		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
 		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
+		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
+		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
 		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
 		GET("/bdaposts/:id/comments/:commentId", handler.GetBdaPostComment(db)).
 		POST("/bdaposts/:id/comments", handler.CreateBdaPostComment(db)).
 		PATCH("/bdaposts/:id/comments/:commentId", handler.UpdateBdaPostComment(db)).
 		DELETE("bdaposts/:id/comments/:commentId", handler.DeleteBdaPostComment(db)).
-		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
-		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
-		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
 		GET("/comments/:id/likes", handler.ListCommentLikes(db)).
 		POST("/comments/:id/likes", handler.CreateCommentLike(db)).
 		DELETE("/comments/:id/likes/:likeId", handler.DeleteCommentLike(db)).
@@ -152,9 +153,7 @@ func main() {
 		POST("/categories/:id/topics", handler.CreateTopic(db)).
 		PATCH("/topics/:id", handler.UpdateTopic(db)).
 		DELETE("/topics/:id", handler.DeleteTopic(db)).
-		GET("/topics/:id", handler.GetTopic(db)).
-		GET("/topics/:id/posts", handler.ListTopicPosts(db)).
-		POST("/topics/:id/posts", handler.CreatePost(db))
+		GET("/topics/:id", handler.GetTopic(db))
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
