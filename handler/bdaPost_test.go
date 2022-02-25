@@ -25,7 +25,7 @@ func TestListBdaPostComments(t *testing.T) {
 		t.Error("ListBdaPostComments response should not have an error: %w", tx.Error)
 	}
 
-	ListBdaPostComments(db)(ctx)
+	NewComment(db).ListBdaPostComments(ctx)
 
 	got := &[]models.Comment{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
@@ -116,7 +116,7 @@ func TestCreateBdaPostComment(t *testing.T) {
 				Value: "80a08d36-cfea-4898-aee3-6902fa562f1d"},
 			}
 
-			CreateBdaPostComment(db)(ctx)
+			NewComment(db).CreateBdaPostComment(ctx)
 
 			comment := &models.Comment{}
 			_ = json.Unmarshal(res.Body.Bytes(), comment)
@@ -152,7 +152,7 @@ func TestDeleteBdaPostComment(t *testing.T) {
 		},
 	}
 
-	DeleteBdaPostComment(db)(ctx)
+	NewComment(db).DeleteBdaPostComment(ctx)
 
 	if res.Code != 204 {
 		t.Errorf("DeleteComment want:%d, got:%d", 204, res.Code)
@@ -229,7 +229,7 @@ func TestGetBdaPostComment(t *testing.T) {
 
 			ctx.Params = tt.args.params
 
-			GetBdaPostComment(db)(ctx)
+			NewComment(db).GetBdaPostComment(ctx)
 
 			if res.Code != tt.want.code {
 				t.Errorf("GetCommentHandler want:%d, got:%d", tt.want.code, res.Code)

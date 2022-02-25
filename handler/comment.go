@@ -10,124 +10,123 @@ import (
 	"gorm.io/gorm"
 )
 
+// Comment is a struct to define comment handler
+type Comment struct {
+	db *gorm.DB
+}
+
+// NewComment is a factory comment handler
+func NewComment(db *gorm.DB) *Comment {
+	return &Comment{db: db}
+}
+
 // CreateBdaPostComment create a comment
-func CreateBdaPostComment(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		bdapostID, _ := c.Params.Get("id")
-
-		comment := &models.Comment{}
-		err = c.ShouldBindJSON(comment)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		bdaPostUUID, err := uuid.FromString(bdapostID)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-		comment.BdaPostID = bdaPostUUID
-		comment.UserID = user.ID
-
-		result := db.Create(comment)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, comment)
+func (co *Comment) CreateBdaPostComment(c *gin.Context) {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	bdapostID, _ := c.Params.Get("id")
+
+	comment := &models.Comment{}
+	err = c.ShouldBindJSON(comment)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	bdaPostUUID, err := uuid.FromString(bdapostID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+	comment.BdaPostID = bdaPostUUID
+	comment.UserID = user.ID
+
+	result := co.db.Create(comment)
+	if result.Error != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, comment)
 }
 
 // UpdateBdaPostComment update a specific comment
-func UpdateBdaPostComment(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		commentID, _ := c.Params.Get("commentId")
-		comment := &models.Comment{}
+func (co *Comment) UpdateBdaPostComment(c *gin.Context) {
+	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+	commentID, _ := c.Params.Get("commentId")
+	comment := &models.Comment{}
 
-		result := db.First(comment, "id = ?", commentID)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Comment", commentID, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	result := co.db.First(comment, "id = ?", commentID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			httpError.NotFound(c, "Comment", commentID, result.Error)
+		} else {
+			httpError.Internal(c, result.Error)
 		}
-
-		err := c.ShouldBindJSON(comment)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		db.Save(comment)
-
-		c.JSON(200, comment)
+		return
 	}
+
+	err := c.ShouldBindJSON(comment)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	co.db.Save(comment)
+
+	c.JSON(200, comment)
 }
 
 // DeleteBdaPostComment delete a specific comment
-func DeleteBdaPostComment(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		commentID, _ := c.Params.Get("commentId")
+func (co *Comment) DeleteBdaPostComment(c *gin.Context) {
+	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+	commentID, _ := c.Params.Get("commentId")
 
-		result := db.Delete(&models.Comment{}, "id = ?", commentID)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(204, nil)
+	result := co.db.Delete(&models.Comment{}, "id = ?", commentID)
+	if result.Error != nil {
+		httpError.Internal(c, result.Error)
+		return
 	}
+
+	c.JSON(204, nil)
 }
 
 // GetBdaPostComment get a specific comment
-func GetBdaPostComment(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		commentID, _ := c.Params.Get("commentId")
+func (co *Comment) GetBdaPostComment(c *gin.Context) {
+	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+	commentID, _ := c.Params.Get("commentId")
 
-		comment := &models.Comment{}
+	comment := &models.Comment{}
 
-		result := db.First(comment, "id = ?", commentID)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Comment", commentID, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	result := co.db.First(comment, "id = ?", commentID)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			httpError.NotFound(c, "Comment", commentID, result.Error)
+		} else {
+			httpError.Internal(c, result.Error)
 		}
-
-		c.JSON(200, comment)
+		return
 	}
+
+	c.JSON(200, comment)
 }
 
 // ListBdaPostComments get comments of a bda post
-func ListBdaPostComments(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		comments := &[]models.Comment{}
+func (co *Comment) ListBdaPostComments(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	comments := &[]models.Comment{}
 
-		result := db.Find(comments, "bda_post_id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, comments)
+	result := co.db.Find(comments, "bda_post_id = ?", id)
+	if result.Error != nil {
+		httpError.Internal(c, result.Error)
+		return
 	}
 
+	c.JSON(200, comments)
 }
 
 // LikeCommentResponse defines the Like response for a BdaPost
