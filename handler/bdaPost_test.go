@@ -9,6 +9,7 @@ import (
 
 	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	commonTesting "github.com/ada-social-network/api/testing"
 )
 
@@ -25,7 +26,8 @@ func TestListBdaPostComments(t *testing.T) {
 		t.Error("ListBdaPostComments response should not have an error: %w", tx.Error)
 	}
 
-	NewComment(db).ListBdaPostComments(ctx)
+	commentRepository := repository.NewCommentRepository(db)
+	NewCommentHandler(commentRepository).ListBdaPostComments(ctx)
 
 	got := &[]models.Comment{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
@@ -116,7 +118,8 @@ func TestCreateBdaPostComment(t *testing.T) {
 				Value: "80a08d36-cfea-4898-aee3-6902fa562f1d"},
 			}
 
-			NewComment(db).CreateBdaPostComment(ctx)
+			commentRepository := repository.NewCommentRepository(db)
+			NewCommentHandler(commentRepository).CreateBdaPostComment(ctx)
 
 			comment := &models.Comment{}
 			_ = json.Unmarshal(res.Body.Bytes(), comment)
@@ -152,7 +155,8 @@ func TestDeleteBdaPostComment(t *testing.T) {
 		},
 	}
 
-	NewComment(db).DeleteBdaPostComment(ctx)
+	commentRepository := repository.NewCommentRepository(db)
+	NewCommentHandler(commentRepository).DeleteBdaPostComment(ctx)
 
 	if res.Code != 204 {
 		t.Errorf("DeleteComment want:%d, got:%d", 204, res.Code)
@@ -160,7 +164,7 @@ func TestDeleteBdaPostComment(t *testing.T) {
 
 	tx := db.First(&models.Comment{}, "id = ?", id)
 	if tx.RowsAffected != 0 {
-		t.Errorf("DeleteComment Comment should be deleted")
+		t.Errorf("DeleteComment CommentHandler should be deleted")
 	}
 }
 
@@ -229,7 +233,8 @@ func TestGetBdaPostComment(t *testing.T) {
 
 			ctx.Params = tt.args.params
 
-			NewComment(db).GetBdaPostComment(ctx)
+			commentRepository := repository.NewCommentRepository(db)
+			NewCommentHandler(commentRepository).GetBdaPostComment(ctx)
 
 			if res.Code != tt.want.code {
 				t.Errorf("GetCommentHandler want:%d, got:%d", tt.want.code, res.Code)
