@@ -108,6 +108,8 @@ func main() {
 		protected.Use(authMiddleware.MiddlewareFunc())
 	}
 
+	commentHandler := handler.NewComment(db)
+
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
@@ -132,11 +134,11 @@ func main() {
 		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
 		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
 		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
-		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
-		GET("/bdaposts/:id/comments/:commentId", handler.GetBdaPostComment(db)).
-		POST("/bdaposts/:id/comments", handler.CreateBdaPostComment(db)).
-		PATCH("/bdaposts/:id/comments/:commentId", handler.UpdateBdaPostComment(db)).
-		DELETE("bdaposts/:id/comments/:commentId", handler.DeleteBdaPostComment(db)).
+		GET("/bdaposts/:id/comments", commentHandler.ListBdaPostComments).
+		GET("/bdaposts/:id/comments/:commentId", commentHandler.GetBdaPostComment).
+		POST("/bdaposts/:id/comments", commentHandler.CreateBdaPostComment).
+		PATCH("/bdaposts/:id/comments/:commentId", commentHandler.UpdateBdaPostComment).
+		DELETE("bdaposts/:id/comments/:commentId", commentHandler.DeleteBdaPostComment).
 		GET("/comments/:id/likes", handler.ListCommentLikes(db)).
 		POST("/comments/:id/likes", handler.CreateCommentLike(db)).
 		DELETE("/comments/:id/likes/:likeId", handler.DeleteCommentLike(db)).
