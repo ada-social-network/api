@@ -61,7 +61,8 @@ Usage of ada-api:
   - test: `go test ./...`
   - build: `go build -o ada-api .`
 - For releasing the application:
-  - version: `./script/release.sh v1.0.0`
+  - version: `./scripts/release.sh v1.0.0`
+  More info about version here: [semantic version](https://www.jvandemo.com/a-simple-guide-to-semantic-versioning/)
 
 ### Hooks
 
