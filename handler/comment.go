@@ -23,37 +23,41 @@ func NewCommentHandler(repository *repository.CommentRepository) *CommentHandler
 
 // CreateBdaPostComment create a comment
 func (co *CommentHandler) CreateBdaPostComment(c *gin.Context) {
+	commentRequestURI := &models.CommentRequestURI{}
+	commentRequest := &models.CommentRequest{}
+
+	err := c.ShouldBindUri(commentRequestURI)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = c.ShouldBindJSON(commentRequest)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
 	user, err := GetCurrentUser(c)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
 	}
 
-	bdapostID, _ := c.Params.Get("id")
-
-	bdaPostUUID, err := uuid.FromString(bdapostID)
+	comment, err := co.repository.CreateComment(user.ID, uuid.FromStringOrNil(commentRequestURI.BdaPostID), commentRequest.Content)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
 	}
 
-	comment := &models.Comment{}
-	err = c.ShouldBindJSON(comment)
-	if err != nil {
-		httpError.Internal(c, err)
-		return
-	}
-
-	comment.BdaPostID = bdaPostUUID
-	comment.UserID = user.ID
-
-	err = co.repository.CreateComment(comment)
-	if err != nil {
-		httpError.Internal(c, err)
-		return
-	}
-
-	c.JSON(200, comment)
+	c.JSON(200, models.CommentResponse{
+		ID:        comment.ID,
+		UserID:    comment.UserID,
+		BdaPostID: comment.BdaPostID,
+		Content:   comment.Content,
+		CreatedAt: comment.CreatedAt,
+		UpdatedAt: comment.UpdatedAt,
+	})
 }
 
 // UpdateBdaPostComment update a specific comment

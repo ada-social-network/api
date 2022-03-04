@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/ada-social-network/api/models"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
@@ -43,8 +44,13 @@ func (co *CommentRepository) ListAllCommentsByBdaPostID(comments *[]models.Comme
 }
 
 // CreateComment create a comment in the DB
-func (co *CommentRepository) CreateComment(comment *models.Comment) error {
-	return co.db.Create(comment).Error
+func (co *CommentRepository) CreateComment(userID uuid.UUID, bdaPostID uuid.UUID, content string) (comment *models.Comment, err error) {
+	comment = &models.Comment{
+		UserID:    userID,
+		BdaPostID: bdaPostID,
+		Content:   content,
+	}
+	return comment, co.db.Create(comment).Error
 }
 
 // UpdateComment update a comment in the DB
