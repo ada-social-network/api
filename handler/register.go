@@ -32,11 +32,13 @@ func Register(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
+		hashedPassword, _ := models.HashPassword(userRegister.Password)
+
 		user := &models.User{
 			LastName:  userRegister.LastName,
 			FirstName: userRegister.FirstName,
 			Email:     userRegister.Email,
-			Password:  userRegister.Password,
+			Password:  hashedPassword,
 		}
 
 		tx := db.First(&models.User{}, "email = ?", user.Email)
