@@ -5,116 +5,127 @@ import (
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
+// BdaPostHandler is a struct to define bda post handler
+type BdaPostHandler struct {
+	repository *repository.BdaPostRepository
+}
+
+// NewBdaPostHandler is a factory for bda post handler
+func NewBdaPostHandler(repository *repository.BdaPostRepository) *BdaPostHandler {
+	return &BdaPostHandler{repository: repository}
+}
+
 // ListBdaPost respond a list of bda posts
-func ListBdaPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		bdaPosts := &[]models.BdaPost{}
+func (bp *BdaPostHandler) ListBdaPost(c *gin.Context) {
+	bdaPosts := &[]models.BdaPost{}
 
-		result := db.Find(&bdaPosts)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, bdaPosts)
+	err := bp.repository.ListAllBdaPosts(bdaPosts)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, bdaPosts)
 }
 
 // CreateBdaPost create a bda post
-func CreateBdaPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		bdaPost := &models.BdaPost{}
-
-		err = c.ShouldBindJSON(bdaPost)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		bdaPost.UserID = user.ID
-
-		result := db.Create(bdaPost)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, bdaPost)
+func (bp *BdaPostHandler) CreateBdaPost(c *gin.Context) {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	bdaPost := &models.BdaPost{}
+
+	err = c.ShouldBindJSON(bdaPost)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	bdaPost.UserID = user.ID
+
+	err = bp.repository.CreateBdaPost(bdaPost)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, bdaPost)
 }
 
 // DeleteBdaPost delete a specific bda post
-func DeleteBdaPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+func (bp *BdaPostHandler) DeleteBdaPost(c *gin.Context) {
+	id, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.BdaPost{}, "id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
+	err := bp.repository.DeleteBdaPostByID(id)
+	if err != nil {
+		if errors.Is(err, repository.ErrBdaPostNotFound) {
+			httpError.NotFound(c, "comment", id, err)
 			return
 		}
 
-		c.JSON(204, nil)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
 }
 
 // GetBdaPost get a specific bda post
-func GetBdaPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		bdaPost := &models.BdaPost{}
+func (bp *BdaPostHandler) GetBdaPost(c *gin.Context) {
+	id, _ := c.Params.Get("id")
 
-		result := db.First(bdaPost, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "BdaPost", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	bdaPost := &models.BdaPost{}
+
+	err := bp.repository.GetBdaPostByID(bdaPost, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrBdaPostNotFound) {
+			httpError.NotFound(c, "bdaPost", id, err)
+
 		}
-
-		c.JSON(200, bdaPost)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, bdaPost)
 }
 
 // UpdateBdaPost update a specific bda post
-func UpdateBdaPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		bdaPost := &models.BdaPost{}
+func (bp *BdaPostHandler) UpdateBdaPost(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	bdaPost := &models.BdaPost{}
 
-		result := db.First(bdaPost, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "BdaPost", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	err := bp.repository.GetBdaPostByID(bdaPost, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrBdaPostNotFound) {
+			httpError.NotFound(c, "bdaPost", id, err)
+
 		}
-
-		err := c.ShouldBindJSON(bdaPost)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		db.Save(bdaPost)
-
-		c.JSON(200, bdaPost)
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = c.ShouldBindJSON(bdaPost)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = bp.repository.UpdateBdaPost(bdaPost)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, bdaPost)
 }
 
 // LikeBdaPostResponse defines the Like response for a BdaPost
