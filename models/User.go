@@ -19,7 +19,7 @@ type User struct {
 	CoverPic       string    `json:"coverPic"`
 	PrivateMail    string    `json:"privateMail"`
 	ProjectPerso   string    `json:"projectPerso"`
-	ProjectPro     string    `json:"projectro"`
+	ProjectPro     string    `json:"projectPro"`
 	Instagram      string    `json:"instagram"`
 	Facebook       string    `json:"facebook"`
 	Github         string    `json:"github"`
