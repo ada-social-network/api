@@ -112,6 +112,9 @@ func main() {
 	commentRepository := repository.NewCommentRepository(db)
 	commentHandler := handler.NewCommentHandler(commentRepository)
 
+	bdaPostRepository := repository.NewBdaPostRepository(db)
+	bdaPostHandler := handler.NewBdaPostHandler(bdaPostRepository)
+
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
@@ -128,11 +131,11 @@ func main() {
 		POST("/users", handler.CreateUser(db)).
 		PATCH("/users/:id", handler.UpdateUser(db)).
 		DELETE("/users/:id", handler.DeleteUser(db)).
-		GET("/bdaposts", handler.ListBdaPost(db)).
-		GET("/bdaposts/:id", handler.GetBdaPost(db)).
-		POST("/bdaposts", handler.CreateBdaPost(db)).
-		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
-		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET("/bdaposts", bdaPostHandler.ListBdaPost).
+		GET("/bdaposts/:id", bdaPostHandler.GetBdaPost).
+		POST("/bdaposts", bdaPostHandler.CreateBdaPost).
+		PATCH("/bdaposts/:id", bdaPostHandler.UpdateBdaPost).
+		DELETE("/bdaposts/:id", bdaPostHandler.DeleteBdaPost).
 		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
 		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
 		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
