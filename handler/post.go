@@ -5,123 +5,134 @@ import (
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
-// ListPost respond a list of posts
-func ListPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		posts := &[]models.Post{}
+// PostHandler is a struct to define post handler
+type PostHandler struct {
+	repository *repository.PostRepository
+}
 
-		result := db.Find(posts, "topic_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
+// NewPostHandler is a factory post handler
+func NewPostHandler(repository *repository.PostRepository) *PostHandler {
+	return &PostHandler{repository: repository}
+}
 
-		c.JSON(200, posts)
+// ListPost get posts of a topic
+func (p *PostHandler) ListPost(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	posts := &[]models.Post{}
+
+	err := p.repository.ListAllPostsByTopicID(posts, id)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, posts)
 }
 
 // CreatePost create a post
-func CreatePost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-		id, _ := c.Params.Get("id")
-		post := &models.Post{}
-
-		err = c.ShouldBindJSON(post)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		post.UserID = user.ID
-		topicUUID, err := uuid.FromString(id)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-		post.TopicID = topicUUID
-
-		result := db.Create(post)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, post)
+func (p *PostHandler) CreatePost(c *gin.Context) {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	topicID, _ := c.Params.Get("id")
+
+	topicUUID, err := uuid.FromString(topicID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	post := &models.Post{}
+	err = c.ShouldBindJSON(post)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	post.UserID = user.ID
+	post.TopicID = topicUUID
+
+	err = p.repository.CreatePost(post)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, post)
 }
 
 // DeletePost delete a specific post
-func DeletePost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		postID, _ := c.Params.Get("postId")
+func (p *PostHandler) DeletePost(c *gin.Context) {
+	postID, _ := c.Params.Get("postId")
 
-		result := db.Delete(&models.Post{}, "id = ?", postID)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
+	err := p.repository.DeletePostByID(postID)
+	if err != nil {
+		if errors.Is(err, repository.ErrPostNotFound) {
+			httpError.NotFound(c, "post", postID, err)
 			return
 		}
 
-		c.JSON(204, nil)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
 }
 
 // GetPost get a specific post
-func GetPost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		postID, _ := c.Params.Get("postID")
-		post := &models.Post{}
+func (p *PostHandler) GetPost(c *gin.Context) {
+	postID, _ := c.Params.Get("postID")
 
-		result := db.First(post, "id = ?", postID)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Post", postID, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	post := &models.Post{}
+
+	err := p.repository.GetPostByID(post, postID)
+	if err != nil {
+		if errors.Is(err, repository.ErrPostNotFound) {
+			httpError.NotFound(c, "post", postID, err)
 		}
-
-		c.JSON(200, post)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, post)
 }
 
 // UpdatePost update a specific post
-func UpdatePost(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		postID, _ := c.Params.Get("postID")
-		post := &models.Post{}
+func (p *PostHandler) UpdatePost(c *gin.Context) {
+	postID, _ := c.Params.Get("postID")
+	post := &models.Post{}
 
-		result := db.First(post, "id = ?", postID)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Post", postID, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	err := p.repository.GetPostByID(post, postID)
+	if err != nil {
+		if errors.Is(err, repository.ErrPostNotFound) {
+			httpError.NotFound(c, "post", postID, err)
 		}
-
-		err := c.ShouldBindJSON(post)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		db.Save(post)
-
-		c.JSON(200, post)
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = c.ShouldBindJSON(post)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = p.repository.UpdatePost(post)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, post)
 }
 
 // LikePostResponse defines the Like response for a Post

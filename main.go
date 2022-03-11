@@ -115,14 +115,17 @@ func main() {
 	bdaPostRepository := repository.NewBdaPostRepository(db)
 	bdaPostHandler := handler.NewBdaPostHandler(bdaPostRepository)
 
+	postRepository := repository.NewPostRepository(db)
+	postHandler := handler.NewPostHandler(postRepository)
+
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
-		GET("/topics/:id/posts", handler.ListPost(db)).
-		GET("/topics/:id/posts/:postId", handler.GetPost(db)).
-		POST("/topics/:id/posts", handler.CreatePost(db)).
-		PATCH("/topics/:id/posts/:postId", handler.UpdatePost(db)).
-		DELETE("/topics/:id/posts/:postId", handler.DeletePost(db)).
+		GET("/topics/:id/posts", postHandler.ListPost).
+		GET("/topics/:id/posts/:postId", postHandler.GetPost).
+		POST("/topics/:id/posts", postHandler.CreatePost).
+		PATCH("/topics/:id/posts/:postId", postHandler.UpdatePost).
+		DELETE("/topics/:id/posts/:postId", postHandler.DeletePost).
 		GET("/posts/:id/likes", handler.ListPostLikes(db)).
 		POST("/posts/:id/likes", handler.CreatePostLike(db)).
 		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
