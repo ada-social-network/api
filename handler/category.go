@@ -70,6 +70,55 @@ func (ca *CategoryHandler) DeleteCategory(c *gin.Context) {
 	c.JSON(204, nil)
 }
 
+// GetCategory get a specific category
+func (ca *CategoryHandler) GetCategory(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+
+	category := &models.Category{}
+
+	err := ca.repository.GetCategoryByID(category, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrCategoryNotFound) {
+			httpError.NotFound(c, "category", id, err)
+
+		}
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, category)
+}
+
+// UpdateCategory update a specific category
+func (ca *CategoryHandler) UpdateCategory(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	category := &models.Category{}
+
+	err := ca.repository.GetCategoryByID(category, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrCategoryNotFound) {
+			httpError.NotFound(c, "category", id, err)
+
+		}
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = c.ShouldBindJSON(category)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = ca.repository.UpdateCategory(category)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, category)
+}
+
 // ListCategoryTopics get topics of a category
 func ListCategoryTopics(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {

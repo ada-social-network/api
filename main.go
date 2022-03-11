@@ -159,7 +159,9 @@ func main() {
 		PATCH("/promos/:id", handler.UpdatePromo(db)).
 		DELETE("/promos/:id", handler.DeletePromo(db)).
 		GET("/categories", categoryHandler.ListCategories).
+		GET("/categories/:id", categoryHandler.GetCategory).
 		POST("/categories", categoryHandler.CreateCategory).
+		PATCH("/categories/:id", categoryHandler.UpdateCategory).
 		DELETE("/categories/:id", categoryHandler.DeleteCategory).
 		GET("/categories/:id/topics", handler.ListCategoryTopics(db)).
 		GET("/topics", handler.ListTopics(db)).
