@@ -52,8 +52,8 @@ func (co *CommentRepository) UpdateComment(comment *models.Comment) error {
 	return co.db.Save(comment).Error
 }
 
-// DeleteByCommentID delete a comment by ID in the DB
-func (co *CommentRepository) DeleteByCommentID(commentID string) error {
+// DeleteCommentByID delete a comment by ID in the DB
+func (co *CommentRepository) DeleteCommentByID(commentID string) error {
 	tx := co.db.Delete(&models.Comment{}, "id = ?", commentID)
 	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return ErrCommentNotFound
