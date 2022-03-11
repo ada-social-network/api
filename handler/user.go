@@ -5,10 +5,21 @@ import (
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
+
+// UserHandler is a struct to define user handler
+type UserHandler struct {
+	repository *repository.UserRepository
+}
+
+// NewUserHandler is a factory user handler
+func NewUserHandler(repository *repository.UserRepository) *UserHandler {
+	return &UserHandler{repository: repository}
+}
 
 // UserResponse define a user response
 type UserResponse struct {
@@ -39,121 +50,140 @@ type UserResponse struct {
 }
 
 // ListUser respond a list of users
-func ListUser(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		users := &[]models.User{}
+func (us *UserHandler) ListUser(c *gin.Context) {
+	users := &[]models.User{}
 
-		result := db.Find(&users)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, createUsersResponse(users))
+	err := us.repository.ListAllUser(users)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, createUsersResponse(users))
+
 }
 
 // CreateUser create a user
-func CreateUser(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user := &models.User{}
-		err := c.ShouldBindJSON(user)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
+func (us *UserHandler) CreateUser(c *gin.Context) {
 
-		user.Password, err = models.HashPassword(user.Password)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
+	user := &models.User{}
 
-		result := db.Create(user)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, user)
+	err := c.ShouldBindJSON(user)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = us.repository.CreateUser(user)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	user.Password, err = models.HashPassword(user.Password)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, user)
 }
 
 // DeleteUser delete a specific user
-func DeleteUser(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+func (us *UserHandler) DeleteUser(c *gin.Context) {
 
-		result := db.Delete(&models.User{}, "id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
+	user, _ := c.Params.Get("id")
 
-		c.JSON(204, nil)
+	err := us.repository.DeleteByUserID(user)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
+
 }
 
 // GetUser get a specific user
-func GetUser(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		id, _ := c.Params.Get("id")
-		user := &models.User{}
+func (us *UserHandler) GetUser(c *gin.Context) {
+	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+	userID, _ := c.Params.Get("id")
 
-		result := db.First(user, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "User", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	user := &models.User{}
+
+	err := us.repository.GetUserByID(user, userID)
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			httpError.NotFound(c, "user", userID, err)
+
 		}
-
-		c.JSON(200, createUserResponse(user))
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, user)
 }
 
 // UpdateUser update a specific user
-func UpdateUser(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		//can be c.Request.URL.Query().Get("id") but it's a shorter notation
-		id, _ := c.Params.Get("id")
-		user := &models.User{}
+func (us *UserHandler) UpdateUser(c *gin.Context) {
+	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
+	userID, _ := c.Params.Get("id")
+	user := &models.User{}
 
-		result := db.Omit("Password").First(user, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "User", id, result.Error)
+	err := us.repository.GetUserByID(user, userID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			httpError.NotFound(c, "User", userID, err)
+		} else {
+			httpError.Internal(c, err)
+		}
+		return
+	}
+
+	err = c.ShouldBindJSON(user)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = us.repository.UpdateUser(user)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	// we omit password because if a hashed password is present it will be re-encrypted
+	if user.Password == "" {
+		err = us.repository.OmitPassword(user)
+		if err != nil {
+			if errors.Is(err, repository.ErrUserNotFound) {
+				httpError.NotFound(c, "User", userID, err)
 			} else {
-				httpError.Internal(c, result.Error)
+				httpError.Internal(c, err)
 			}
 			return
 		}
-
-		err := c.ShouldBindJSON(user)
+		err = us.repository.UpdateUser(user)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
+		}
+	} else {
+		hashedPassword, err := models.HashPassword(user.Password)
 		if err != nil {
 			httpError.Internal(c, err)
 			return
 		}
 
-		// we omit password because if a hashed password is present it will be re-encrypted
-		if user.Password == "" {
-			db.Omit("Password").Save(user)
-		} else {
-			hashedPassword, err := models.HashPassword(user.Password)
-			if err != nil {
-				httpError.Internal(c, err)
-				return
-			}
-
-			user.Password = hashedPassword
-			db.Save(user)
+		user.Password = hashedPassword
+		err = us.repository.UpdateUser(user)
+		if err != nil {
+			httpError.Internal(c, err)
+			return
 		}
-
-		c.JSON(200, createUserResponse(user))
 	}
+
+	c.JSON(200, createUserResponse(user))
 }
 
 // createUserResponse map the values of user to createUserResponse

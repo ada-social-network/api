@@ -111,6 +111,8 @@ func main() {
 
 	commentRepository := repository.NewCommentRepository(db)
 	commentHandler := handler.NewCommentHandler(commentRepository)
+	userRepository := repository.NewUserRepository(db)
+	userHandler := handler.NewUserHandler(userRepository)
 
 	protected.
 		GET("/me", handler.Me(db)).
@@ -123,11 +125,11 @@ func main() {
 		GET("/posts/:id/likes", handler.ListPostLikes(db)).
 		POST("/posts/:id/likes", handler.CreatePostLike(db)).
 		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
-		GET("/users", handler.ListUser(db)).
-		GET("/users/:id", handler.GetUser(db)).
-		POST("/users", handler.CreateUser(db)).
-		PATCH("/users/:id", handler.UpdateUser(db)).
-		DELETE("/users/:id", handler.DeleteUser(db)).
+		GET("/users", userHandler.ListUser).
+		GET("/users/:id", userHandler.GetUser).
+		POST("/users", userHandler.CreateUser).
+		PATCH("/users/:id", userHandler.UpdateUser).
+		DELETE("/users/:id", userHandler.DeleteUser).
 		GET("/bdaposts", handler.ListBdaPost(db)).
 		GET("/bdaposts/:id", handler.GetBdaPost(db)).
 		POST("/bdaposts", handler.CreateBdaPost(db)).
