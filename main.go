@@ -114,14 +114,23 @@ func main() {
 	userRepository := repository.NewUserRepository(db)
 	userHandler := handler.NewUserHandler(userRepository)
 
+	bdaPostRepository := repository.NewBdaPostRepository(db)
+	bdaPostHandler := handler.NewBdaPostHandler(bdaPostRepository)
+
+	postRepository := repository.NewPostRepository(db)
+	postHandler := handler.NewPostHandler(postRepository)
+
+	categoryRepository := repository.NewCategoryRepository(db)
+	categoryHandler := handler.NewCategoryHandler(categoryRepository)
+
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
-		GET("/topics/:id/posts", handler.ListPost(db)).
-		GET("/topics/:id/posts/:postId", handler.GetPost(db)).
-		POST("/topics/:id/posts", handler.CreatePost(db)).
-		PATCH("/topics/:id/posts/:postId", handler.UpdatePost(db)).
-		DELETE("/topics/:id/posts/:postId", handler.DeletePost(db)).
+		GET("/topics/:id/posts", postHandler.ListPost).
+		GET("/topics/:id/posts/:postId", postHandler.GetPost).
+		POST("/topics/:id/posts", postHandler.CreatePost).
+		PATCH("/topics/:id/posts/:postId", postHandler.UpdatePost).
+		DELETE("/topics/:id/posts/:postId", postHandler.DeletePost).
 		GET("/posts/:id/likes", handler.ListPostLikes(db)).
 		POST("/posts/:id/likes", handler.CreatePostLike(db)).
 		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
@@ -130,11 +139,11 @@ func main() {
 		POST("/users", userHandler.CreateUser).
 		PATCH("/users/:id", userHandler.UpdateUser).
 		DELETE("/users/:id", userHandler.DeleteUser).
-		GET("/bdaposts", handler.ListBdaPost(db)).
-		GET("/bdaposts/:id", handler.GetBdaPost(db)).
-		POST("/bdaposts", handler.CreateBdaPost(db)).
-		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
-		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
+		GET("/bdaposts", bdaPostHandler.ListBdaPost).
+		GET("/bdaposts/:id", bdaPostHandler.GetBdaPost).
+		POST("/bdaposts", bdaPostHandler.CreateBdaPost).
+		PATCH("/bdaposts/:id", bdaPostHandler.UpdateBdaPost).
+		DELETE("/bdaposts/:id", bdaPostHandler.DeleteBdaPost).
 		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
 		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
 		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
@@ -151,9 +160,11 @@ func main() {
 		GET("/promos/:id/users", handler.ListPromoUsers(db)).
 		PATCH("/promos/:id", handler.UpdatePromo(db)).
 		DELETE("/promos/:id", handler.DeletePromo(db)).
-		GET("/categories", handler.ListCategories(db)).
-		POST("/categories", handler.CreateCategory(db)).
-		DELETE("/categories/:id", handler.DeleteCategory(db)).
+		GET("/categories", categoryHandler.ListCategories).
+		GET("/categories/:id", categoryHandler.GetCategory).
+		POST("/categories", categoryHandler.CreateCategory).
+		PATCH("/categories/:id", categoryHandler.UpdateCategory).
+		DELETE("/categories/:id", categoryHandler.DeleteCategory).
 		GET("/categories/:id/topics", handler.ListCategoryTopics(db)).
 		GET("/topics", handler.ListTopics(db)).
 		POST("/categories/:id/topics", handler.CreateTopic(db)).

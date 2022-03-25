@@ -58,7 +58,6 @@ func (co *CommentHandler) CreateBdaPostComment(c *gin.Context) {
 
 // UpdateBdaPostComment update a specific comment
 func (co *CommentHandler) UpdateBdaPostComment(c *gin.Context) {
-	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 	commentID, _ := c.Params.Get("commentId")
 	comment := &models.Comment{}
 
@@ -89,10 +88,9 @@ func (co *CommentHandler) UpdateBdaPostComment(c *gin.Context) {
 
 // DeleteBdaPostComment delete a specific comment
 func (co *CommentHandler) DeleteBdaPostComment(c *gin.Context) {
-	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 	commentID, _ := c.Params.Get("commentId")
 
-	err := co.repository.DeleteByCommentID(commentID)
+	err := co.repository.DeleteCommentByID(commentID)
 	if err != nil {
 		if errors.Is(err, repository.ErrCommentNotFound) {
 			httpError.NotFound(c, "comment", commentID, err)
@@ -108,7 +106,6 @@ func (co *CommentHandler) DeleteBdaPostComment(c *gin.Context) {
 
 // GetBdaPostComment get a specific comment
 func (co *CommentHandler) GetBdaPostComment(c *gin.Context) {
-	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 	commentID, _ := c.Params.Get("commentId")
 
 	comment := &models.Comment{}
