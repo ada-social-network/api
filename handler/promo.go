@@ -5,101 +5,109 @@ import (
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-// ListPromoUsers get users from the same promo
-func ListPromoUsers(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		promoUsers := &[]models.User{}
-
-		result := db.Find(promoUsers, "promo_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, promoUsers)
-	}
+// PromoHandler is a struct to define comment handler
+type PromoHandler struct {
+	repository *repository.PromoRepository
 }
 
-// ListPromo respond a list of promo
-func ListPromo(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		promos := &[]models.Promo{}
+// NewPromoHandler is a factory comment handler
+func NewPromoHandler(repository *repository.PromoRepository) *PromoHandler {
+	return &PromoHandler{repository: repository}
+}
 
-		result := db.Find(&promos)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
+// ListPromoUsers get users from the same promo
+func (p *PromoHandler) ListPromoUsers(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	promo := &[]models.User{}
 
-		c.JSON(200, promos)
+	err := p.repository.ListAllUsersByPromoID(promo, id)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, promo)
+
+}
+
+// ListPromos respond the list of all promos
+func (p *PromoHandler) ListPromos(c *gin.Context) {
+	promos := &[]models.Promo{}
+
+	err := p.repository.ListAllPromos(promos)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, promos)
+
 }
 
 // CreatePromo create a promo
-func CreatePromo(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		promo := &models.Promo{}
+func (p *PromoHandler) CreatePromo(c *gin.Context) {
+	promo := &models.Promo{}
 
-		err := c.ShouldBindJSON(promo)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		result := db.Create(promo)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, promo)
+	err := c.ShouldBindJSON(promo)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = p.repository.CreatePromo(promo)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, promo)
+
 }
 
 // DeletePromo delete a specific promo
-func DeletePromo(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+func (p *PromoHandler) DeletePromo(c *gin.Context) {
+	promoID, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.Promo{}, "id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(204, nil)
+	err := p.repository.DeleteByPromoID(promoID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
+
 }
 
 // UpdatePromo update a specific promo
-func UpdatePromo(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		promo := &models.Promo{}
+func (p *PromoHandler) UpdatePromo(c *gin.Context) {
+	promoID, _ := c.Params.Get("id")
+	promo := &models.Promo{}
 
-		result := db.First(promo, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Promo", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
-		}
-
-		err := c.ShouldBindJSON(promo)
-		if err != nil {
+	err := p.repository.GetPromoByID(promo, promoID)
+	if err != nil {
+		if errors.Is(err, repository.ErrCommentNotFound) {
+			httpError.NotFound(c, "Promo", promoID, err)
+		} else {
 			httpError.Internal(c, err)
-			return
 		}
-
-		db.Save(promo)
-
-		c.JSON(200, promo)
+		return
 	}
+
+	err = c.ShouldBindJSON(promo)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = p.repository.UpdatePromo(promo)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, promo)
 }
