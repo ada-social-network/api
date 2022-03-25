@@ -52,7 +52,7 @@ func (p *PromoRepository) UpdatePromo(promo *models.Promo) error {
 	return p.db.Save(promo).Error
 }
 
-// DeleteByPromoID delete a comment by ID in the DB
+// DeleteByPromoID delete a promo by ID in the DB
 func (p *PromoRepository) DeleteByPromoID(promoID string) error {
 	tx := p.db.Delete(&models.Promo{}, "id = ?", promoID)
 	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {

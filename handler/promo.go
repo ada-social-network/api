@@ -9,12 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PromoHandler is a struct to define comment handler
+// PromoHandler is a struct to define promo handler
 type PromoHandler struct {
 	repository *repository.PromoRepository
 }
 
-// NewPromoHandler is a factory comment handler
+// NewPromoHandler is a factory promo handler
 func NewPromoHandler(repository *repository.PromoRepository) *PromoHandler {
 	return &PromoHandler{repository: repository}
 }
@@ -89,7 +89,7 @@ func (p *PromoHandler) UpdatePromo(c *gin.Context) {
 
 	err := p.repository.GetPromoByID(promo, promoID)
 	if err != nil {
-		if errors.Is(err, repository.ErrCommentNotFound) {
+		if errors.Is(err, repository.ErrPromoNotFound) {
 			httpError.NotFound(c, "Promo", promoID, err)
 		} else {
 			httpError.Internal(c, err)
