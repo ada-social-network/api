@@ -50,11 +50,7 @@ func (us *UserRepository) UpdateUser(user *models.User) error {
 
 // OmitPassword omit the passsword in the DB
 func (us *UserRepository) OmitPassword(user *models.User) error {
-	tx := us.db.Omit("Password")
-	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {
-		return ErrUserNotFound
-	}
-	return tx.Error
+	return us.db.Omit("Password").Error
 }
 
 // DeleteByUserID delete a comment by ID in the DB
