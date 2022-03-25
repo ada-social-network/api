@@ -121,7 +121,7 @@ ghcr.io/ada-social-network/api:latest
 
 You can run the image and bind:
  
-- your local port (e.g. `8080`) to the container port (e.g. `8080`) for accessing the container through your machine
+- Your local port (e.g. `8080`) to the container port (e.g. `8080`) for accessing the container through your machine
 
 ```shell
 # run latest
