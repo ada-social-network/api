@@ -43,14 +43,19 @@ func (us *UserRepository) ListAllUser(users *[]models.User) error {
 	return us.db.Find(users).Error
 }
 
-// UpdateUser update a user in the DB
-func (us *UserRepository) UpdateUser(user *models.User) error {
-	return us.db.Save(user).Error
+// UpdateUserWithoutPassword update a user in the DB without password
+func (us *UserRepository) UpdateUserWithoutPassword(user *models.User) error {
+	return us.db.Omit("Password").Save(user).Error
 }
 
-// OmitPassword omit the passsword in the DB
-func (us *UserRepository) OmitPassword(user *models.User) error {
-	return us.db.Omit("Password").Error
+// UpdateUserWithPassword update user password only
+func (us *UserRepository) UpdateUserWithPassword(user *models.User, password string) error {
+	passwordEncrypted, err := models.HashPassword(password)
+	if err != nil {
+		return err
+	}
+	user.Password = passwordEncrypted
+	return us.db.Save(user).Error
 }
 
 // DeleteByUserID delete a comment by ID in the DB

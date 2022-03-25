@@ -146,41 +146,19 @@ func (us *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	err = us.repository.UpdateUser(user)
-	if err != nil {
-		httpError.Internal(c, err)
-		return
+	if user.Password == "" {
+		err = us.repository.UpdateUserWithoutPassword(user)
+	} else {
+		err = us.repository.UpdateUserWithPassword(user, user.Password)
 	}
 
-	// we omit password because if a hashed password is present it will be re-encrypted
-	if user.Password == "" {
-		err = us.repository.OmitPassword(user)
-		if err != nil {
-			if errors.Is(err, repository.ErrUserNotFound) {
-				httpError.NotFound(c, "User", userID, err)
-			} else {
-				httpError.Internal(c, err)
-			}
-			return
-		}
-		err = us.repository.UpdateUser(user)
-		if err != nil {
+	if err != nil {
+		if errors.Is(err, repository.ErrUserNotFound) {
+			httpError.NotFound(c, "User", userID, err)
+		} else {
 			httpError.Internal(c, err)
-			return
 		}
-	} else {
-		hashedPassword, err := models.HashPassword(user.Password)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		user.Password = hashedPassword
-		err = us.repository.UpdateUser(user)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
+		return
 	}
 
 	c.JSON(200, createUserResponse(user))
