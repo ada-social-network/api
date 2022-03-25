@@ -121,6 +121,9 @@ func main() {
 	categoryRepository := repository.NewCategoryRepository(db)
 	categoryHandler := handler.NewCategoryHandler(categoryRepository)
 
+	topicRepository := repository.NewTopicRepository(db)
+	topicHandler := handler.NewTopicHandler(topicRepository)
+
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
@@ -163,12 +166,12 @@ func main() {
 		POST("/categories", categoryHandler.CreateCategory).
 		PATCH("/categories/:id", categoryHandler.UpdateCategory).
 		DELETE("/categories/:id", categoryHandler.DeleteCategory).
-		GET("/categories/:id/topics", handler.ListCategoryTopics(db)).
-		GET("/topics", handler.ListTopics(db)).
-		POST("/categories/:id/topics", handler.CreateTopic(db)).
-		PATCH("/topics/:id", handler.UpdateTopic(db)).
-		DELETE("/topics/:id", handler.DeleteTopic(db)).
-		GET("/topics/:id", handler.GetTopic(db))
+		GET("/categories/:id/topics", topicHandler.ListCategoryTopics).
+		GET("/topics", topicHandler.ListTopics).
+		POST("/categories/:id/topics", topicHandler.CreateTopic).
+		PATCH("/topics/:id", topicHandler.UpdateTopic).
+		DELETE("/topics/:id", topicHandler.DeleteTopic).
+		GET("/topics/:id", topicHandler.GetTopic)
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),

@@ -7,7 +7,6 @@ import (
 	"github.com/ada-social-network/api/models"
 	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 //CategoryHandler is a struct to define category handler
@@ -117,20 +116,4 @@ func (ca *CategoryHandler) UpdateCategory(c *gin.Context) {
 	}
 
 	c.JSON(200, category)
-}
-
-// ListCategoryTopics get topics of a category
-func ListCategoryTopics(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		topics := &[]models.Topic{}
-
-		result := db.Find(topics, "category_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, topics)
-	}
 }
