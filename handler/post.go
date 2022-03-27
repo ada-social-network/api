@@ -8,7 +8,6 @@ import (
 	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-	"gorm.io/gorm"
 )
 
 // PostHandler is a struct to define post handler
@@ -135,6 +134,16 @@ func (p *PostHandler) UpdatePost(c *gin.Context) {
 	c.JSON(200, post)
 }
 
+// LikeHandler is a struct to define like handler
+type LikeHandler struct {
+	repository *repository.LikeRepository
+}
+
+// NewLikeHandler is a factory like handler
+func NewLikeHandler(repository *repository.LikeRepository) *LikeHandler {
+	return &LikeHandler{repository: repository}
+}
+
 // LikePostResponse defines the Like response for a Post
 type LikePostResponse struct {
 	models.Base
@@ -152,103 +161,103 @@ func createPostLikeResponse(like models.Like) LikePostResponse {
 }
 
 // CreatePostLike create a like
-func CreatePostLike(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		postID, _ := c.Params.Get("id")
-
-		like := &models.Like{}
-
-		err = c.ShouldBindJSON(like)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		PostUUID, err := uuid.FromString(postID)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-		like.PostID = PostUUID
-		like.UserID = user.ID
-
-		tx := db.Where("user_id= ? AND post_id= ?", like.UserID, like.PostID).Find(like)
-		if tx.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		if tx.RowsAffected > 0 {
-			httpError.AlreadyLiked(c, "user_id", like.UserID.String())
-			return
-		}
-
-		result := db.Create(like)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, createPostLikeResponse(*like))
+func (l *LikeHandler) CreatePostLike(c *gin.Context) {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	postID, _ := c.Params.Get("id")
+
+	like := &models.Like{}
+
+	err = c.ShouldBindJSON(like)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	PostUUID, err := uuid.FromString(postID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+	like.PostID = PostUUID
+	like.UserID = user.ID
+
+	exist, err := l.repository.CheckLikeByUserAndPostID(like, like.UserID, like.PostID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+	if exist {
+		httpError.AlreadyLiked(c, "user_id", like.UserID.String())
+		return
+	}
+
+	err = l.repository.CreateLike(like)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, createPostLikeResponse(*like))
 }
 
 // ListPostLikes get likes of a post
-func ListPostLikes(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		likes := &[]models.Like{}
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
+func (l *LikeHandler) ListPostLikes(c *gin.Context) {
+	postID, _ := c.Params.Get("id")
+	likes := &[]models.Like{}
 
-		result := db.Find(likes, "post_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		var liked = &models.Like{}
-		tx := db.Where("user_id= ? AND post_id= ?", user.ID, id).Find(liked)
-		if tx.Error != nil {
-			httpError.Internal(c, tx.Error)
-			return
-		}
-
-		var isLikedByCurrentUser bool
-		if tx.RowsAffected > 0 {
-			isLikedByCurrentUser = true
-		}
-
-		likesResponse := []interface{}{}
-
-		for _, like := range *likes {
-			likesResponse = append(likesResponse, createPostLikeResponse(like))
-		}
-
-		c.JSON(200, NewLikeCollection(likesResponse, isLikedByCurrentUser))
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = l.repository.ListAllPostsByPostID(likes, postID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	var liked = &models.Like{}
+
+	exist, err := l.repository.CheckLikeByUserAndPostID(liked, user.ID, uuid.FromStringOrNil(postID))
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	var isLikedByCurrentUser bool
+	if exist {
+		isLikedByCurrentUser = true
+	}
+
+	likesResponse := []interface{}{}
+
+	for _, like := range *likes {
+		likesResponse = append(likesResponse, createPostLikeResponse(like))
+	}
+
+	c.JSON(200, NewLikeCollection(likesResponse, isLikedByCurrentUser))
 }
 
 // DeletePostLike delete a specific like
-func DeletePostLike(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("likeId")
+func (l *LikeHandler) DeletePostLike(c *gin.Context) {
+	id, _ := c.Params.Get("likeId")
 
-		result := db.Delete(&models.Like{}, "id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
+	err := l.repository.DeleteLikeByID(id)
+	if err != nil {
+		if errors.Is(err, repository.ErrLikeNotFound) {
+			httpError.NotFound(c, "like", id, err)
 			return
 		}
 
-		c.JSON(204, nil)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
 }

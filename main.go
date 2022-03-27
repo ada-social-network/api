@@ -124,6 +124,9 @@ func main() {
 	topicRepository := repository.NewTopicRepository(db)
 	topicHandler := handler.NewTopicHandler(topicRepository)
 
+	likeRepository := repository.NewLikeRepository(db)
+	likeHandler := handler.NewLikeHandler(likeRepository)
+
 	protected.
 		GET("/me", handler.Me(db)).
 		PATCH("/me/password", handler.UpdatePassword(db)).
@@ -132,9 +135,9 @@ func main() {
 		POST("/topics/:id/posts", postHandler.CreatePost).
 		PATCH("/topics/:id/posts/:postId", postHandler.UpdatePost).
 		DELETE("/topics/:id/posts/:postId", postHandler.DeletePost).
-		GET("/posts/:id/likes", handler.ListPostLikes(db)).
-		POST("/posts/:id/likes", handler.CreatePostLike(db)).
-		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
+		GET("/posts/:id/likes", likeHandler.ListPostLikes).
+		POST("/posts/:id/likes", likeHandler.CreatePostLike).
+		DELETE("/posts/:id/likes/:likeId", likeHandler.DeletePostLike).
 		GET("/users", handler.ListUser(db)).
 		GET("/users/:id", handler.GetUser(db)).
 		POST("/users", handler.CreateUser(db)).
