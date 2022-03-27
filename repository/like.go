@@ -55,27 +55,18 @@ func (l *LikeRepository) DeleteLikeByID(likeID string) error {
 
 // CheckLikeByUserAndPostID will check if a like by this user already exist on a post
 func (l *LikeRepository) CheckLikeByUserAndPostID(like *models.Like, userID uuid.UUID, postID uuid.UUID) (bool, error) {
-	tx := l.db.Where("user_id= ? AND post_id= ?", userID, postID).Find(like)
-	if tx.RowsAffected > 0 {
-		return true, nil
-	}
-	return false, tx.Error
+	tx := l.db.Where("user_id= ? AND post_id= ?", userID, postID).First(like)
+	return tx.RowsAffected > 0, tx.Error
 }
 
 // CheckLikeByUserAndBdaPostID will check if a like by this user already exist on a bda post
 func (l *LikeRepository) CheckLikeByUserAndBdaPostID(like *models.Like, userID uuid.UUID, bdaPostID uuid.UUID) (bool, error) {
-	tx := l.db.Where("user_id= ? AND bda_post_id= ?", userID, bdaPostID).Find(like)
-	if tx.RowsAffected > 0 {
-		return true, nil
-	}
-	return false, tx.Error
+	tx := l.db.Where("user_id= ? AND bda_post_id= ?", userID, bdaPostID).First(like)
+	return tx.RowsAffected > 0, tx.Error
 }
 
 // CheckLikeByUserAndCommentID will check if a like by this user already exist on a comment
 func (l *LikeRepository) CheckLikeByUserAndCommentID(like *models.Like, userID uuid.UUID, commentID uuid.UUID) (bool, error) {
-	tx := l.db.Where("user_id= ? AND comment_id= ?", userID, commentID).Find(like)
-	if tx.RowsAffected > 0 {
-		return true, nil
-	}
-	return false, tx.Error
+	tx := l.db.Where("user_id= ? AND comment_id= ?", userID, commentID).First(like)
+	return tx.RowsAffected > 0, tx.Error
 }

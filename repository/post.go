@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/ada-social-network/api/models"
 	"gorm.io/gorm"
@@ -57,6 +58,32 @@ func (p *PostRepository) DeletePostByID(postID string) error {
 	tx := p.db.Delete(&models.Post{}, "id = ?", postID)
 	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return ErrPostNotFound
+	}
+
+	return tx.Error
+}
+
+// CheckLikeByUserAndPostID will check if a like by this user already exist on a post
+func (p *PostRepository) CheckLikeByUserAndPostID(like *models.Like, userID uuid.UUID, postID uuid.UUID) (bool, error) {
+	tx := p.db.Where("user_id= ? AND post_id= ?", userID, postID).First(like)
+	return tx.RowsAffected > 0, tx.Error
+}
+
+// CreateLike create a like on a resource in the DB
+func (p *PostRepository) CreateLike(like *models.Like) error {
+	return p.db.Create(like).Error
+}
+
+// ListAllPostsByPostID list all likes of a specific post in the DB
+func (p *PostRepository) ListAllPostsByPostID(likes *[]models.Like, postID string) error {
+	return p.db.Find(likes, "post_id=?", postID).Error
+}
+
+// DeleteLikeByID delete a like by ID in the DB
+func (p *PostRepository) DeleteLikeByID(likeID string) error {
+	tx := p.db.Delete(&models.Like{}, "id = ?", likeID)
+	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		return ErrLikeNotFound
 	}
 
 	return tx.Error

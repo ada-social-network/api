@@ -134,16 +134,6 @@ func (p *PostHandler) UpdatePost(c *gin.Context) {
 	c.JSON(200, post)
 }
 
-// LikeHandler is a struct to define like handler
-type LikeHandler struct {
-	repository *repository.LikeRepository
-}
-
-// NewLikeHandler is a factory like handler
-func NewLikeHandler(repository *repository.LikeRepository) *LikeHandler {
-	return &LikeHandler{repository: repository}
-}
-
 // LikePostResponse defines the Like response for a Post
 type LikePostResponse struct {
 	models.Base
@@ -161,7 +151,7 @@ func createPostLikeResponse(like models.Like) LikePostResponse {
 }
 
 // CreatePostLike create a like
-func (l *LikeHandler) CreatePostLike(c *gin.Context) {
+func (p *PostHandler) CreatePostLike(c *gin.Context) {
 	user, err := GetCurrentUser(c)
 	if err != nil {
 		httpError.Internal(c, err)
@@ -169,7 +159,6 @@ func (l *LikeHandler) CreatePostLike(c *gin.Context) {
 	}
 
 	postID, _ := c.Params.Get("id")
-
 	like := &models.Like{}
 
 	err = c.ShouldBindJSON(like)
@@ -178,25 +167,21 @@ func (l *LikeHandler) CreatePostLike(c *gin.Context) {
 		return
 	}
 
-	PostUUID, err := uuid.FromString(postID)
-	if err != nil {
-		httpError.Internal(c, err)
-		return
-	}
-	like.PostID = PostUUID
+	like.PostID = uuid.FromStringOrNil(postID)
 	like.UserID = user.ID
 
-	exist, err := l.repository.CheckLikeByUserAndPostID(like, like.UserID, like.PostID)
+	exist, err := p.repository.CheckLikeByUserAndPostID(like, like.UserID, like.PostID)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
 	}
+
 	if exist {
 		httpError.AlreadyLiked(c, "user_id", like.UserID.String())
 		return
 	}
 
-	err = l.repository.CreateLike(like)
+	err = p.repository.CreateLike(like)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -206,7 +191,7 @@ func (l *LikeHandler) CreatePostLike(c *gin.Context) {
 }
 
 // ListPostLikes get likes of a post
-func (l *LikeHandler) ListPostLikes(c *gin.Context) {
+func (p *PostHandler) ListPostLikes(c *gin.Context) {
 	postID, _ := c.Params.Get("id")
 	likes := &[]models.Like{}
 
@@ -216,7 +201,7 @@ func (l *LikeHandler) ListPostLikes(c *gin.Context) {
 		return
 	}
 
-	err = l.repository.ListAllPostsByPostID(likes, postID)
+	err = p.repository.ListAllPostsByPostID(likes, postID)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -224,7 +209,7 @@ func (l *LikeHandler) ListPostLikes(c *gin.Context) {
 
 	var liked = &models.Like{}
 
-	exist, err := l.repository.CheckLikeByUserAndPostID(liked, user.ID, uuid.FromStringOrNil(postID))
+	exist, err := p.repository.CheckLikeByUserAndPostID(liked, user.ID, uuid.FromStringOrNil(postID))
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -245,10 +230,10 @@ func (l *LikeHandler) ListPostLikes(c *gin.Context) {
 }
 
 // DeletePostLike delete a specific like
-func (l *LikeHandler) DeletePostLike(c *gin.Context) {
+func (p *PostHandler) DeletePostLike(c *gin.Context) {
 	id, _ := c.Params.Get("likeId")
 
-	err := l.repository.DeleteLikeByID(id)
+	err := p.repository.DeleteLikeByID(id)
 	if err != nil {
 		if errors.Is(err, repository.ErrLikeNotFound) {
 			httpError.NotFound(c, "like", id, err)
