@@ -33,6 +33,11 @@ func (l *LikeRepository) ListAllPostsByPostID(likes *[]models.Like, postID strin
 	return l.db.Find(likes, "post_id=?", postID).Error
 }
 
+// ListAllPostsByBdaPostID list all likes of a specific bda post in the DB
+func (l *LikeRepository) ListAllPostsByBdaPostID(likes *[]models.Like, bdaPostID string) error {
+	return l.db.Find(likes, "bda_post_id=?", bdaPostID).Error
+}
+
 // DeleteLikeByID delete a like by ID in the DB
 func (l *LikeRepository) DeleteLikeByID(likeID string) error {
 	tx := l.db.Delete(&models.Like{}, "id = ?", likeID)
@@ -46,6 +51,15 @@ func (l *LikeRepository) DeleteLikeByID(likeID string) error {
 // CheckLikeByUserAndPostID will check if a like by this user already exist on a resource
 func (l *LikeRepository) CheckLikeByUserAndPostID(like *models.Like, userID uuid.UUID, postID uuid.UUID) (bool, error) {
 	tx := l.db.Where("user_id= ? AND post_id= ?", userID, postID).Find(like)
+	if tx.RowsAffected > 0 {
+		return true, nil
+	}
+	return false, tx.Error
+}
+
+// CheckLikeByUserAndBdaPostID will check if a like by this user already exist on a resource
+func (l *LikeRepository) CheckLikeByUserAndBdaPostID(like *models.Like, userID uuid.UUID, bdaPostID uuid.UUID) (bool, error) {
+	tx := l.db.Where("user_id= ? AND bda_post_id= ?", userID, bdaPostID).Find(like)
 	if tx.RowsAffected > 0 {
 		return true, nil
 	}
