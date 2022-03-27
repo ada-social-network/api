@@ -11,6 +11,7 @@ import (
 // ErrPostNotFound is an error when resource is not found
 var (
 	ErrPostNotFound = errors.New("post not found")
+	ErrLikeNotFound = errors.New("like not found")
 )
 
 // PostRepository is a repository for post resource
