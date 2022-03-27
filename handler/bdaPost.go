@@ -144,7 +144,7 @@ func createBdaPostLikeResponse(like models.Like) LikeBdaPostResponse {
 }
 
 // CreateBdaPostLike create a like
-func (l *LikeHandler) CreateBdaPostLike(c *gin.Context) {
+func (bp *BdaPostHandler) CreateBdaPostLike(c *gin.Context) {
 	user, err := GetCurrentUser(c)
 	if err != nil {
 		httpError.Internal(c, err)
@@ -169,7 +169,7 @@ func (l *LikeHandler) CreateBdaPostLike(c *gin.Context) {
 	like.BdaPostID = bdaPostUUID
 	like.UserID = user.ID
 
-	exist, err := l.repository.CheckLikeByUserAndBdaPostID(like, like.UserID, like.BdaPostID)
+	exist, err := bp.repository.CheckLikeByUserAndBdaPostID(like, like.UserID, like.BdaPostID)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -179,7 +179,7 @@ func (l *LikeHandler) CreateBdaPostLike(c *gin.Context) {
 		return
 	}
 
-	err = l.repository.CreateLike(like)
+	err = bp.repository.CreateLike(like)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -189,7 +189,7 @@ func (l *LikeHandler) CreateBdaPostLike(c *gin.Context) {
 }
 
 // ListBdaPostLikes get likes of a bda post
-func (l *LikeHandler) ListBdaPostLikes(c *gin.Context) {
+func (bp *BdaPostHandler) ListBdaPostLikes(c *gin.Context) {
 	bdaPostID, _ := c.Params.Get("id")
 	likes := &[]models.Like{}
 	user, err := GetCurrentUser(c)
@@ -198,7 +198,7 @@ func (l *LikeHandler) ListBdaPostLikes(c *gin.Context) {
 		return
 	}
 
-	err = l.repository.ListAllPostsByBdaPostID(likes, bdaPostID)
+	err = bp.repository.ListAllPostsByBdaPostID(likes, bdaPostID)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -206,7 +206,7 @@ func (l *LikeHandler) ListBdaPostLikes(c *gin.Context) {
 
 	var liked = &models.Like{}
 
-	exist, err := l.repository.CheckLikeByUserAndBdaPostID(liked, user.ID, uuid.FromStringOrNil(bdaPostID))
+	exist, err := bp.repository.CheckLikeByUserAndBdaPostID(liked, user.ID, uuid.FromStringOrNil(bdaPostID))
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -227,10 +227,10 @@ func (l *LikeHandler) ListBdaPostLikes(c *gin.Context) {
 }
 
 // DeleteBdaPostLike delete a specific like
-func (l *LikeHandler) DeleteBdaPostLike(c *gin.Context) {
+func (bp *BdaPostHandler) DeleteBdaPostLike(c *gin.Context) {
 	id, _ := c.Params.Get("likeId")
 
-	err := l.repository.DeleteLikeByID(id)
+	err := bp.repository.DeleteLikeByID(id)
 	if err != nil {
 		if errors.Is(err, repository.ErrLikeNotFound) {
 			httpError.NotFound(c, "like", id, err)

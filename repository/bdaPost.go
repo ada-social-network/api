@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/ada-social-network/api/models"
 	"gorm.io/gorm"
@@ -52,6 +53,32 @@ func (bp *BdaPostRepository) DeleteBdaPostByID(bdaPostID string) error {
 	tx := bp.db.Delete(&models.BdaPost{}, "id = ?", bdaPostID)
 	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {
 		return ErrBdaPostNotFound
+	}
+
+	return tx.Error
+}
+
+// CheckLikeByUserAndBdaPostID will check if a like by this user already exist on a bda post
+func (bp *BdaPostRepository) CheckLikeByUserAndBdaPostID(like *models.Like, userID uuid.UUID, bdaPostID uuid.UUID) (bool, error) {
+	tx := bp.db.Where("user_id= ? AND bda_post_id= ?", userID, bdaPostID).First(like)
+	return tx.RowsAffected > 0, tx.Error
+}
+
+// CreateLike create a like on a resource in the DB
+func (bp *BdaPostRepository) CreateLike(like *models.Like) error {
+	return bp.db.Create(like).Error
+}
+
+// ListAllPostsByBdaPostID list all likes of a specific bda post in the DB
+func (bp *BdaPostRepository) ListAllPostsByBdaPostID(likes *[]models.Like, bdaPostID string) error {
+	return bp.db.Find(likes, "bda_post_id=?", bdaPostID).Error
+}
+
+// DeleteLikeByID delete a like by ID in the DB
+func (bp *BdaPostRepository) DeleteLikeByID(likeID string) error {
+	tx := bp.db.Delete(&models.Like{}, "id = ?", likeID)
+	if tx.Error != nil && errors.Is(tx.Error, gorm.ErrRecordNotFound) {
+		return ErrLikeNotFound
 	}
 
 	return tx.Error
