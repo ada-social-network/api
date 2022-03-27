@@ -121,6 +121,9 @@ func main() {
 	categoryRepository := repository.NewCategoryRepository(db)
 	categoryHandler := handler.NewCategoryHandler(categoryRepository)
 
+	promoRepository := repository.NewPromoRepository(db)
+	promoHandler := handler.NewPromoHandler(promoRepository)
+
 	topicRepository := repository.NewTopicRepository(db)
 	topicHandler := handler.NewTopicHandler(topicRepository)
 
@@ -156,11 +159,11 @@ func main() {
 		GET("/comments/:id/likes", commentHandler.ListCommentLikes).
 		POST("/comments/:id/likes", commentHandler.CreateCommentLike).
 		DELETE("/comments/:id/likes/:likeId", commentHandler.DeleteCommentLike).
-		GET("/promos", handler.ListPromo(db)).
-		POST("/promos", handler.CreatePromo(db)).
-		GET("/promos/:id/users", handler.ListPromoUsers(db)).
-		PATCH("/promos/:id", handler.UpdatePromo(db)).
-		DELETE("/promos/:id", handler.DeletePromo(db)).
+		GET("/promos", promoHandler.ListPromos).
+		POST("/promos", promoHandler.CreatePromo).
+		GET("/promos/:id/users", promoHandler.ListPromoUsers).
+		PATCH("/promos/:id", promoHandler.UpdatePromo).
+		DELETE("/promos/:id", promoHandler.DeletePromo).
 		GET("/categories", categoryHandler.ListCategories).
 		GET("/categories/:id", categoryHandler.GetCategory).
 		POST("/categories", categoryHandler.CreateCategory).
