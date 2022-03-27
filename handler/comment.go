@@ -153,7 +153,7 @@ func createCommentLikeResponse(like models.Like) LikeCommentResponse {
 }
 
 // CreateCommentLike create a like
-func (l *LikeHandler) CreateCommentLike(c *gin.Context) {
+func (co *CommentHandler) CreateCommentLike(c *gin.Context) {
 	user, err := GetCurrentUser(c)
 	if err != nil {
 		httpError.Internal(c, err)
@@ -178,7 +178,7 @@ func (l *LikeHandler) CreateCommentLike(c *gin.Context) {
 	like.CommentID = commentUUID
 	like.UserID = user.ID
 
-	exist, err := l.repository.CheckLikeByUserAndCommentID(like, like.UserID, like.CommentID)
+	exist, err := co.repository.CheckLikeByUserAndCommentID(like, like.UserID, like.CommentID)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -189,7 +189,7 @@ func (l *LikeHandler) CreateCommentLike(c *gin.Context) {
 		return
 	}
 
-	err = l.repository.CreateLike(like)
+	err = co.repository.CreateLike(like)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -199,7 +199,7 @@ func (l *LikeHandler) CreateCommentLike(c *gin.Context) {
 }
 
 // ListCommentLikes get likes of a bda post
-func (l *LikeHandler) ListCommentLikes(c *gin.Context) {
+func (co *CommentHandler) ListCommentLikes(c *gin.Context) {
 	commentID, _ := c.Params.Get("id")
 	likes := &[]models.Like{}
 
@@ -209,7 +209,7 @@ func (l *LikeHandler) ListCommentLikes(c *gin.Context) {
 		return
 	}
 
-	err = l.repository.ListAllPostsByCommentID(likes, commentID)
+	err = co.repository.ListAllPostsByCommentID(likes, commentID)
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -217,7 +217,7 @@ func (l *LikeHandler) ListCommentLikes(c *gin.Context) {
 
 	var liked = &models.Like{}
 
-	exist, err := l.repository.CheckLikeByUserAndCommentID(liked, user.ID, uuid.FromStringOrNil(commentID))
+	exist, err := co.repository.CheckLikeByUserAndCommentID(liked, user.ID, uuid.FromStringOrNil(commentID))
 	if err != nil {
 		httpError.Internal(c, err)
 		return
@@ -238,10 +238,10 @@ func (l *LikeHandler) ListCommentLikes(c *gin.Context) {
 }
 
 // DeleteCommentLike delete a specific like
-func (l *LikeHandler) DeleteCommentLike(c *gin.Context) {
+func (co *CommentHandler) DeleteCommentLike(c *gin.Context) {
 	id, _ := c.Params.Get("likeId")
 
-	err := l.repository.DeleteLikeByID(id)
+	err := co.repository.DeleteLikeByID(id)
 	if err != nil {
 		if errors.Is(err, repository.ErrLikeNotFound) {
 			httpError.NotFound(c, "like", id, err)

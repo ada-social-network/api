@@ -2,9 +2,9 @@ package repository
 
 import (
 	"errors"
-	uuid "github.com/satori/go.uuid"
 
 	"github.com/ada-social-network/api/models"
+	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
 
