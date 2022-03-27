@@ -156,9 +156,9 @@ func main() {
 		POST("/bdaposts/:id/comments", commentHandler.CreateBdaPostComment).
 		PATCH("/bdaposts/:id/comments/:commentId", commentHandler.UpdateBdaPostComment).
 		DELETE("bdaposts/:id/comments/:commentId", commentHandler.DeleteBdaPostComment).
-		GET("/comments/:id/likes", handler.ListCommentLikes(db)).
-		POST("/comments/:id/likes", handler.CreateCommentLike(db)).
-		DELETE("/comments/:id/likes/:likeId", handler.DeleteCommentLike(db)).
+		GET("/comments/:id/likes", likeHandler.ListCommentLikes).
+		POST("/comments/:id/likes", likeHandler.CreateCommentLike).
+		DELETE("/comments/:id/likes/:likeId", likeHandler.DeleteCommentLike).
 		GET("/promos", handler.ListPromo(db)).
 		POST("/promos", handler.CreatePromo(db)).
 		GET("/promos/:id/users", handler.ListPromoUsers(db)).
