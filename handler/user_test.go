@@ -81,18 +81,18 @@ func TestCreateUserHandler(t *testing.T) {
 
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.user)
 
-			CreateUser(db)(ctx)
+			CreateUserWithPassword(db)(ctx)
 
 			user := &models.User{}
 			_ = json.Unmarshal(res.Body.Bytes(), user)
 
 			if res.Code != tt.want.statusCode {
-				t.Errorf("CreateUser want:%d, got:%d", tt.want.statusCode, res.Code)
+				t.Errorf("CreateUserWithPassword want:%d, got:%d", tt.want.statusCode, res.Code)
 			}
 
 			tx := db.First(&models.User{}, "id = ?", user.ID)
 			if tx.RowsAffected != tt.want.count {
-				t.Errorf("CreateUser want:%d, got:%d", tt.want.count, tx.RowsAffected)
+				t.Errorf("CreateUserWithPassword want:%d, got:%d", tt.want.count, tx.RowsAffected)
 			}
 		})
 	}

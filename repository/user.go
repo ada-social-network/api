@@ -22,8 +22,13 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-// CreateUser create a user in the DB
-func (us *UserRepository) CreateUser(user *models.User) error {
+// CreateUserWithPassword create a user in the DB
+func (us *UserRepository) CreateUserWithPassword(user *models.User, password string) error {
+	passwordEncrypted, err := models.HashPassword(password)
+	if err != nil {
+		return err
+	}
+	user.Password = passwordEncrypted
 	return us.db.Create(user).Error
 }
 
@@ -55,6 +60,12 @@ func (us *UserRepository) UpdateUserWithPassword(user *models.User, password str
 	}
 	user.Password = passwordEncrypted
 	return us.db.Save(user).Error
+}
+
+// CheckUniqueMailInUsers will check if a user with this email already exist in DB
+func (us *UserRepository) CheckUniqueMailInUsers(user *models.User, email string) (bool, error) {
+	tx := us.db.Where("email= ?", email).First(user)
+	return tx.RowsAffected > 0, tx.Error
 }
 
 // DeleteByUserID delete a comment by ID in the DB

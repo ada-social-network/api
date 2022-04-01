@@ -7,6 +7,7 @@ import (
 	"github.com/ada-social-network/api/models"
 	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	uuid "github.com/satori/go.uuid"
 	"gorm.io/gorm"
 )
@@ -52,6 +53,55 @@ type UserResponse struct {
 // UpdatePasswordRequest is the request for the password change
 type UpdatePasswordRequest struct {
 	Password string `json:"password"`
+}
+
+type userRegister struct {
+	LastName  string `json:"lastName" binding:"required,min=2,max=20"`
+	FirstName string `json:"firstName" binding:"required,min=2,max=20"`
+	Email     string `json:"email" binding:"required,email"`
+	Password  string `json:"password" binding:"required,min=8,max=32"`
+}
+
+// Register register a user
+func (us *UserHandler) Register(c *gin.Context) {
+	userRegister := &userRegister{}
+
+	err := c.BindJSON(userRegister)
+	if err != nil {
+		ve, ok := err.(validator.ValidationErrors)
+		if ok {
+			httpError.Validation(c, ve)
+			return
+		}
+
+		httpError.Internal(c, err)
+		return
+	}
+
+	user := &models.User{
+		LastName:  userRegister.LastName,
+		FirstName: userRegister.FirstName,
+		Email:     userRegister.Email,
+		Password:  userRegister.Password,
+	}
+
+	exist, err := us.repository.CheckUniqueMailInUsers(user, user.Email)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+	if exist {
+		httpError.AlreadyExist(c, "email", user.Email)
+		return
+	}
+
+	err = us.repository.CreateUserWithPassword(user, user.Password)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, createUserResponse(user))
 }
 
 // Me provide informations about the connected user
@@ -123,13 +173,7 @@ func (us *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	err = us.repository.CreateUser(user)
-	if err != nil {
-		httpError.Internal(c, err)
-		return
-	}
-
-	user.Password, err = models.HashPassword(user.Password)
+	err = us.repository.CreateUserWithPassword(user, user.Password)
 	if err != nil {
 		httpError.Internal(c, err)
 		return

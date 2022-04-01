@@ -98,17 +98,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	r.Group(basePathAuth).
-		POST("/register", handler.Register(db)).
-		POST("/login", authMiddleware.LoginHandler).
-		GET("/refresh", authMiddleware.RefreshHandler)
-
-	protected := r.Group(basePath)
-
-	if withAuth {
-		protected.Use(authMiddleware.MiddlewareFunc())
-	}
-
 	commentRepository := repository.NewCommentRepository(db)
 	commentHandler := handler.NewCommentHandler(commentRepository)
 	userRepository := repository.NewUserRepository(db)
@@ -122,6 +111,17 @@ func main() {
 
 	categoryRepository := repository.NewCategoryRepository(db)
 	categoryHandler := handler.NewCategoryHandler(categoryRepository)
+
+	r.Group(basePathAuth).
+		POST("/register", userHandler.Register).
+		POST("/login", authMiddleware.LoginHandler).
+		GET("/refresh", authMiddleware.RefreshHandler)
+
+	protected := r.Group(basePath)
+
+	if withAuth {
+		protected.Use(authMiddleware.MiddlewareFunc())
+	}
 
 	protected.
 		GET("/me", userHandler.Me).
