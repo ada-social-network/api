@@ -65,7 +65,7 @@ func (co *CommentRepository) DeleteCommentByID(commentID string) error {
 
 // CheckLikeByUserAndCommentID will check if a like by this user already exist on a comment
 func (co *CommentRepository) CheckLikeByUserAndCommentID(like *models.Like, userID uuid.UUID, commentID uuid.UUID) (bool, error) {
-	tx := co.db.Where("user_id= ? AND comment_id= ?", userID, commentID).First(like)
+	tx := co.db.Where("user_id= ? AND comment_id= ?", userID, commentID).Find(like)
 	return tx.RowsAffected > 0, tx.Error
 }
 

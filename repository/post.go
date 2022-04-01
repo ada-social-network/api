@@ -66,7 +66,7 @@ func (p *PostRepository) DeletePostByID(postID string) error {
 
 // CheckLikeByUserAndPostID will check if a like by this user already exist on a post
 func (p *PostRepository) CheckLikeByUserAndPostID(like *models.Like, userID uuid.UUID, postID uuid.UUID) (bool, error) {
-	tx := p.db.Where("user_id= ? AND post_id= ?", userID, postID).First(like)
+	tx := p.db.Where("user_id= ? AND post_id= ?", userID, postID).Find(like)
 	return tx.RowsAffected > 0, tx.Error
 }
 

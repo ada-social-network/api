@@ -60,7 +60,7 @@ func (bp *BdaPostRepository) DeleteBdaPostByID(bdaPostID string) error {
 
 // CheckLikeByUserAndBdaPostID will check if a like by this user already exist on a bda post
 func (bp *BdaPostRepository) CheckLikeByUserAndBdaPostID(like *models.Like, userID uuid.UUID, bdaPostID uuid.UUID) (bool, error) {
-	tx := bp.db.Where("user_id= ? AND bda_post_id= ?", userID, bdaPostID).First(like)
+	tx := bp.db.Where("user_id= ? AND bda_post_id= ?", userID, bdaPostID).Find(like)
 	return tx.RowsAffected > 0, tx.Error
 }
 
