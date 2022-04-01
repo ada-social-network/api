@@ -98,16 +98,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	r.Group(basePathAuth).
-		POST("/register", handler.Register(db)).
-		POST("/login", authMiddleware.LoginHandler).
-		GET("/refresh", authMiddleware.RefreshHandler)
-
-	protected := r.Group(basePath)
-
-	if withAuth {
-		protected.Use(authMiddleware.MiddlewareFunc())
-	}
+	userRepository := repository.NewUserRepository(db)
+	userHandler := handler.NewUserHandler(userRepository)
 
 	commentRepository := repository.NewCommentRepository(db)
 	commentHandler := handler.NewCommentHandler(commentRepository)
@@ -127,9 +119,25 @@ func main() {
 	topicRepository := repository.NewTopicRepository(db)
 	topicHandler := handler.NewTopicHandler(topicRepository)
 
+	r.Group(basePathAuth).
+		POST("/register", userHandler.Register).
+		POST("/login", authMiddleware.LoginHandler).
+		GET("/refresh", authMiddleware.RefreshHandler)
+
+	protected := r.Group(basePath)
+
+	if withAuth {
+		protected.Use(authMiddleware.MiddlewareFunc())
+	}
+
 	protected.
-		GET("/me", handler.Me(db)).
-		PATCH("/me/password", handler.UpdatePassword(db)).
+		GET("/me", userHandler.Me).
+		PATCH("/me/password", userHandler.UpdatePassword).
+		GET("/users", userHandler.ListUser).
+		GET("/users/:id", userHandler.GetUser).
+		POST("/users", userHandler.CreateUser).
+		PATCH("/users/:id", userHandler.UpdateUser).
+		DELETE("/users/:id", userHandler.DeleteUser).
 		GET("/topics/:id/posts", postHandler.ListPost).
 		GET("/topics/:id/posts/:postId", postHandler.GetPost).
 		POST("/topics/:id/posts", postHandler.CreatePost).
@@ -138,11 +146,6 @@ func main() {
 		GET("/posts/:id/likes", postHandler.ListPostLikes).
 		POST("/posts/:id/likes", postHandler.CreatePostLike).
 		DELETE("/posts/:id/likes/:likeId", postHandler.DeletePostLike).
-		GET("/users", handler.ListUser(db)).
-		GET("/users/:id", handler.GetUser(db)).
-		POST("/users", handler.CreateUser(db)).
-		PATCH("/users/:id", handler.UpdateUser(db)).
-		DELETE("/users/:id", handler.DeleteUser(db)).
 		GET("/bdaposts", bdaPostHandler.ListBdaPost).
 		GET("/bdaposts/:id", bdaPostHandler.GetBdaPost).
 		POST("/bdaposts", bdaPostHandler.CreateBdaPost).

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
+	commonTesting "github.com/ada-social-network/api/testing"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
-
-	"github.com/ada-social-network/api/models"
-	commonTesting "github.com/ada-social-network/api/testing"
 )
 
 func TestListUserHandler(t *testing.T) {
@@ -17,7 +17,8 @@ func TestListUserHandler(t *testing.T) {
 
 	db.Create(&models.User{})
 
-	ListUser(db)(ctx)
+	userRepository := repository.NewCommentRepository(db)
+	NewUserHandler((*repository.UserRepository)(userRepository)).ListUser(ctx)
 
 	got := &[]models.User{}
 	_ = json.Unmarshal(res.Body.Bytes(), got)
@@ -81,7 +82,8 @@ func TestCreateUserHandler(t *testing.T) {
 
 			commonTesting.AddRequestWithBodyToContext(ctx, tt.args.user)
 
-			CreateUser(db)(ctx)
+			userRepository := repository.NewCommentRepository(db)
+			NewUserHandler((*repository.UserRepository)(userRepository)).CreateUser(ctx)
 
 			user := &models.User{}
 			_ = json.Unmarshal(res.Body.Bytes(), user)
@@ -114,7 +116,8 @@ func TestDeleteUserHandler(t *testing.T) {
 		},
 	}
 
-	DeleteUser(db)(ctx)
+	userRepository := repository.NewCommentRepository(db)
+	NewUserHandler((*repository.UserRepository)(userRepository)).DeleteUser(ctx)
 
 	if res.Code != 204 {
 		t.Errorf("DeleteUser want:%d, got:%d", 204, res.Code)
