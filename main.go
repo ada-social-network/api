@@ -124,8 +124,8 @@ func main() {
 	categoryHandler := handler.NewCategoryHandler(categoryRepository)
 
 	protected.
-		GET("/me", handler.Me(db)).
-		PATCH("/me/password", handler.UpdatePassword(db)).
+		GET("/me", userHandler.Me).
+		PATCH("/me/password", userHandler.UpdatePassword).
 		GET("/topics/:id/posts", postHandler.ListPost).
 		GET("/topics/:id/posts/:postId", postHandler.GetPost).
 		POST("/topics/:id/posts", postHandler.CreatePost).

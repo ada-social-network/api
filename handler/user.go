@@ -49,6 +49,56 @@ type UserResponse struct {
 	Likes          []models.Like    `json:"likes"`
 }
 
+// UpdatePasswordRequest is the request for the password change
+type UpdatePasswordRequest struct {
+	Password string `json:"password"`
+}
+
+// Me provide informations about the connected user
+func (us *UserHandler) Me(c *gin.Context) {
+	user, exist := c.Get("id")
+	if !exist {
+		httpError.Internal(c, errors.New("jwt does not exist"))
+		return
+	}
+
+	u, ok := user.(*models.User)
+	if !ok {
+		httpError.Internal(c, errors.New("this is not a user"))
+		return
+	}
+
+	err := us.repository.GetUserByID(u, u.ID.String())
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, createUserResponse(u))
+}
+
+// UpdatePassword update password of the current user
+func (us *UserHandler) UpdatePassword(c *gin.Context) {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+	}
+
+	updatePasswordRequest := &UpdatePasswordRequest{}
+	err = c.ShouldBindJSON(updatePasswordRequest)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = us.repository.UpdateUserWithPassword(user, updatePasswordRequest.Password)
+	if err != nil {
+		httpError.Internal(c, err)
+	}
+
+	c.JSON(204, nil)
+}
+
 // ListUser respond a list of users
 func (us *UserHandler) ListUser(c *gin.Context) {
 	users := &[]models.User{}
@@ -65,7 +115,6 @@ func (us *UserHandler) ListUser(c *gin.Context) {
 
 // CreateUser create a user
 func (us *UserHandler) CreateUser(c *gin.Context) {
-
 	user := &models.User{}
 
 	err := c.ShouldBindJSON(user)
@@ -106,7 +155,6 @@ func (us *UserHandler) DeleteUser(c *gin.Context) {
 
 // GetUser get a specific user
 func (us *UserHandler) GetUser(c *gin.Context) {
-	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 	userID, _ := c.Params.Get("id")
 
 	user := &models.User{}
@@ -126,7 +174,6 @@ func (us *UserHandler) GetUser(c *gin.Context) {
 
 // UpdateUser update a specific user
 func (us *UserHandler) UpdateUser(c *gin.Context) {
-	//can be c.Request.URL.Query().Get("id") but it's a shorter notation
 	userID, _ := c.Params.Get("id")
 	user := &models.User{}
 

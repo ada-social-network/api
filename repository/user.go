@@ -9,8 +9,7 @@ import (
 
 // ErrUserNotFound is an error when resource is not found
 var (
-	ErrUserNotFound     = errors.New("user not found")
-	ErrPasswordNotFound = errors.New("password not found")
+	ErrUserNotFound = errors.New("user not found")
 )
 
 // UserRepository is a repository for user resource
