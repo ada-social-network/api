@@ -64,7 +64,7 @@ func (us *UserRepository) UpdateUserWithPassword(user *models.User, password str
 
 // CheckUniqueMailInUsers will check if a user with this email already exist in DB
 func (us *UserRepository) CheckUniqueMailInUsers(user *models.User, email string) (bool, error) {
-	tx := us.db.Where("email= ?", email).First(user)
+	tx := us.db.Where("email= ?", email).Find(user)
 	return tx.RowsAffected > 0, tx.Error
 }
 
