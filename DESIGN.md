@@ -155,6 +155,8 @@ can be done easily with an interceptor axios. You can use and adapt the followin
 | Get Users Promo        | `Promo`    | `Users`                | 204  | `/promos/:id/users`                 | `GET`    | Get users of a promo                                   |
 | Create Category        | `Category` | `Category`             | 200  | `/categories`                       | `POST`   | Create a category                                      |
 | List Categories        | `Category` | `Collection<Category>` | 200  | `/categories`                       | `GET`    | List all categories                                    |
+| Get Category           | `Category` | `Category `            | 200  | `/categories/:id`                   | `GET`    | Get a specific category                                |
+| Update Category        | `Category` | `Category `            | 200  | `/categories/:id`                   | `PATCH`  | Update a category                                      |
 | Delete Category        | `Category` | `<empty>`              | 204  | `/categories/:id`                   | `DELETE` | Delete a category                                      |
 | Create Topic           | `Topic`    | `Topic`                | 200  | `/categories/:id/topics`            | `POST`   | Create a topic                                         |
 | List Category Topics   | `Topic`    | `Collection<Topic>`    | 200  | `/categories/:id/topics`            | `GET`    | Get all the topics of a category                       |

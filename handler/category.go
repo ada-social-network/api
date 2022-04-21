@@ -1,76 +1,119 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	"errors"
 
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
+	"github.com/gin-gonic/gin"
 )
 
+//CategoryHandler is a struct to define category handler
+type CategoryHandler struct {
+	repository *repository.CategoryRepository
+}
+
+// NewCategoryHandler is a factory for category handler
+func NewCategoryHandler(repository *repository.CategoryRepository) *CategoryHandler {
+	return &CategoryHandler{repository: repository}
+}
+
 // ListCategories respond a list of categories
-func ListCategories(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		categories := &[]models.Category{}
+func (ca *CategoryHandler) ListCategories(c *gin.Context) {
+	categories := &[]models.Category{}
 
-		result := db.Find(&categories)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, categories)
+	err := ca.repository.ListAllCategories(categories)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, categories)
 }
 
 // CreateCategory create a category
-func CreateCategory(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		category := &models.Category{}
+func (ca *CategoryHandler) CreateCategory(c *gin.Context) {
+	category := &models.Category{}
 
-		err := c.ShouldBindJSON(category)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		result := db.Create(category)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, category)
+	err := c.ShouldBindJSON(category)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = ca.repository.CreateCategory(category)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, category)
 }
 
 // DeleteCategory delete a specific category
-func DeleteCategory(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+func (ca *CategoryHandler) DeleteCategory(c *gin.Context) {
+	id, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.Category{}, "id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
+	err := ca.repository.DeleteCategoryByID(id)
+	if err != nil {
+		if errors.Is(err, repository.ErrCategoryNotFound) {
+			httpError.NotFound(c, "category", id, err)
 			return
 		}
 
-		c.JSON(204, nil)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
 }
 
-// ListCategoryTopics get topics of a category
-func ListCategoryTopics(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		topics := &[]models.Topic{}
+// GetCategory get a specific category
+func (ca *CategoryHandler) GetCategory(c *gin.Context) {
+	id, _ := c.Params.Get("id")
 
-		result := db.Find(topics, "category_id= ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
+	category := &models.Category{}
+
+	err := ca.repository.GetCategoryByID(category, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrCategoryNotFound) {
+			httpError.NotFound(c, "category", id, err)
+
 		}
-
-		c.JSON(200, topics)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, category)
+}
+
+// UpdateCategory update a specific category
+func (ca *CategoryHandler) UpdateCategory(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	category := &models.Category{}
+
+	err := ca.repository.GetCategoryByID(category, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrCategoryNotFound) {
+			httpError.NotFound(c, "category", id, err)
+
+		}
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = c.ShouldBindJSON(category)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = ca.repository.UpdateCategory(category)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, category)
 }
