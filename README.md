@@ -45,6 +45,34 @@ Usage of ada-api:
         Show application current version
 ```
 
+## CORS
+
+CORS is disabled by default. it means that all request should have the same domain
+as the API.
+
+In order to use another domain, it is possible to activate CORS by passing to command arguments
+an allowed domain.
+
+For example:
+
+```shell
+# Allow request from adahub.com (for example)
+./ada-api --allowed-domain="https://adahub.com"
+```
+
+For development, you can also allow all domain (useful for accepting any request from any domain):
+
+```shell
+# Allow all
+./ada-api --allowed-domain="*"
+
+# Or specific front-end
+./ada-api --allowed-domain="http://localhost:3000"
+```
+
+You can also use a CORS plugin (see Chrome Store for a CORS Plugin) in order to allow Cross domain request
+during development. For example : https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf
+
 ## Development
 
 - lint code: `golangci-lint run`
@@ -88,7 +116,7 @@ More info, here: [https://golangci-lint.run](https://golangci-lint.run/)
 - Docker image: `ghcr.io/ada-social-network/api`
 - Docker tags: 
   - `latest`: latest version of the image
-
+  
 #### Get locally `latest` docker image
 
 You can get the last image of the api using `docker pull`.
@@ -162,6 +190,7 @@ docker-compose stop
 # remove stopped application
 docker-compose rm
 ```
+
 ## References
 
 - https://golang.org/pkg/testing/

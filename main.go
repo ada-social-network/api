@@ -27,23 +27,6 @@ const (
 	basePathAuth = "/auth"
 )
 
-// CORS used for adding cors support
-func CORS() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
-			return
-		}
-
-		c.Next()
-	}
-}
-
 func main() {
 	var wait time.Duration
 	var port int
@@ -52,11 +35,13 @@ func main() {
 	var dsn string
 	var withAuth bool
 	var showVersion bool
+	var allowedDomain string
 
 	flag.BoolVar(&withAuth, "auth", true, "Use api authentication")
 	flag.BoolVar(&showVersion, "version", false, "Show application current version")
 	flag.IntVar(&port, "http-port", 8080, "Default port")
 	flag.StringVar(&host, "http-host", "0.0.0.0", "Default interface")
+	flag.StringVar(&allowedDomain, "allowed-domain", "", "domain allowed for Cross Domain Request (CORS)")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
 	flag.StringVar(&dsn, "sqlite-dsn", "gorm.db", "sqlite database file (dsn) that will store data")
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
@@ -82,8 +67,14 @@ func main() {
 	gin.SetMode(mode)
 
 	r := gin.New()
+
+	// We use CORS only if an allowed domain is specified
+	if allowedDomain != "" {
+		log.Printf("Enable CORS, allow domain %s", allowedDomain)
+		r.Use(middleware.CORS(allowedDomain))
+	}
+
 	r.
-		Use(CORS()).
 		// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 		Use(gin.Logger()).
 		// Recovery middleware recovers from any panics and writes a 500 if there was one.
