@@ -3,124 +3,147 @@ package handler
 import (
 	"errors"
 
-	"github.com/gin-gonic/gin"
-	uuid "github.com/satori/go.uuid"
-	"gorm.io/gorm"
-
 	httpError "github.com/ada-social-network/api/error"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
+	"github.com/gin-gonic/gin"
+	uuid "github.com/satori/go.uuid"
 )
 
+// TopicHandler is a struct to define bda post handler
+type TopicHandler struct {
+	repository *repository.TopicRepository
+}
+
+// NewTopicHandler is a factory for topic handler
+func NewTopicHandler(repository *repository.TopicRepository) *TopicHandler {
+	return &TopicHandler{repository: repository}
+}
+
 // GetTopic get a specific topic
-func GetTopic(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		topic := &models.Topic{}
+func (t *TopicHandler) GetTopic(c *gin.Context) {
+	id, _ := c.Params.Get("id")
 
-		result := db.First(topic, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Topic", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	topic := &models.Topic{}
+
+	err := t.repository.GetTopicByID(topic, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrTopicNotFound) {
+			httpError.NotFound(c, "topic", id, err)
+
 		}
-
-		c.JSON(200, topic)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, topic)
 }
 
 // ListTopics respond a list of topics
-func ListTopics(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		topics := &[]models.Topic{}
+func (t *TopicHandler) ListTopics(c *gin.Context) {
+	topics := &[]models.Topic{}
 
-		result := db.Find(&topics)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
-			return
-		}
-
-		c.JSON(200, topics)
+	err := t.repository.ListAllTopics(topics)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(200, topics)
 }
 
 // CreateTopic create a topic
-func CreateTopic(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, err := GetCurrentUser(c)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		topic := &models.Topic{}
-		id, _ := c.Params.Get("id")
-
-		err = c.ShouldBindJSON(topic)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		topic.UserID = user.ID
-		catUUID, err := uuid.FromString(id)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-		topic.CategoryID = catUUID
-
-		result := db.Create(topic)
-		if result.Error != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		c.JSON(200, topic)
+func (t *TopicHandler) CreateTopic(c *gin.Context) {
+	user, err := GetCurrentUser(c)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
 	}
+
+	topic := &models.Topic{}
+	categoryID, _ := c.Params.Get("id")
+
+	err = c.ShouldBindJSON(topic)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	topic.UserID = user.ID
+	catUUID, err := uuid.FromString(categoryID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+	topic.CategoryID = catUUID
+
+	err = t.repository.CreateTopic(topic)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, topic)
 }
 
 // DeleteTopic delete a specific topic
-func DeleteTopic(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
+func (t *TopicHandler) DeleteTopic(c *gin.Context) {
+	id, _ := c.Params.Get("id")
 
-		result := db.Delete(&models.Topic{}, "id = ?", id)
-		if result.Error != nil {
-			httpError.Internal(c, result.Error)
+	err := t.repository.DeleteTopicByID(id)
+	if err != nil {
+		if errors.Is(err, repository.ErrTopicNotFound) {
+			httpError.NotFound(c, "topic", id, err)
 			return
 		}
 
-		c.JSON(204, nil)
+		httpError.Internal(c, err)
+		return
 	}
+
+	c.JSON(204, nil)
 }
 
 // UpdateTopic update a specific topic
-func UpdateTopic(db *gorm.DB) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id, _ := c.Params.Get("id")
-		topic := &models.Topic{}
+func (t *TopicHandler) UpdateTopic(c *gin.Context) {
+	id, _ := c.Params.Get("id")
+	topic := &models.Topic{}
 
-		result := db.First(topic, "id = ?", id)
-		if result.Error != nil {
-			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				httpError.NotFound(c, "Topic", id, result.Error)
-			} else {
-				httpError.Internal(c, result.Error)
-			}
-			return
+	err := t.repository.GetTopicByID(topic, id)
+	if err != nil {
+		if errors.Is(err, repository.ErrTopicNotFound) {
+			httpError.NotFound(c, "topic", id, err)
+
 		}
-
-		err := c.ShouldBindJSON(topic)
-		if err != nil {
-			httpError.Internal(c, err)
-			return
-		}
-
-		db.Save(topic)
-
-		c.JSON(200, topic)
+		httpError.Internal(c, err)
+		return
 	}
+
+	err = c.ShouldBindJSON(topic)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	err = t.repository.UpdateTopic(topic)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, topic)
+}
+
+// ListCategoryTopics get topics of a category
+func (t *TopicHandler) ListCategoryTopics(c *gin.Context) {
+	categoryID, _ := c.Params.Get("id")
+	topics := &[]models.Topic{}
+
+	err := t.repository.ListAllTopicsByCategoryID(topics, categoryID)
+	if err != nil {
+		httpError.Internal(c, err)
+		return
+	}
+
+	c.JSON(200, topics)
 }

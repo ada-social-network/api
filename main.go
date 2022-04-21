@@ -14,6 +14,7 @@ import (
 	"github.com/ada-social-network/api/handler"
 	"github.com/ada-social-network/api/middleware"
 	"github.com/ada-social-network/api/models"
+	"github.com/ada-social-network/api/repository"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -27,6 +28,23 @@ const (
 	basePathAuth = "/auth"
 )
 
+// CORS used for adding cors support
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
 func main() {
 	var wait time.Duration
 	var port int
@@ -35,13 +53,11 @@ func main() {
 	var dsn string
 	var withAuth bool
 	var showVersion bool
-	var allowedDomain string
 
 	flag.BoolVar(&withAuth, "auth", true, "Use api authentication")
 	flag.BoolVar(&showVersion, "version", false, "Show application current version")
 	flag.IntVar(&port, "http-port", 8080, "Default port")
 	flag.StringVar(&host, "http-host", "0.0.0.0", "Default interface")
-	flag.StringVar(&allowedDomain, "allowed-domain", "", "domain allowed for Cross Domain Request (CORS)")
 	flag.StringVar(&mode, "mode", gin.ReleaseMode, "Running mode, can be 'debug', 'release' or 'test'")
 	flag.StringVar(&dsn, "sqlite-dsn", "gorm.db", "sqlite database file (dsn) that will store data")
 	flag.DurationVar(&wait, "graceful-timeout", time.Second*15, "the duration for which the server gracefully wait for existing connections to finish - e.g. 15s or 1m")
@@ -67,14 +83,8 @@ func main() {
 	gin.SetMode(mode)
 
 	r := gin.New()
-
-	// We use CORS only if an allowed domain is specified
-	if allowedDomain != "" {
-		log.Printf("Enable CORS, allow domain %s", allowedDomain)
-		r.Use(middleware.CORS(allowedDomain))
-	}
-
 	r.
+		Use(CORS()).
 		// Logger middleware will write the logs to gin.DefaultWriter even if you set with GIN_MODE=release.
 		Use(gin.Logger()).
 		// Recovery middleware recovers from any panics and writes a 500 if there was one.
@@ -88,8 +98,29 @@ func main() {
 		log.Fatal(err)
 	}
 
+	userRepository := repository.NewUserRepository(db)
+	userHandler := handler.NewUserHandler(userRepository)
+
+	commentRepository := repository.NewCommentRepository(db)
+	commentHandler := handler.NewCommentHandler(commentRepository)
+
+	bdaPostRepository := repository.NewBdaPostRepository(db)
+	bdaPostHandler := handler.NewBdaPostHandler(bdaPostRepository)
+
+	postRepository := repository.NewPostRepository(db)
+	postHandler := handler.NewPostHandler(postRepository)
+
+	categoryRepository := repository.NewCategoryRepository(db)
+	categoryHandler := handler.NewCategoryHandler(categoryRepository)
+
+	promoRepository := repository.NewPromoRepository(db)
+	promoHandler := handler.NewPromoHandler(promoRepository)
+
+	topicRepository := repository.NewTopicRepository(db)
+	topicHandler := handler.NewTopicHandler(topicRepository)
+
 	r.Group(basePathAuth).
-		POST("/register", handler.Register(db)).
+		POST("/register", userHandler.Register).
 		POST("/login", authMiddleware.LoginHandler).
 		GET("/refresh", authMiddleware.RefreshHandler)
 
@@ -100,51 +131,53 @@ func main() {
 	}
 
 	protected.
-		GET("/me", handler.Me(db)).
-		PATCH("/me/password", handler.UpdatePassword(db)).
-		GET("/topics/:id/posts", handler.ListPost(db)).
-		GET("/topics/:id/posts/:postId", handler.GetPost(db)).
-		POST("/topics/:id/posts", handler.CreatePost(db)).
-		PATCH("/topics/:id/posts/:postId", handler.UpdatePost(db)).
-		DELETE("/topics/:id/posts/:postId", handler.DeletePost(db)).
-		GET("/posts/:id/likes", handler.ListPostLikes(db)).
-		POST("/posts/:id/likes", handler.CreatePostLike(db)).
-		DELETE("/posts/:id/likes/:likeId", handler.DeletePostLike(db)).
-		GET("/users", handler.ListUser(db)).
-		GET("/users/:id", handler.GetUser(db)).
-		POST("/users", handler.CreateUser(db)).
-		PATCH("/users/:id", handler.UpdateUser(db)).
-		DELETE("/users/:id", handler.DeleteUser(db)).
-		GET("/bdaposts", handler.ListBdaPost(db)).
-		GET("/bdaposts/:id", handler.GetBdaPost(db)).
-		POST("/bdaposts", handler.CreateBdaPost(db)).
-		PATCH("/bdaposts/:id", handler.UpdateBdaPost(db)).
-		DELETE("/bdaposts/:id", handler.DeleteBdaPost(db)).
-		GET("/bdaposts/:id/likes", handler.ListBdaPostLikes(db)).
-		POST("/bdaposts/:id/likes", handler.CreateBdaPostLike(db)).
-		DELETE("/bdaposts/:id/likes/:likeId", handler.DeleteBdaPostLike(db)).
-		GET("/bdaposts/:id/comments", handler.ListBdaPostComments(db)).
-		GET("/bdaposts/:id/comments/:commentId", handler.GetBdaPostComment(db)).
-		POST("/bdaposts/:id/comments", handler.CreateBdaPostComment(db)).
-		PATCH("/bdaposts/:id/comments/:commentId", handler.UpdateBdaPostComment(db)).
-		DELETE("bdaposts/:id/comments/:commentId", handler.DeleteBdaPostComment(db)).
-		GET("/comments/:id/likes", handler.ListCommentLikes(db)).
-		POST("/comments/:id/likes", handler.CreateCommentLike(db)).
-		DELETE("/comments/:id/likes/:likeId", handler.DeleteCommentLike(db)).
-		GET("/promos", handler.ListPromo(db)).
-		POST("/promos", handler.CreatePromo(db)).
-		GET("/promos/:id/users", handler.ListPromoUsers(db)).
-		PATCH("/promos/:id", handler.UpdatePromo(db)).
-		DELETE("/promos/:id", handler.DeletePromo(db)).
-		GET("/categories", handler.ListCategories(db)).
-		POST("/categories", handler.CreateCategory(db)).
-		DELETE("/categories/:id", handler.DeleteCategory(db)).
-		GET("/categories/:id/topics", handler.ListCategoryTopics(db)).
-		GET("/topics", handler.ListTopics(db)).
-		POST("/categories/:id/topics", handler.CreateTopic(db)).
-		PATCH("/topics/:id", handler.UpdateTopic(db)).
-		DELETE("/topics/:id", handler.DeleteTopic(db)).
-		GET("/topics/:id", handler.GetTopic(db))
+		GET("/me", userHandler.Me).
+		PATCH("/me/password", userHandler.UpdatePassword).
+		GET("/users", userHandler.ListUser).
+		GET("/users/:id", userHandler.GetUser).
+		POST("/users", userHandler.CreateUser).
+		PATCH("/users/:id", userHandler.UpdateUser).
+		DELETE("/users/:id", userHandler.DeleteUser).
+		GET("/topics/:id/posts", postHandler.ListPost).
+		GET("/topics/:id/posts/:postId", postHandler.GetPost).
+		POST("/topics/:id/posts", postHandler.CreatePost).
+		PATCH("/topics/:id/posts/:postId", postHandler.UpdatePost).
+		DELETE("/topics/:id/posts/:postId", postHandler.DeletePost).
+		GET("/posts/:id/likes", postHandler.ListPostLikes).
+		POST("/posts/:id/likes", postHandler.CreatePostLike).
+		DELETE("/posts/:id/likes/:likeId", postHandler.DeletePostLike).
+		GET("/bdaposts", bdaPostHandler.ListBdaPost).
+		GET("/bdaposts/:id", bdaPostHandler.GetBdaPost).
+		POST("/bdaposts", bdaPostHandler.CreateBdaPost).
+		PATCH("/bdaposts/:id", bdaPostHandler.UpdateBdaPost).
+		DELETE("/bdaposts/:id", bdaPostHandler.DeleteBdaPost).
+		GET("/bdaposts/:id/likes", bdaPostHandler.ListBdaPostLikes).
+		POST("/bdaposts/:id/likes", bdaPostHandler.CreateBdaPostLike).
+		DELETE("/bdaposts/:id/likes/:likeId", bdaPostHandler.DeleteBdaPostLike).
+		GET("/bdaposts/:id/comments", commentHandler.ListBdaPostComments).
+		GET("/bdaposts/:id/comments/:commentId", commentHandler.GetBdaPostComment).
+		POST("/bdaposts/:id/comments", commentHandler.CreateBdaPostComment).
+		PATCH("/bdaposts/:id/comments/:commentId", commentHandler.UpdateBdaPostComment).
+		DELETE("bdaposts/:id/comments/:commentId", commentHandler.DeleteBdaPostComment).
+		GET("/comments/:id/likes", commentHandler.ListCommentLikes).
+		POST("/comments/:id/likes", commentHandler.CreateCommentLike).
+		DELETE("/comments/:id/likes/:likeId", commentHandler.DeleteCommentLike).
+		GET("/promos", promoHandler.ListPromos).
+		POST("/promos", promoHandler.CreatePromo).
+		GET("/promos/:id/users", promoHandler.ListPromoUsers).
+		PATCH("/promos/:id", promoHandler.UpdatePromo).
+		DELETE("/promos/:id", promoHandler.DeletePromo).
+		GET("/categories", categoryHandler.ListCategories).
+		GET("/categories/:id", categoryHandler.GetCategory).
+		POST("/categories", categoryHandler.CreateCategory).
+		PATCH("/categories/:id", categoryHandler.UpdateCategory).
+		DELETE("/categories/:id", categoryHandler.DeleteCategory).
+		GET("/categories/:id/topics", topicHandler.ListCategoryTopics).
+		GET("/topics", topicHandler.ListTopics).
+		POST("/categories/:id/topics", topicHandler.CreateTopic).
+		PATCH("/topics/:id", topicHandler.UpdateTopic).
+		DELETE("/topics/:id", topicHandler.DeleteTopic).
+		GET("/topics/:id", topicHandler.GetTopic)
 
 	srv := &http.Server{
 		Addr: fmt.Sprintf("%s:%d", host, port),
