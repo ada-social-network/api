@@ -28,6 +28,7 @@ type UserResponse struct {
 	LastName       string           `json:"lastName" binding:"required,min=2,max=20"`
 	FirstName      string           `json:"firstName" binding:"required,min=2,max=20"`
 	Email          string           `json:"email" binding:"required,email" gorm:"unique"`
+	Password       string           `json:"password"`
 	DateOfBirth    string           `json:"dateOfBirth"`
 	Apprenticeship string           `json:"apprenticeAt"`
 	ProfilPic      string           `json:"profilPic"`
@@ -237,11 +238,13 @@ func (us *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if user.Password == "" {
-		err = us.repository.UpdateUserWithoutPassword(user)
-	} else {
-		err = us.repository.UpdateUserWithPassword(user, user.Password)
-	}
+	//if user.Password == "" {
+	err = us.repository.UpdateUserWithoutPassword(user)
+	//fmt.Println("is", user.FirstName, user.Password)
+	//} else {
+	//err = us.repository.UpdateUserWithPassword(user, user.Password)
+	//mt.Println("coucou", user.FirstName, user.Password)
+	//}
 
 	if err != nil {
 		if errors.Is(err, repository.ErrUserNotFound) {

@@ -35,6 +35,7 @@ func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 				Email:     claims["email"].(string),
 				FirstName: claims["firstname"].(string),
 				LastName:  claims["lastname"].(string),
+				Admin:     claims["admin"].(bool),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -64,6 +65,7 @@ func CreateAuthMiddleware(db *gorm.DB) (*jwt.GinJWTMiddleware, error) {
 					IdentityKey: v.ID,
 					"firstname": v.FirstName,
 					"lastname":  v.LastName,
+					"admin":     v.Admin,
 					"email":     v.Email,
 				}
 			}
