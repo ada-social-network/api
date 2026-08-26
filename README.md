@@ -191,6 +191,3 @@ docker-compose stop
 docker-compose rm
 ```
 
-## References
-
-- https://golang.org/pkg/testing/
